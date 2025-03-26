@@ -4,7 +4,7 @@
 #include <iostream>
 #include <string>
 
-class Doctor; // Forward declaration for composition
+class Doctor;
 
 class Patient {
 private:
