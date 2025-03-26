@@ -31,4 +31,4 @@ public:
   friend std::ostream& operator<<(std::ostream& os, const Patient& p);
 };
 
-#endif
+#endif //PATIENT_H
