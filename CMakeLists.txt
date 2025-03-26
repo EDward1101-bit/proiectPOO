@@ -49,8 +49,11 @@ include(cmake/CopyHelper.cmake)
 
 # NOTE: update executable name in .github/workflows/cmake.yml:25 when changing name here
 add_executable(${MAIN_EXECUTABLE_NAME}
-    main.cpp
     generated/src/Helper.cpp
+        code/src/main.cpp
+        code/src/patient.cpp
+        code/includes/patient.h
+        code/includes/doctor.h
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )
