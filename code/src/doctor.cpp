@@ -5,7 +5,7 @@ Doctor::Doctor(std::string name, std::string specialty)
     : name(std::move(name)), specialty(std::move(specialty)) {}
 
 // Getter for name
-std::string Doctor::getName() const {
+const std::string& Doctor::getName() const {  // Fixed: Return by const reference
     return name;
 }
 

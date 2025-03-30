@@ -33,7 +33,7 @@ void Patient::assignDoctor(Doctor* doc) {
 }
 
 void Patient::removeDoctor(Doctor* doc) {
-    auto it = std::remove_if(doctors.begin(), doctors.end(), [doc](Doctor* d) {
+    auto it = std::remove_if(doctors.begin(), doctors.end(), [doc](const Doctor* d) {  // Fixed: const Doctor* d
         return d->getName() == doc->getName();
     });
     doctors.erase(it, doctors.end());
@@ -45,7 +45,7 @@ void Patient::printInfo() const {
 
 void Patient::printDoctors() const {
     std::cout << "Doctors for " << name << ":\n";
-    for (const auto& doc : doctors) {
+    for (const auto& doc : doctors) {  // Fixed: const Doctor* doc
         std::cout << *doc << "\n";
     }
 }
