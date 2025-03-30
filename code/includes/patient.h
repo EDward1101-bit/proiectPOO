@@ -3,8 +3,8 @@
 
 #include <iostream>
 #include <string>
-
-class Doctor;
+#include <vector>
+#include "doctor.h"
 
 class Patient {
 private:
@@ -12,23 +12,30 @@ private:
   int age;
   char gender;
   std::string disease;
-  Doctor* doctor; // Composition: a Patient has a Doctor
+  std::vector<Doctor*> doctors;  // Multiple doctors can be assigned
 
 public:
   // Constructor
-  explicit Patient(std::string name, int age, char gender, std::string disease, Doctor* doctor = nullptr);
+  Patient(std::string name, int age, char gender, std::string disease);
 
-  Patient(const Patient& other);            // Copy Constructor
-  Patient& operator=(const Patient& other); // Copy Assignment Operator
-  ~Patient();                               // Destructor
+  // Copy Constructor
+  Patient(const Patient& other);
+
+  // Copy Assignment Operator
+  Patient& operator=(const Patient& other);
+
+  // Destructor
+  ~Patient();
 
   // Public member functions
   void updateDisease(const std::string& newDisease);
   void assignDoctor(Doctor* doc);
+  void removeDoctor(Doctor* doc);
   void printInfo() const;
+  void printDoctors() const;
 
   // Operator<< Overload
   friend std::ostream& operator<<(std::ostream& os, const Patient& p);
 };
 
-#endif //PATIENT_H
+#endif // PATIENT_H
