@@ -12,15 +12,9 @@ private:
 public:
     // Constructor
     explicit Doctor(std::string name, std::string specialty);
-
-    // Getter for name (added)
     std::string getName() const;
-
-    // Public member functions
     void changeSpecialty(const std::string& newSpecialty);
     void printInfo() const;
-
-    // Operator<< Overload
     friend std::ostream& operator<<(std::ostream& os, const Doctor& d);
 };
 

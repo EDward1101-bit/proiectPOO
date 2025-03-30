@@ -32,9 +32,9 @@ public:
   void assignDoctor(Doctor* doc);
   void removeDoctor(Doctor* doc);  // Remove a doctor
   void printInfo() const;
-  void printDoctors() const;  // Print all assigned doctors
+  void printDoctors() const;
 
-  // Operator<< Overload
+
   friend std::ostream& operator<<(std::ostream& os, const Patient& p);
 };
 
