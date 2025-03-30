@@ -14,7 +14,6 @@ public:
     std::string getName() const;
     void changeSpecialty(const std::string& newSpecialty);
     void printInfo() const;
-
     friend std::ostream& operator<<(std::ostream& os, const Doctor& d);
 };
 

@@ -33,9 +33,8 @@ void Patient::assignDoctor(Doctor* doc) {
 }
 
 void Patient::removeDoctor(Doctor* doc) {
-    // Remove the doctor by name using std::remove_if
     auto it = std::remove_if(doctors.begin(), doctors.end(), [doc](Doctor* d) {
-        return d->getName() == doc->getName();  // Compare by doctor name or another unique identifier
+        return d->getName() == doc->getName();
     });
     doctors.erase(it, doctors.end());
 }
