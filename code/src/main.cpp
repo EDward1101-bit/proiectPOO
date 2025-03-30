@@ -1,30 +1,31 @@
 #include <iostream>
-#include "../includes/patient.h"
 #include "../includes/doctor.h"
+#include "../includes/patient.h"
 
 int main() {
-    // Create a doctor
-    Doctor doc("Dr. Smith", "Cardiology");
+    // Create doctors
+    Doctor doc1("Dr. Smith", "Cardiology");
+    Doctor doc2("Dr. Johnson", "Neurology");
+    Doctor doc3("Dr. Brown", "Pediatrics");
 
-    // Create a patient assigned to the doctor
-    Patient p1("John Doe", 45, 'M', "Heart Disease", &doc);
-    std::cout << p1 << std::endl;
+    // Create a patient
+    Patient p1("John Doe", 45, 'M', "Heart Disease");
 
-    // Test public functions
+    // Assign doctors to the patient
+    p1.assignDoctor(&doc1);
+    p1.assignDoctor(&doc2);
+
+    // Print patient info and doctors assigned to the patient
+    p1.printInfo();
+    p1.printDoctors();
+
+    // Update disease and reassign doctors
     p1.updateDisease("Recovered");
     p1.printInfo();
 
-    // Create another doctor and assign to patient
-    Doctor doc2("Dr. Wilson", "Neurology");
-    p1.assignDoctor(&doc2);
-
-    // Test Doctor class functions
-    doc2.changeSpecialty("General Medicine");
-    std::cout << doc2 << std::endl;
-
-    // Test Rule of Three
-    Patient p2 = p1; // Copy constructor
-    p2 = p1;         // Copy assignment
+    // Remove a doctor from the patient
+    p1.removeDoctor(&doc1);
+    p1.printDoctors();
 
     return 0;
 }

@@ -12,7 +12,7 @@ private:
   int age;
   char gender;
   std::string disease;
-  std::vector<Doctor*> doctors;  // Multiple doctors can be assigned
+  std::vector<Doctor*> doctors;  // A patient can have multiple doctors
 
 public:
   // Constructor
@@ -27,12 +27,12 @@ public:
   // Destructor
   ~Patient();
 
-  // Public member functions
+  // Public Methods
   void updateDisease(const std::string& newDisease);
   void assignDoctor(Doctor* doc);
-  void removeDoctor(Doctor* doc);
+  void removeDoctor(Doctor* doc);  // Remove a doctor
   void printInfo() const;
-  void printDoctors() const;
+  void printDoctors() const;  // Print all assigned doctors
 
   // Operator<< Overload
   friend std::ostream& operator<<(std::ostream& os, const Patient& p);
