@@ -9,10 +9,6 @@ const std::string& Doctor::getName() const {  // Fixed: Return by const referenc
     return name;
 }
 
-// Public Methods
-void Doctor::changeSpecialty(const std::string& newSpecialty) {
-    specialty = newSpecialty;
-}
 
 void Doctor::printInfo() const {
     std::cout << "Doctor: " << name << ", Specialty: " << specialty << "\n";

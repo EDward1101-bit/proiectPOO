@@ -12,7 +12,6 @@ private:
 public:
     explicit Doctor(std::string name, std::string specialty);
     const std::string& getName() const;  // Fixed: Return by const reference
-    void changeSpecialty(const std::string& newSpecialty);
     void printInfo() const;
     friend std::ostream& operator<<(std::ostream& os, const Doctor& d);
 };

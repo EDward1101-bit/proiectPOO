@@ -45,7 +45,7 @@ void Patient::printInfo() const {
 
 void Patient::printDoctors() const {
     std::cout << "Doctors for " << name << ":\n";
-    for (const auto& doc : doctors) {  // Fixed: const Doctor* doc
+    for (const Doctor* doc : doctors) {  // Fixed: using const pointer to Doctor
         std::cout << *doc << "\n";
     }
 }
