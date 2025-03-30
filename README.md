@@ -1,12 +1,24 @@
 # Hospital Manager
 
-### Folosiți template-ul corespunzător grupei voastre!
+This project is a Hospital Management System. The system is designed to manage doctors, patients, and appointments in a hospital setting. The project utilizes composition and encapsulation to model real-world entities and their interactions within a hospital environment. The code follows best practices and implements key functionalities such as:
 
-| Laborant  | Link template                                |
-|-----------|----------------------------------------------|
-| Dragoș B  | https://github.com/Ionnier/oop-template      |
-| Tiberiu M | https://github.com/MaximTiberiu/oop-template |
+Managing doctors and patients: Add/remove doctors and patients to/from the hospital database.
+
+Scheduling appointments: Link patients with doctors based on availability.
+
+Finding doctors by specialty: Search for available doctors in a specific specialty.
+
+Tracking doctor availability: Each doctor has specific available days, which are considered when scheduling appointments.
+
+Displaying hospital information: View lists of doctors and patients.
+
+
 | Marius MC | https://github.com/mcmarius/oop-template     |
+
+
+
+
+
 
 ### Important!
 
