@@ -10,11 +10,11 @@ private:
     std::string specialty;
 
 public:
-    // Constructor
     explicit Doctor(std::string name, std::string specialty);
     std::string getName() const;
     void changeSpecialty(const std::string& newSpecialty);
     void printInfo() const;
+
     friend std::ostream& operator<<(std::ostream& os, const Doctor& d);
 };
 

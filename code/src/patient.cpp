@@ -1,5 +1,5 @@
 #include "../includes/patient.h"
-#include <algorithm>  // For std::remove_if
+#include <algorithm>
 
 // Constructor
 Patient::Patient(std::string name, int age, char gender, std::string disease)

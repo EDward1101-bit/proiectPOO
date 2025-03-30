@@ -18,22 +18,16 @@ public:
   // Constructor
   Patient(std::string name, int age, char gender, std::string disease);
 
-  // Copy Constructor
   Patient(const Patient& other);
 
-  // Copy Assignment Operator
   Patient& operator=(const Patient& other);
-
-  // Destructor
   ~Patient();
 
-  // Public Methods
   void updateDisease(const std::string& newDisease);
   void assignDoctor(Doctor* doc);
-  void removeDoctor(Doctor* doc);  // Remove a doctor
+  void removeDoctor(Doctor* doc);
   void printInfo() const;
   void printDoctors() const;
-
 
   friend std::ostream& operator<<(std::ostream& os, const Patient& p);
 };
