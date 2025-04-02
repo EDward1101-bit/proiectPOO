@@ -15,7 +15,6 @@ private:
 public:
     explicit Doctor(std::string name, std::string specialty);
     void printInfo() const;
-    const int getId()const;
     void assignPatient(Patient* p);  // Assign a patient to this doctor
     void removePatient(const Patient* p);  // Remove a patient from this doctor (const pointer)
     void printPatients() const;  // Print all patients of this doctor
