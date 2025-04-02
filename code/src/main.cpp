@@ -2,7 +2,6 @@
 #include "../includes/doctor.h"
 #include "../includes/patient.h"
 
-
 int main() {
     // Create doctors
     Doctor doc1("Dr. Smith", "Cardiology");

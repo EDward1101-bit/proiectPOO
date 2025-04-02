@@ -19,7 +19,6 @@ public:
     void removePatient(const Patient* p);  // Remove a patient from this doctor (const pointer)
     void printPatients() const;  // Print all patients of this doctor
     friend std::ostream& operator<<(std::ostream& os, const Doctor& d);
-    ~Doctor();
 };
 
 #endif // DOCTOR_H

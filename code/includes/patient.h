@@ -4,12 +4,13 @@
 #include <iostream>
 #include <string>
 
+
 class Patient {
 private:
     std::string name;
-    std::string disease;
     int age;
     char gender;
+    std::string disease;
 
 public:
     // Constructor
