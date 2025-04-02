@@ -4,9 +4,9 @@
 
 int main() {
     // Create doctors
-    Doctor doc1("Dr. Smith", "Cardiology");
-    Doctor doc2("Dr. Johnson", "Neurology");
-    Doctor doc3("Dr. Brown", "Pediatrics");
+    Doctor doc1("Dr. Smith", "Cardiology", 300);
+    Doctor doc2("Dr. Johnson", "Neurology", 250);
+    Doctor doc3("Dr. Brown", "Pediatrics", 600);
 
     // Create patients
     Patient p1("John Doe", 45, 'M', "Heart Disease");

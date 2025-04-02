@@ -1,14 +1,18 @@
 #ifndef HOSPITAL_H
 #define HOSPITAL_H
 
-#include <iostream>
 #include "doctor.h"
-#include "patient.h"
+
 
 class Spital {
 private:
-    Doctor
+    std::string name;
+    std::vector<Doctor*> doctors;
 public:
+    explicit Spital(std::string name);
+
+
+
 };
 
 

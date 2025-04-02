@@ -1,11 +1,11 @@
 #include "../includes/doctor.h"
 #include "../includes/patient.h"
 // Constructor
-Doctor::Doctor(std::string name, std::string specialty)
-    : name(std::move(name)), specialty(std::move(specialty)) {}
+Doctor::Doctor(std::string name, std::string specialty, const unsigned int tarif)
+    : name(std::move(name)), specialty(std::move(specialty)), tarif(tarif) {}
 
 void Doctor::printInfo() const {
-    std::cout << "Doctor: " << name << ", Specialty: " << specialty << "\n";
+    std::cout << "Doctor: " << name << ", Specialty: " << specialty <<", Tarif: "<< tarif <<"\n";
 }
 
 void Doctor::assignPatient(Patient* p) {
@@ -30,6 +30,6 @@ void Doctor::printPatients() const {
 
 // Operator<< Overload to print doctor info
 std::ostream& operator<<(std::ostream& os, const Doctor& d) {
-    os << "Doctor: " << d.name << ", Specialty: " << d.specialty;
+    os << "Doctor: " << d.name << ", Specialty: " << d.specialty << ", Tarif: " << d.tarif << std::endl;
     return os;
 }
