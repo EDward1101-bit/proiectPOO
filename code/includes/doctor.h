@@ -8,8 +8,6 @@
 
 class Doctor {
 private:
-    static int next_idDoctor;
-    int id;
     std::string name;
     std::string specialty;
     std::vector<Patient*> patients;  // A doctor has multiple patients

@@ -2,13 +2,8 @@
 
 // Constructor
 Doctor::Doctor(std::string name, std::string specialty)
-    : name(std::move(name)), specialty(std::move(specialty)) {
-    id = next_idDoctor++;
-}
+    : name(std::move(name)), specialty(std::move(specialty)) {}
 
-const int Doctor::getId() const {
-    return id;
-}
 
 void Doctor::printInfo() const {
     std::cout << "Doctor: " << name << ", Specialty: " << specialty << "\n";

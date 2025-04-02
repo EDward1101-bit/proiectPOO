@@ -6,8 +6,6 @@
 
 class Patient {
 private:
-    static int next_idPatient;
-    int id;
     std::string name;
     std::string disease;
     int age;
