@@ -12,6 +12,7 @@ private:
     std::string specialty;
     std::vector<Patient*> patients;  // A doctor has multiple patients
     const unsigned int tarif;
+
 public:
     explicit Doctor(std::string name, std::string specialty, const unsigned int tarif);
     void printInfo() const;

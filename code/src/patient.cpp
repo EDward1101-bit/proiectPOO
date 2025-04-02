@@ -8,8 +8,12 @@ void Patient::updateDisease(const std::string& newDisease) {
     disease = newDisease;  // Update the patient's disease
 }
 
+const std::string Patient::getCNP() const {
+    return CNP;
+}
+
 void Patient::printInfo() const {
-    std::cout << "Patient: " << name << ", Age: " << age << ", Gender: " << gender<< ", Disease: " << disease << "\n";
+    std::cout << "Patient: " << name << ", Age: " << age << ", Gender: " << gender << ", Disease: " << disease << "\n";
 }
 
 // Operator<< Overload to print patient info
