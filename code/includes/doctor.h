@@ -11,10 +11,9 @@ private:
     std::string name;
     std::string specialty;
     std::vector<Patient*> patients;  // A doctor has multiple patients
-    const unsigned int tarif;
 
 public:
-    explicit Doctor(std::string name, std::string specialty, const unsigned int tarif);
+    explicit Doctor(std::string name, std::string specialty);
     void printInfo() const;
     void assignPatient(Patient* p);  // Assign a patient to this doctor
     void removePatient(const Patient* p);  // Remove a patient from this doctor (const pointer)
