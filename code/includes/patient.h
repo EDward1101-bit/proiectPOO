@@ -3,33 +3,20 @@
 
 #include <iostream>
 #include <string>
-#include <vector>
-#include "doctor.h"
 
 class Patient {
 private:
-  std::string name;
-  int age;
-  char gender;
-  std::string disease;
-  std::vector<Doctor*> doctors;  // A patient can have multiple doctors
+    std::string name;
+    int age;
+    char gender;
+    std::string disease;
 
 public:
-  // Constructor
-  Patient(std::string name, int age, char gender, std::string disease);
-
-  Patient(const Patient& other);
-
-  Patient& operator=(const Patient& other);
-  ~Patient();
-
-  void updateDisease(const std::string& newDisease);
-  void assignDoctor(Doctor* doc);
-  void removeDoctor(Doctor* doc);
-  void printInfo() const;
-  void printDoctors() const;
-
-  friend std::ostream& operator<<(std::ostream& os, const Patient& p);
+    // Constructor
+    Patient(std::string name, int age, char gender, std::string disease);
+    void updateDisease(const std::string& newDisease);  // Update the disease info
+    void printInfo() const;  // Print patient info
+    friend std::ostream& operator<<(std::ostream& os, const Patient& p);
 };
 
 #endif // PATIENT_H
