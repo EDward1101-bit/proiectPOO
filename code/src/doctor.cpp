@@ -28,7 +28,7 @@ void Doctor::removePatient(Patient* p) {
 
 void Doctor::printPatients() const {
     std::cout << "Patients of Dr. " << name << ":\n";
-    for (const Patient* patient : patients) {
+    for (const auto& patient : patients) {
         std::cout << *patient << "\n";
     }
 }
