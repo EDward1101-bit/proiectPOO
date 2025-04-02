@@ -2,16 +2,25 @@
 #include "../includes/doctor.h"
 #include "../includes/patient.h"
 
+int Doctor::next_idDoctor=6996;
+int Patient::next_idPatient=3472;
+
 int main() {
     // Create doctors
     Doctor doc1("Dr. Smith", "Cardiology");
     Doctor doc2("Dr. Johnson", "Neurology");
     Doctor doc3("Dr. Brown", "Pediatrics");
 
+    //show ID
+    std::cout << doc1.getId() << std::endl;
     // Create patients
     Patient p1("John Doe", 45, 'M', "Heart Disease");
     Patient p2("Jane Doe", 30, 'F', "Migraine");
     Patient p3("Alice Brown", 25, 'F', "Asthma");
+
+    //show ID
+    std::cout << p1.getId() << std::endl;
+    std::cout << p2.getId() << std::endl;
 
     // Assign patients to doctors
     doc1.assignPatient(&p1);

@@ -2,7 +2,14 @@
 
 // Constructor
 Patient::Patient(std::string name, int age, char gender, std::string disease)
-    : name(std::move(name)), age(age), gender(gender), disease(std::move(disease)) {}
+    : name(std::move(name)), age(age), gender(gender), disease(std::move(disease)) {
+    id = next_idPatient++;
+}
+
+const int Patient::getId() const {
+    return id;
+}
+
 
 void Patient::updateDisease(const std::string& newDisease) {
     disease = newDisease;  // Update the patient's disease
