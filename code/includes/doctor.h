@@ -43,6 +43,7 @@ public:
     // Print the list of patients assigned to the doctor
     void printPatients() const;
 
+    ~Doctor();
     // Operator<< overload to print doctor's information
     friend std::ostream& operator<<(std::ostream& os, const Doctor& d);
 };

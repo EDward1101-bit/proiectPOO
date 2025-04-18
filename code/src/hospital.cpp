@@ -86,12 +86,6 @@ void Hospital::printAppointments() const {
     }
 }
 
-Hospital::~Hospital() {
-    for (Appointment* appointment : appointments) {
-        delete appointment;  // Free memory
-    }
-}
-
 // Operator<< to display the hospital information
 std::ostream& operator<<(std::ostream& os, const Hospital& h) {
     os << "Hospital: " << h.name << ", Location: " << h.location << "\n";

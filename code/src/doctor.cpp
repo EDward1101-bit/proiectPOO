@@ -56,6 +56,12 @@ void Doctor::printPatients() const {
     }
 }
 
+Doctor::~Doctor() {
+    for (Appointment* appointment : appointments) {
+        delete appointment;
+    }
+}
+
 // Operator<< overload to print doctor's information
 std::ostream& operator<<(std::ostream& os, const Doctor& d) {
     os << "Doctor: " << d.name << ", Specialty: " << d.specialty;

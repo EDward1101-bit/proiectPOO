@@ -29,7 +29,7 @@ public:
     void printInfo() const;
     void printDoctors() const;
     void printAppointments() const;
-    ~Hospital();
+
     friend std::ostream& operator<<(std::ostream& os, const Hospital& hospital);
 };
 
