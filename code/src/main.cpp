@@ -38,7 +38,14 @@ int main() {
     // Step 6: Use the functions to make sure they aren't unused
 
     // Test scheduleAppointment function from Hospital
-    hospital.scheduleAppointment("Dr. Smith", patient1, "2025-04-22", "14:00");
+    std::string appointmentDate = "2025-04-22";
+    std::string appointmentTime = "14:00";
+    if (app1->isValidDateTime(appointmentDate, appointmentTime)) {
+        hospital.scheduleAppointment("Dr. Smith", patient1, appointmentDate, appointmentTime);
+        std::cout << "Appointment scheduled for " << patient1->getName() << " with Dr. Smith at " << appointmentDate << " " << appointmentTime << std::endl;
+    } else {
+        std::cout << "Invalid date or time!" << std::endl;
+    }
 
     // Test the isDoctorAvailable function from Hospital
     std::cout << "Checking doctor availability:" << std::endl;
@@ -63,6 +70,9 @@ int main() {
     patient1->updateDisease("Cardiac Arrhythmia");
 
     std::cout << "Patient: " << patient1->getName() << ", Updated Disease: " << patient1->getDisease() << std::endl;
+
+    // Use addPatientToDoctor to assign a patient to Dr. Smith
+    hospital.addPatientToDoctor("Dr. Smith", patient1);
 
     // Print doctor information and their patients
     std::cout << "\nDoctor Information:" << std::endl;
