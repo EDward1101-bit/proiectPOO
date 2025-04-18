@@ -21,11 +21,11 @@ int main() {
     Patient* patient1 = new Patient("Alice", 30, 'F', "Heart Disease");
     Patient* patient2 = new Patient("Bob", 45, 'M', "Brain Tumor");
 
-    // Assign patients to doctors
+    // Step 4: Assign patients to doctors
     drSmith->assignPatient(patient1);
     drJohnson->assignPatient(patient2);
 
-    // Step 4: Create Appointments
+    // Step 5: Create Appointments
     Appointment* app1 = new Appointment("2025-04-20", "10:00", drSmith);
     Appointment* app2 = new Appointment("2025-04-20", "11:00", drSmith);
     Appointment* app3 = new Appointment("2025-04-21", "10:00", drJohnson);
@@ -35,8 +35,8 @@ int main() {
     hospital.addAppointment(app2);
     hospital.addAppointment(app3);
 
-    // Step 5: Test Doctor Availability
-    std::cout << "Checking Doctor Availability:" << std::endl;
+    // Step 6: Use the unused functions to prevent warnings
+    std::cout << "Checking doctor availability:" << std::endl;
     std::cout << "Is Dr. Smith available on 2025-04-20 at 10:00? ";
     if (app1->isDoctorAvailable("2025-04-20", "10:00")) {
         std::cout << "Yes\n";
@@ -58,16 +58,32 @@ int main() {
         std::cout << "No\n";
     }
 
-    std::cout << "\nDoctors and Patients:" << std::endl;
+    // Use getDisease and updateDisease functions
+    std::cout << "\nPatient information before update:" << std::endl;
+    std::cout << "Patient: " << patient1->getName() << ", Disease: " << patient1->getDisease() << std::endl;
+
+    // Update patient's disease
+    patient1->updateDisease("Cardiac Arrhythmia");
+
+    std::cout << "Patient: " << patient1->getName() << ", Updated Disease: " << patient1->getDisease() << std::endl;
+
+    // Print doctor information and their patients
+    std::cout << "\nDoctor Information:" << std::endl;
     drSmith->printInfo();
     drSmith->printPatients();
 
     drJohnson->printInfo();
     drJohnson->printPatients();
 
-    std::cout << "\nAppointments:" << std::endl;
+    // Use printDoctors function from Hospital
+    std::cout << "\nDoctors in the hospital:" << std::endl;
+    hospital.printDoctors();
+
+    // Print appointments for the hospital
+    std::cout << "\nAppointments in the hospital:" << std::endl;
     hospital.printAppointments();
 
+    // Clean up dynamically allocated memory
     delete drSmith;
     delete drJohnson;
     delete patient1;

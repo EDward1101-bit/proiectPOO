@@ -37,7 +37,7 @@ bool Appointment::isValidDateTime(const std::string& date, const std::string& ti
         year = std::stoi(date.substr(0, 4));
         month = std::stoi(date.substr(5, 2));
         day = std::stoi(date.substr(8, 2));
-    } catch (const std::exception& e) {
+    } catch (const std::exception&) {
         std::cerr << "Invalid date value.\n";
         return false;
     }
@@ -58,7 +58,7 @@ bool Appointment::isValidDateTime(const std::string& date, const std::string& ti
     try {
         hour = std::stoi(time.substr(0, 2));
         minute = std::stoi(time.substr(3, 2));
-    } catch (const std::exception& e) {
+    } catch (const std::exception&) {
         std::cerr << "Invalid time value.\n";
         return false;
     }
@@ -73,7 +73,7 @@ bool Appointment::isValidDateTime(const std::string& date, const std::string& ti
 
 
 bool Appointment::isDoctorAvailable(const std::string& date, const std::string& time) const {
-    for (const auto& appointment : doctor->getAppointments()) {
+    for (const auto* appointment : doctor->getAppointments()) { // Use pointer to const to avoid modification
         if (appointment->getDate() == date && appointment->getTime() == time) {
             return false;
         }

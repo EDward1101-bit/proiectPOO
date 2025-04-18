@@ -31,11 +31,15 @@ void Doctor::assignPatient(Patient* p) {
 
 // Remove a patient from the doctor's list
 void Doctor::removePatient(const Patient* p) {
-    for (auto it = patients.begin(); it != patients.end(); ++it) {
-        if (*it == p) {
-            patients.erase(it);
-            break;
-        }
+    auto it = std::find_if(patients.begin(), patients.end(),
+        [p](const Patient* patient) {
+            return patient == p; // Compare pointers
+        });
+
+    if (it != patients.end()) {
+        patients.erase(it); // Remove the patient if found
+    } else {
+        std::cerr << "Patient not found.\n";
     }
 }
 
@@ -47,7 +51,7 @@ void Doctor::printInfo() const {
 // Print the list of patients assigned to the doctor
 void Doctor::printPatients() const {
     std::cout << "Patients assigned to Dr. " << name << ":\n";
-    for (const auto& patient : patients) {
+    for (const auto* patient : patients) { // range-based loop with pointer
         std::cout << *patient << "\n";
     }
 }

@@ -6,12 +6,12 @@ Patient::Patient(std::string name, int age, char gender, std::string disease)
 
 // Get the name of the patient
 std::string const& Patient::getName() const {
-    return name; // Return by constant reference
+    return name; // Return by constant reference to avoid unnecessary copies
 }
 
 // Get the disease of the patient
 std::string const& Patient::getDisease() const {
-    return disease; // Return by constant reference
+    return disease; // Return by constant reference to avoid unnecessary copies
 }
 
 // Update the disease of the patient
