@@ -35,30 +35,27 @@ int main() {
     hospital.addAppointment(app2);
     hospital.addAppointment(app3);
 
-    // Step 6: Use the unused functions to prevent warnings
+    // Step 6: Use the functions to make sure they aren't unused
+
+    // Test scheduleAppointment function from Hospital
+    hospital.scheduleAppointment("Dr. Smith", patient1, "2025-04-22", "14:00");
+
+    // Test the isDoctorAvailable function from Hospital
     std::cout << "Checking doctor availability:" << std::endl;
     std::cout << "Is Dr. Smith available on 2025-04-20 at 10:00? ";
-    if (app1->isDoctorAvailable("2025-04-20", "10:00")) {
+    if (hospital.isDoctorAvailable("Dr. Smith", "2025-04-20", "10:00")) {
         std::cout << "Yes\n";
     } else {
         std::cout << "No\n";
     }
 
-    std::cout << "Is Dr. Smith available on 2025-04-20 at 11:00? ";
-    if (app2->isDoctorAvailable("2025-04-20", "11:00")) {
-        std::cout << "Yes\n";
-    } else {
-        std::cout << "No\n";
-    }
+    // Test removePatient function from Doctor (remove Alice from Dr. Smith)
+    drSmith->removePatient(patient1);
 
-    std::cout << "Is Dr. Johnson available on 2025-04-21 at 10:00? ";
-    if (app3->isDoctorAvailable("2025-04-21", "10:00")) {
-        std::cout << "Yes\n";
-    } else {
-        std::cout << "No\n";
-    }
+    // Test getDoctor function from Appointment (get doctor for the first appointment)
+    std::cout << "Doctor for the first appointment: " << app1->getDoctor()->getName() << "\n";
 
-    // Use getDisease and updateDisease functions
+    // Test getDisease and updateDisease from Patient
     std::cout << "\nPatient information before update:" << std::endl;
     std::cout << "Patient: " << patient1->getName() << ", Disease: " << patient1->getDisease() << std::endl;
 
