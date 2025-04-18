@@ -14,8 +14,8 @@ private:
 public:
     // Constructor
     Patient(std::string name, int age, char gender, std::string disease);
-    void updateDisease(const std::string& newDisease);  // Update the disease info
-    void printInfo() const;  // Print patient info
+    void updateDisease(const std::string& newDisease);
+    void printInfo() const;
     friend std::ostream& operator<<(std::ostream& os, const Patient& p);
 };
 

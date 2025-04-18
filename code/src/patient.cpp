@@ -1,15 +1,19 @@
 #include "../includes/patient.h"
+#include <iostream>
 
-// Constructor
+// Constructor for the Patient class
 Patient::Patient(std::string name, int age, char gender, std::string disease)
     : name(std::move(name)), age(age), gender(gender), disease(std::move(disease)) {}
 
+// Update the patient's disease information
 void Patient::updateDisease(const std::string& newDisease) {
-    disease = newDisease;  // Update the patient's disease
+    disease = newDisease;
 }
 
+// Print the patient's information
 void Patient::printInfo() const {
-    std::cout << "Patient: " << name << ", Age: " << age << ", Gender: " << gender << ", Disease: " << disease << "\n";
+    std::cout << "Patient: " << name << ", Age: " << age << ", Gender: " << gender
+              << ", Disease: " << disease << "\n";
 }
 
 // Operator<< Overload to print patient info

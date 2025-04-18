@@ -4,20 +4,24 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include "patient.h"
+#include "patient.h"  // Include the Patient class
 
 class Doctor {
 private:
     std::string name;
     std::string specialty;
-    std::vector<Patient*> patients;  // A doctor has multiple patients
+    std::vector<Patient*> patients;  // Store pointers to patients
 
 public:
+    // Constructor
     explicit Doctor(std::string name, std::string specialty);
+
+    std::string getName() const;
+    std::string getSpecialty() const;
+    void assignPatient(Patient* p);
+    void removePatient(const Patient* p);
     void printInfo() const;
-    void assignPatient(Patient* p);  // Assign a patient to this doctor
-    void removePatient(const Patient* p);  // Remove a patient from this doctor (const pointer)
-    void printPatients() const;  // Print all patients of this doctor
+    void printPatients() const;
     friend std::ostream& operator<<(std::ostream& os, const Doctor& d);
 };
 
