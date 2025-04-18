@@ -1,42 +1,80 @@
 #include <iostream>
+#include <string>
+#include "../includes/appointment.h"
 #include "../includes/doctor.h"
-#include "../includes/patient.h"
 #include "../includes/hospital.h"
+#include "../includes/patient.h"
 
 int main() {
+    // Step 1: Create a Hospital
+    Hospital hospital("City Hospital", "Downtown");
 
-    Hospital hospital("City Hospital", "New York");
+    // Step 2: Create Doctors
+    Doctor* drSmith = new Doctor("Dr. Smith", "Cardiology");
+    Doctor* drJohnson = new Doctor("Dr. Johnson", "Neurology");
 
-    // Crearea doctorilor
-    Doctor* doc1 = new Doctor("Dr. Smith", "Cardiology");
-    Doctor* doc2 = new Doctor("Dr. Johnson", "Neurology");
+    // Add doctors to the hospital
+    hospital.addDoctor(drSmith);
+    hospital.addDoctor(drJohnson);
 
-    hospital.addDoctor(doc1);
-    hospital.addDoctor(doc2);
+    // Step 3: Create Patients
+    Patient* patient1 = new Patient("Alice", 30, 'F', "Heart Disease");
+    Patient* patient2 = new Patient("Bob", 45, 'M', "Brain Tumor");
 
-    Patient p1("John Doe", 45, 'M', "Heart Disease");
-    Patient p2("Jane Doe", 30, 'F', "Migraine");
+    // Assign patients to doctors
+    drSmith->assignPatient(patient1);
+    drJohnson->assignPatient(patient2);
 
+    // Step 4: Create Appointments
+    Appointment* app1 = new Appointment("2025-04-20", "10:00", drSmith);
+    Appointment* app2 = new Appointment("2025-04-20", "11:00", drSmith);
+    Appointment* app3 = new Appointment("2025-04-21", "10:00", drJohnson);
 
-    hospital.addPatientToDoctor("Dr. Smith", &p1);
-    hospital.addPatientToDoctor("Dr. Johnson", &p2);
+    // Add appointments to the hospital
+    hospital.addAppointment(app1);
+    hospital.addAppointment(app2);
+    hospital.addAppointment(app3);
 
-
-    hospital.printInfo();
-    hospital.printDoctors();
-
-    // Programare
-    try {
-        hospital.scheduleAppointment("Dr. Smith", &p1, "2025-04-20", "10:00");
-        hospital.scheduleAppointment("Dr. Smith", &p2, "2025-04-20", "11:00");
-        hospital.scheduleAppointment("Dr. Smith", &p1, "2025-04-20", "10:00");  // Aceasta ar trebui să dea eroare
-        hospital.scheduleAppointment("Dr. Johnson", &p2, "2025-04-20", "12:00");
-    } catch (const std::invalid_argument& e) {
-        std::cout << "Error: " << e.what() << std::endl;
+    // Step 5: Test Doctor Availability
+    std::cout << "Checking Doctor Availability:" << std::endl;
+    std::cout << "Is Dr. Smith available on 2025-04-20 at 10:00? ";
+    if (app1->isDoctorAvailable("2025-04-20", "10:00")) {
+        std::cout << "Yes\n";
+    } else {
+        std::cout << "No\n";
     }
 
-    // Verificarea programărilor
+    std::cout << "Is Dr. Smith available on 2025-04-20 at 11:00? ";
+    if (app2->isDoctorAvailable("2025-04-20", "11:00")) {
+        std::cout << "Yes\n";
+    } else {
+        std::cout << "No\n";
+    }
+
+    std::cout << "Is Dr. Johnson available on 2025-04-21 at 10:00? ";
+    if (app3->isDoctorAvailable("2025-04-21", "10:00")) {
+        std::cout << "Yes\n";
+    } else {
+        std::cout << "No\n";
+    }
+
+    std::cout << "\nDoctors and Patients:" << std::endl;
+    drSmith->printInfo();
+    drSmith->printPatients();
+
+    drJohnson->printInfo();
+    drJohnson->printPatients();
+
+    std::cout << "\nAppointments:" << std::endl;
     hospital.printAppointments();
+
+    delete drSmith;
+    delete drJohnson;
+    delete patient1;
+    delete patient2;
+    delete app1;
+    delete app2;
+    delete app3;
 
     return 0;
 }
