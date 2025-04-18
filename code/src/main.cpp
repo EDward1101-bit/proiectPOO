@@ -4,36 +4,37 @@
 #include "../includes/doctor.h"
 #include "../includes/hospital.h"
 #include "../includes/patient.h"
+#include <memory>
 
 int main() {
     // Step 1: Create a Hospital
     Hospital hospital("City Hospital", "Downtown");
 
     // Step 2: Create Doctors
-    Doctor* drSmith = new Doctor("Dr. Smith", "Cardiology");
-    Doctor* drJohnson = new Doctor("Dr. Johnson", "Neurology");
+    std::unique_ptr<Doctor> drSmith = std::make_unique<Doctor>("Dr. Smith", "Cardiology");
+    std::unique_ptr<Doctor> drJohnson = std::make_unique<Doctor>("Dr. Johnson", "Neurology");
 
     // Add doctors to the hospital
-    hospital.addDoctor(drSmith);
-    hospital.addDoctor(drJohnson);
+    hospital.addDoctor(drSmith.get());
+    hospital.addDoctor(drJohnson.get());
 
     // Step 3: Create Patients
-    Patient* patient1 = new Patient("Alice", 30, 'F', "Heart Disease");
-    Patient* patient2 = new Patient("Bob", 45, 'M', "Brain Tumor");
+    std::unique_ptr<Patient> patient1 = std::make_unique<Patient>("Alice", 30, 'F', "Heart Disease");
+    std::unique_ptr<Patient> patient2 = std::make_unique<Patient>("Bob", 45, 'M', "Brain Tumor");
 
     // Step 4: Assign patients to doctors
-    drSmith->assignPatient(patient1);
-    drJohnson->assignPatient(patient2);
+    drSmith->assignPatient(patient1.get());
+    drJohnson->assignPatient(patient2.get());
 
     // Step 5: Create Appointments
-    Appointment* app1 = new Appointment("2025-04-20", "10:00", drSmith);
-    Appointment* app2 = new Appointment("2025-04-20", "11:00", drSmith);
-    Appointment* app3 = new Appointment("2025-04-21", "10:00", drJohnson);
+    std::unique_ptr<Appointment> app1 = std::make_unique<Appointment>("2025-04-20", "10:00", drSmith.get());
+    std::unique_ptr<Appointment> app2 = std::make_unique<Appointment>("2025-04-20", "11:00", drSmith.get());
+    std::unique_ptr<Appointment> app3 = std::make_unique<Appointment>("2025-04-21", "10:00", drJohnson.get());
 
     // Add appointments to the hospital
-    hospital.addAppointment(app1);
-    hospital.addAppointment(app2);
-    hospital.addAppointment(app3);
+    hospital.addAppointment(app1.get());
+    hospital.addAppointment(app2.get());
+    hospital.addAppointment(app3.get());
 
     // Step 6: Use the functions to make sure they aren't unused
 
@@ -41,7 +42,7 @@ int main() {
     std::string appointmentDate = "2025-04-22";
     std::string appointmentTime = "14:00";
     if (app1->isValidDateTime(appointmentDate, appointmentTime)) {
-        hospital.scheduleAppointment("Dr. Smith", patient1, appointmentDate, appointmentTime);
+        hospital.scheduleAppointment("Dr. Smith", patient1.get(), appointmentDate, appointmentTime);
         std::cout << "Appointment scheduled for " << patient1->getName() << " with Dr. Smith at " << appointmentDate << " " << appointmentTime << std::endl;
     } else {
         std::cout << "Invalid date or time!" << std::endl;
@@ -57,7 +58,7 @@ int main() {
     }
 
     // Test removePatient function from Doctor (remove Alice from Dr. Smith)
-    drSmith->removePatient(patient1);
+    drSmith->removePatient(patient1.get());
 
     // Test getDoctor function from Appointment (get doctor for the first appointment)
     std::cout << "Doctor for the first appointment: " << app1->getDoctor()->getName() << "\n";
@@ -72,7 +73,7 @@ int main() {
     std::cout << "Patient: " << patient1->getName() << ", Updated Disease: " << patient1->getDisease() << std::endl;
 
     // Use addPatientToDoctor to assign a patient to Dr. Smith
-    hospital.addPatientToDoctor("Dr. Smith", patient1);
+    hospital.addPatientToDoctor("Dr. Smith", patient1.get());
 
     // Print doctor information and their patients
     std::cout << "\nDoctor Information:" << std::endl;
@@ -89,15 +90,6 @@ int main() {
     // Print appointments for the hospital
     std::cout << "\nAppointments in the hospital:" << std::endl;
     hospital.printAppointments();
-
-    // Clean up dynamically allocated memory
-    delete drSmith;
-    delete drJohnson;
-    delete patient1;
-    delete patient2;
-    delete app1;
-    delete app2;
-    delete app3;
 
     return 0;
 }

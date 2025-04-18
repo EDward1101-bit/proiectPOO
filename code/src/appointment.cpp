@@ -71,7 +71,6 @@ bool Appointment::isValidDateTime(const std::string& date, const std::string& ti
     return true;
 }
 
-
 bool Appointment::isDoctorAvailable(const std::string& date, const std::string& time) const {
     for (const auto* appointment : doctor->getAppointments()) { // Use pointer to const to avoid modification
         if (appointment->getDate() == date && appointment->getTime() == time) {

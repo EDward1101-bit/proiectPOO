@@ -17,15 +17,19 @@ public:
     // Constructor
     Appointment(const std::string& date, const std::string& time, Doctor* doctor);
 
-    static bool isValidDateTime(const std::string& date, const std::string& time);
-    bool isDoctorAvailable(const std::string& date, const std::string& time) const;
-
+    // Getter functions
     std::string const& getDate() const;
     std::string const& getTime() const;
     Doctor* getDoctor() const;
 
+    // Static and member functions
+    static bool isValidDateTime(const std::string& date, const std::string& time);
+    bool isDoctorAvailable(const std::string& date, const std::string& time) const;
+
+    // Print appointment details
     void printInfo() const;
 
+    // Operator overload to print appointment details
     friend std::ostream& operator<<(std::ostream& os, const Appointment& appointment);
 };
 
