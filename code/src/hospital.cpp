@@ -45,7 +45,7 @@ bool Hospital::isDoctorAvailable(const std::string& doctorName, const std::strin
 }
 
 // Schedule an appointment for a patient with a doctor
-void Hospital::scheduleAppointment(const std::string& doctorName, Patient* patient, const std::string& date, const std::string& time) {
+void Hospital::scheduleAppointment(const std::string& doctorName, [[maybe_unused]] Patient* patient, const std::string& date, const std::string& time) {
     if (!isDoctorAvailable(doctorName, date, time)) {
         std::cout << "Doctor is not available at the given time.\n";
         return;
