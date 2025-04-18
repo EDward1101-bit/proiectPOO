@@ -7,6 +7,8 @@
 #include <memory>
 
 int main() {
+    //TODO: rezolvare probleme git + adaugare meniu
+
     // Step 1: Create a Hospital
     Hospital hospital("City Hospital", "Downtown");
 
