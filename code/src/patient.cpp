@@ -1,15 +1,14 @@
 #include "../includes/patient.h"
+#include "../includes/medical_data.h"
 #include <regex>
+#include <cctype>
 
-// Constructor
 Patient::Patient(std::string name, int age, char gender, std::string cnp, double funds)
     : name(std::move(name)), age(age), gender(gender), cnp(std::move(cnp)), funds(funds) {}
 
-// Copy constructor
 Patient::Patient(const Patient& other)
     : name(other.name), age(other.age), gender(other.gender), cnp(other.cnp), funds(other.funds), diseases(other.diseases) {}
 
-// Copy assignment
 Patient& Patient::operator=(const Patient& other) {
     if (this != &other) {
         name = other.name;
@@ -22,7 +21,6 @@ Patient& Patient::operator=(const Patient& other) {
     return *this;
 }
 
-// Destructor
 Patient::~Patient() = default;
 
 std::string const& Patient::getName() const {
@@ -91,8 +89,18 @@ bool Patient::isValidCNP(const std::string& cnp) {
 
     if (month < 1 || month > 12 || day < 1 || day > 31) return false;
 
-    // Control digit check (optional): You can add checksum logic here
+    return true;
+}
 
+bool Patient::isValidDisease(const std::string& disease) {
+    return knownDiseases.count(disease) > 0;
+}
+
+bool Patient::isValidName(const std::string& name) {
+    if (name.empty()) return false;
+    for (char ch : name) {
+        if (!isalpha(ch) && ch != ' ') return false;
+    }
     return true;
 }
 

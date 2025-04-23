@@ -1,9 +1,9 @@
 #ifndef DOCTOR_H
 #define DOCTOR_H
 
+#include <algorithm>
 #include <string>
 #include <vector>
-#include <algorithm>
 #include "patient.h"
 #include "appointment.h"
 
@@ -21,19 +21,23 @@ public:
     // Constructor
     Doctor(std::string name, std::string specialty);
 
-    // Getters
     std::string const& getName() const;
     std::string const& getSpecialty() const;
 
     void addAppointment(Appointment* appointment);
     const std::vector<Appointment*>& getAppointments() const;
+
     void assignPatient(Patient* p);
     void removePatient(const Patient* p);
+
     void printInfo() const;
     void printPatients() const;
 
     ~Doctor();
     friend std::ostream& operator<<(std::ostream& os, const Doctor& d);
+
+    // Validation
+    static bool isValidSpecialty(const std::string& specialty);
 };
 
 #endif // DOCTOR_H

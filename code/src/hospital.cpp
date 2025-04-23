@@ -4,56 +4,19 @@
 #include "../includes/patient.h"
 #include "../includes/medical_data.h"
 #include <algorithm>
+#include <memory>
 
-// Constructor
 Hospital::Hospital(std::string name, Location location)
     : name(std::move(name)), location(std::move(location)) {}
 
-// Copy constructor
-Hospital::Hospital(const Hospital& other)
-    : name(other.name), location(other.location), totalProfit(other.totalProfit) {
-    for (Doctor* doc : other.doctors) {
-        doctors.push_back(new Doctor(*doc));
-    }
-    for (Appointment* app : other.appointments) {
-        appointments.push_back(new Appointment(*app));
-    }
+Hospital::~Hospital() = default;
+
+void Hospital::addDoctor(std::unique_ptr<Doctor> doctor) {
+    doctors.emplace_back(std::move(doctor));
 }
 
-// Copy assignment operator
-Hospital& Hospital::operator=(const Hospital& other) {
-    if (this != &other) {
-        for (Doctor* doc : doctors) delete doc;
-        for (Appointment* app : appointments) delete app;
-
-        doctors.clear();
-        appointments.clear();
-
-        name = other.name;
-        location = other.location;
-        totalProfit = other.totalProfit;
-
-        for (Doctor* doc : other.doctors) {
-            doctors.push_back(new Doctor(*doc));
-        }
-        for (Appointment* app : other.appointments) {
-            appointments.push_back(new Appointment(*app));
-        }
-    }
-    return *this;
-}
-
-Hospital::~Hospital() {
-    for (Doctor* doc : doctors) delete doc;
-    for (Appointment* app : appointments) delete app;
-}
-
-void Hospital::addDoctor(Doctor* doctor) {
-    doctors.push_back(doctor);
-}
-
-void Hospital::addAppointment(Appointment* appointment) {
-    appointments.push_back(appointment);
+void Hospital::addAppointment(std::unique_ptr<Appointment> appointment) {
+    appointments.emplace_back(std::move(appointment));
 }
 
 void Hospital::addPatientToDoctor(const std::string& doctorName, Patient* patient) {
@@ -65,7 +28,7 @@ void Hospital::addPatientToDoctor(const std::string& doctorName, Patient* patien
 
     const std::string& requiredSpecialty = it->second;
 
-    for (Doctor* doctor : doctors) {
+    for (const auto& doctor : doctors) {
         if (doctor->getName() == doctorName && doctor->getSpecialty() == requiredSpecialty) {
             doctor->assignPatient(patient);
             return;
@@ -74,9 +37,9 @@ void Hospital::addPatientToDoctor(const std::string& doctorName, Patient* patien
 }
 
 bool Hospital::isDoctorAvailable(const std::string& doctorName, const std::string& date, const std::string& time) const {
-    for (const Doctor* doctor : doctors) {
+    for (const auto& doctor : doctors) {
         if (doctor->getName() == doctorName) {
-            for (const Appointment* appointment : doctor->getAppointments()) {
+            for (const auto& appointment : doctor->getAppointments()) {
                 if (appointment->getDate() == date && appointment->getTime() == time) {
                     return false;
                 }
@@ -92,29 +55,35 @@ void Hospital::scheduleAppointment(const std::string& doctorName, Patient* patie
         return;
     }
 
-    for (Doctor* doctor : doctors) {
+    for (const auto& doctor : doctors) {
         if (doctor->getName() == doctorName) {
-            Appointment* newAppointment = new Appointment(date, time, doctor, location.getTimezoneOffset());
-            doctor->addAppointment(newAppointment);
-            addAppointment(newAppointment);
+            auto appointment = std::make_unique<Appointment>(date, time, doctor.get(), location.getTimezoneOffset());
+            doctor->addAppointment(appointment.get());
+            addAppointment(std::move(appointment));
             return;
         }
     }
 }
 
 void Hospital::dischargePatient(Patient* patient, Doctor* doctor) {
-    if (!patient->isHealthy()) return;
+    if (!patient->isHealthy()) {
+        std::cerr << "Discharge failed: Patient is not healthy.\n";
+        return;
+    }
 
     double cost = patient->getTotalTreatmentCost();
-    if (patient->getFunds() < cost) return;
+    if (patient->getFunds() < cost) {
+        std::cerr << "Discharge failed: Insufficient funds.\n";
+        return;
+    }
 
     patient->deductFunds(cost);
     totalProfit += cost;
     doctor->removePatient(patient);
 
-    Appointment* recheck = new Appointment("2025-05-01", "09:00", doctor, location.getTimezoneOffset());
-    doctor->addAppointment(recheck);
-    addAppointment(recheck);
+    auto recheck = std::make_unique<Appointment>("2025-05-01", "09:00", doctor, location.getTimezoneOffset());
+    doctor->addAppointment(recheck.get());
+    addAppointment(std::move(recheck));
 }
 
 double Hospital::getProfit() const {
@@ -127,14 +96,14 @@ void Hospital::printInfo() const {
 
 void Hospital::printDoctors() const {
     std::cout << "Doctors in the hospital:\n";
-    for (const Doctor* doctor : doctors) {
+    for (const auto& doctor : doctors) {
         std::cout << doctor->getName() << " - Specialty: " << doctor->getSpecialty() << "\n";
     }
 }
 
 void Hospital::printAppointments() const {
     std::cout << "Appointments in the hospital:\n";
-    for (const Appointment* appointment : appointments) {
+    for (const auto& appointment : appointments) {
         std::cout << *appointment << "\n";
     }
 }

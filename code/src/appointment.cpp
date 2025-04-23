@@ -4,6 +4,8 @@
 #include <iomanip>
 #include <ctime>
 
+
+
 // Constructor
 Appointment::Appointment(const std::string& date, const std::string& time, Doctor* doctor, int timezoneOffset)
     : date(date), time(time), doctor(doctor), timezoneOffset(timezoneOffset) {}
@@ -26,10 +28,12 @@ Doctor* Appointment::getDoctor() const {
 
 // Verifies if the date and time are valid
 bool Appointment::isValidDateTime(const std::string& inputDate, const std::string& inputTime, int timezoneOffset) {
+    // Format: YYYY-MM-DD (10 chars)
     if (inputDate.size() != 10 || inputDate[4] != '-' || inputDate[7] != '-') {
         return false;
     }
 
+    // Format: HH:MM (5 chars)
     if (inputTime.size() != 5 || inputTime[2] != ':') {
         return false;
     }
@@ -48,8 +52,10 @@ bool Appointment::isValidDateTime(const std::string& inputDate, const std::strin
     }
 
     const int days_in_month[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
-    if ((month == 2 && (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)))
-        ? (day > 29) : (day > days_in_month[month - 1])) {
+    bool isLeap = (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0));
+    int maxDay = (month == 2 && isLeap) ? 29 : days_in_month[month - 1];
+
+    if (day > maxDay) {
         return false;
     }
 
@@ -61,13 +67,25 @@ bool Appointment::isValidDateTime(const std::string& inputDate, const std::strin
         return false;
     }
 
-    hour -= timezoneOffset; // convert to UTC hour for standardization
-
     if (hour < 0 || hour > 23 || minute < 0 || minute > 59) {
         return false;
     }
 
-    return true;
+    // Convert to tm structure
+    std::tm tm = {};
+    tm.tm_year = year - 1900;
+    tm.tm_mon = month - 1;
+    tm.tm_mday = day;
+    tm.tm_hour = hour - timezoneOffset;
+    tm.tm_min = minute;
+    tm.tm_sec = 0;
+    tm.tm_isdst = -1;
+
+    std::time_t appointmentTime = std::mktime(&tm);
+    if (appointmentTime == -1) return false;
+
+    std::time_t now = std::time(nullptr);
+    return appointmentTime >= now;
 }
 
 bool Appointment::isDoctorAvailable(const std::string& checkDate, const std::string& checkTime, int tzOffset) const {
