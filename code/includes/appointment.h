@@ -2,37 +2,32 @@
 #define APPOINTMENT_H
 
 #include <string>
-#include <ostream>
-#include "doctor.h"
-
-class Doctor; // Forward declaration of the Doctor class
+#include <iostream>
+class Doctor;
 
 class Appointment {
 private:
     std::string date;
     std::string time;
-    int timezoneOffset; // in hours from UTC
-    Doctor* doctor; // Pointer to the associated doctor
+    Doctor* doctor;
+    int timezoneOffset;
 
 public:
-    // Constructor
     Appointment(const std::string& date, const std::string& time, Doctor* doctor, int timezoneOffset);
+    Appointment(const Appointment& other);
+    Appointment& operator=(const Appointment& other);
+    ~Appointment();
 
-    // Getters
-    std::string const& getDate() const;
-    std::string const& getTime() const;
-    int getTimezoneOffset() const;
-    Doctor* getDoctor() const;
+    [[nodiscard]] const std::string& getDate() const;
+    [[nodiscard]] const std::string& getTime() const;
+    [[nodiscard]] Doctor* getDoctor() const;
+    [[nodiscard]] int getTimezoneOffset() const;
+    [[nodiscard]] bool isDoctorAvailable(const std::string& checkDate, const std::string& checkTime, int tzOffset) const;
 
-    // Static and member functions
-    static bool isValidDateTime(const std::string& date, const std::string& time, int timezoneOffset);
-    bool isDoctorAvailable(const std::string& date, const std::string& time, int timezoneOffset) const;
+    static bool isValidDateTime(const std::string& inputDate, const std::string& inputTime, int timezoneOffset);
 
-    // Print appointment details
     void printInfo() const;
-
-    // Operator overload to print appointment details
-    friend std::ostream& operator<<(std::ostream& os, const Appointment& appointment);
+    friend std::ostream& operator<<(std::ostream& os, const Appointment& app);
 };
 
 #endif // APPOINTMENT_H

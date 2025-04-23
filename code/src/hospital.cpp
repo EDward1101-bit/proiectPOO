@@ -5,9 +5,11 @@
 #include "../includes/medical_data.h"
 #include <algorithm>
 #include <memory>
+#include <iostream>
+#include <unordered_map>
 
-Hospital::Hospital(std::string name, Location location)
-    : name(std::move(name)), location(std::move(location)) {}
+Hospital::Hospital(std::string name, const Location& location)
+    : name(std::move(name)), location(location) {}
 
 Hospital::~Hospital() = default;
 
@@ -20,19 +22,37 @@ void Hospital::addAppointment(std::unique_ptr<Appointment> appointment) {
 }
 
 void Hospital::addPatientToDoctor(const std::string& doctorName, Patient* patient) {
-    if (patient->getDiseases().empty()) return;
+    if (patient->getDiseases().empty()) {
+        std::cerr << "Error: Patient has no diseases to assign to a doctor.\n";
+        return;
+    }
 
     const std::string& disease = patient->getDiseases().begin()->first;
     auto it = diseaseToSpecialty.find(disease);
-    if (it == diseaseToSpecialty.end()) return;
+    if (it == diseaseToSpecialty.end()) {
+        std::cerr << "Error: Disease '" << disease << "' is not recognized.\n";
+        return;
+    }
 
     const std::string& requiredSpecialty = it->second;
+    bool found = false;
 
     for (const auto& doctor : doctors) {
-        if (doctor->getName() == doctorName && doctor->getSpecialty() == requiredSpecialty) {
-            doctor->assignPatient(patient);
-            return;
+        if (doctor->getName() == doctorName) {
+            found = true;
+            if (doctor->getSpecialty() == requiredSpecialty) {
+                doctor->assignPatient(patient);
+                return;
+            } else {
+                std::cerr << "Error: Doctor specialty '" << doctor->getSpecialty()
+                          << "' does not match required specialty '" << requiredSpecialty << "'.\n";
+                return;
+            }
         }
+    }
+
+    if (!found) {
+        std::cerr << "Error: Doctor '" << doctorName << "' not found.\n";
     }
 }
 
@@ -50,19 +70,26 @@ bool Hospital::isDoctorAvailable(const std::string& doctorName, const std::strin
     return false;
 }
 
-void Hospital::scheduleAppointment(const std::string& doctorName, Patient* patient, const std::string& date, const std::string& time) {
-    if (!isDoctorAvailable(doctorName, date, time)) {
+void Hospital::scheduleAppointment(const std::string& doctorName, Patient* /*patient*/, const std::string& date, const std::string& time) {
+    if (!Appointment::isValidDateTime(date, time, location.getTimezoneOffset())) {
+        std::cerr << "Error: Invalid date or time format.\n";
         return;
     }
 
     for (const auto& doctor : doctors) {
         if (doctor->getName() == doctorName) {
+            if (!isDoctorAvailable(doctorName, date, time)) {
+                std::cerr << "Error: Doctor is not available at this time.\n";
+                return;
+            }
             auto appointment = std::make_unique<Appointment>(date, time, doctor.get(), location.getTimezoneOffset());
             doctor->addAppointment(appointment.get());
             addAppointment(std::move(appointment));
             return;
         }
     }
+
+    std::cerr << "Error: Doctor '" << doctorName << "' not found for appointment.\n";
 }
 
 void Hospital::dischargePatient(Patient* patient, Doctor* doctor) {
@@ -102,10 +129,50 @@ void Hospital::printDoctors() const {
 }
 
 void Hospital::printAppointments() const {
-    std::cout << "Appointments in the hospital:\n";
-    for (const auto& appointment : appointments) {
+    std::vector<Appointment*> sortedAppointments;
+    for (const auto& appt : appointments) {
+        sortedAppointments.push_back(appt.get());
+    }
+
+    std::sort(sortedAppointments.begin(), sortedAppointments.end(), [](const Appointment* a, const Appointment* b) {
+        return a->getDate() < b->getDate() ||
+              (a->getDate() == b->getDate() && a->getTime() < b->getTime());
+    });
+
+    std::cout << "Appointments in the hospital (sorted):\n";
+    for (const auto* appointment : sortedAppointments) {
         std::cout << *appointment << "\n";
     }
+}
+
+std::vector<std::pair<std::string, int>> Hospital::getMostCommonDiseases(int topN) const {
+    std::unordered_map<std::string, int> diseaseCounts;
+
+    for (const auto& doctor : doctors) {
+        const auto& patients = doctor->getPatientList();
+        for (const auto* patient : patients) {
+            const auto& patientDiseases = patient->getDiseases();
+            for (const auto& [disease, _] : patientDiseases) {
+                ++diseaseCounts[disease];
+            }
+        }
+    }
+
+    std::vector<std::pair<std::string, int>> sortedDiseases(diseaseCounts.begin(), diseaseCounts.end());
+
+    std::sort(sortedDiseases.begin(), sortedDiseases.end(), [](const auto& a, const auto& b) {
+        return b.second < a.second;
+    });
+
+    if ((int)sortedDiseases.size() > topN) {
+        sortedDiseases.resize(topN);
+    }
+
+    return sortedDiseases;
+}
+
+const std::vector<std::unique_ptr<Doctor>>& Hospital::getDoctors() const {
+    return doctors;
 }
 
 std::ostream& operator<<(std::ostream& os, const Hospital& h) {

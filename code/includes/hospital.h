@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <map>
 #include "doctor.h"
 #include "appointment.h"
 #include "patient.h"
@@ -22,8 +23,7 @@ private:
     double totalProfit = 0.0;
 
 public:
-    Hospital(std::string name, Location location);
-    // Copy operations are deleted to avoid issues with unique_ptr
+    Hospital(std::string name, const Location& location);
     Hospital(const Hospital& other) = delete;
     Hospital& operator=(const Hospital& other) = delete;
     ~Hospital();
@@ -31,14 +31,17 @@ public:
     void addDoctor(std::unique_ptr<Doctor> doctor);
     void addAppointment(std::unique_ptr<Appointment> appointment);
     void addPatientToDoctor(const std::string& doctorName, Patient* patient);
-    bool isDoctorAvailable(const std::string& doctorName, const std::string& date, const std::string& time) const;
+    [[nodiscard]] bool isDoctorAvailable(const std::string& doctorName, const std::string& date, const std::string& time) const;
     void scheduleAppointment(const std::string& doctorName, Patient* patient, const std::string& date, const std::string& time);
     void dischargePatient(Patient* patient, Doctor* doctor);
 
-    double getProfit() const;
+    [[nodiscard]] double getProfit() const;
     void printInfo() const;
     void printDoctors() const;
     void printAppointments() const;
+
+    [[nodiscard]] std::vector<std::pair<std::string, int>> getMostCommonDiseases(int topN = 5) const;
+    [[nodiscard]] const std::vector<std::unique_ptr<Doctor>>& getDoctors() const;
 
     friend std::ostream& operator<<(std::ostream& os, const Hospital& hospital);
 };

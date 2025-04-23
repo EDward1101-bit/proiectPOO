@@ -1,14 +1,31 @@
 #include "../includes/appointment.h"
+#include "../includes/doctor.h"
 #include <iostream>
 #include <sstream>
 #include <iomanip>
 #include <ctime>
 
-
-
 // Constructor
 Appointment::Appointment(const std::string& date, const std::string& time, Doctor* doctor, int timezoneOffset)
     : date(date), time(time), doctor(doctor), timezoneOffset(timezoneOffset) {}
+
+// Copy constructor
+Appointment::Appointment(const Appointment& other)
+    : date(other.date), time(other.time), doctor(other.doctor), timezoneOffset(other.timezoneOffset) {}
+
+// Copy assignment operator
+Appointment& Appointment::operator=(const Appointment& other) {
+    if (this != &other) {
+        date = other.date;
+        time = other.time;
+        doctor = other.doctor;
+        timezoneOffset = other.timezoneOffset;
+    }
+    return *this;
+}
+
+// Destructor
+Appointment::~Appointment() = default;
 
 const std::string& Appointment::getDate() const {
     return date;
@@ -26,14 +43,11 @@ Doctor* Appointment::getDoctor() const {
     return doctor;
 }
 
-// Verifies if the date and time are valid
 bool Appointment::isValidDateTime(const std::string& inputDate, const std::string& inputTime, int timezoneOffset) {
-    // Format: YYYY-MM-DD (10 chars)
     if (inputDate.size() != 10 || inputDate[4] != '-' || inputDate[7] != '-') {
         return false;
     }
 
-    // Format: HH:MM (5 chars)
     if (inputTime.size() != 5 || inputTime[2] != ':') {
         return false;
     }
@@ -71,7 +85,6 @@ bool Appointment::isValidDateTime(const std::string& inputDate, const std::strin
         return false;
     }
 
-    // Convert to tm structure
     std::tm tm = {};
     tm.tm_year = year - 1900;
     tm.tm_mon = month - 1;
@@ -99,14 +112,12 @@ bool Appointment::isDoctorAvailable(const std::string& checkDate, const std::str
     return true;
 }
 
-// Print appointment information
 void Appointment::printInfo() const {
     std::cout << "Appointment with Dr. " << doctor->getName()
               << " on " << date << " at " << time
               << " (UTC" << (timezoneOffset >= 0 ? "+" : "") << timezoneOffset << ")\n";
 }
 
-// Operator overload to print appointment details
 std::ostream& operator<<(std::ostream& os, const Appointment& app) {
     os << "Appointment with Dr. " << app.doctor->getName()
        << " on " << app.date << " at " << app.time

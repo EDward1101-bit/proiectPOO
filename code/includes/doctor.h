@@ -1,7 +1,6 @@
 #ifndef DOCTOR_H
 #define DOCTOR_H
 
-#include <algorithm>
 #include <string>
 #include <vector>
 #include "patient.h"
@@ -18,15 +17,14 @@ private:
     std::vector<Appointment*> appointments;
 
 public:
-    // Constructor
     Doctor(std::string name, std::string specialty);
 
-    std::string const& getName() const;
-    std::string const& getSpecialty() const;
+    [[nodiscard]] const std::string& getName() const;
+    [[nodiscard]] const std::string& getSpecialty() const;
+    [[nodiscard]] const std::vector<Patient*>& getPatientList() const;
+    [[nodiscard]] const std::vector<Appointment*>& getAppointments() const;
 
     void addAppointment(Appointment* appointment);
-    const std::vector<Appointment*>& getAppointments() const;
-
     void assignPatient(Patient* p);
     void removePatient(const Patient* p);
 
@@ -34,9 +32,9 @@ public:
     void printPatients() const;
 
     ~Doctor();
+
     friend std::ostream& operator<<(std::ostream& os, const Doctor& d);
 
-    // Validation
     static bool isValidSpecialty(const std::string& specialty);
 };
 

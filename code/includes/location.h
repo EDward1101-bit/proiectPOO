@@ -7,16 +7,16 @@
 class Location {
 private:
     std::string country;
-    int timezoneOffset; // +2 for Romania, -5 for EST
+    int timezoneOffset;
 
 public:
     Location(std::string country, int timezoneOffset);
-    Location(const Location& other);
+    Location(const Location& other) = default;
     Location& operator=(const Location& other);
     ~Location();
 
-    const std::string& getCountry() const;
-    int getTimezoneOffset() const;
+    [[nodiscard]] const std::string& getCountry() const;
+    [[nodiscard]] int getTimezoneOffset() const;
 
     friend std::ostream& operator<<(std::ostream& os, const Location& loc);
 };

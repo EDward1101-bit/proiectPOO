@@ -1,6 +1,7 @@
 #include "../includes/doctor.h"
 #include "../includes/medical_data.h"
 #include <iostream>
+#include <algorithm>
 
 Doctor::Doctor(std::string name, std::string specialty)
     : name(std::move(name)), specialty(std::move(specialty)) {}
@@ -11,6 +12,10 @@ std::string const& Doctor::getName() const {
 
 std::string const& Doctor::getSpecialty() const {
     return specialty;
+}
+
+const std::vector<Patient*>& Doctor::getPatientList() const {
+    return patients;
 }
 
 void Doctor::addAppointment(Appointment* appointment) {

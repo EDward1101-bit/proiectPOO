@@ -3,9 +3,6 @@
 Location::Location(std::string country, int timezoneOffset)
     : country(std::move(country)), timezoneOffset(timezoneOffset) {}
 
-Location::Location(const Location& other)
-    : country(other.country), timezoneOffset(other.timezoneOffset) {}
-
 Location& Location::operator=(const Location& other) {
     if (this != &other) {
         country = other.country;
