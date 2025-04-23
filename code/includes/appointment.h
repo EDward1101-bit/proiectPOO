@@ -11,20 +11,22 @@ class Appointment {
 private:
     std::string date;
     std::string time;
+    int timezoneOffset; // in hours from UTC
     Doctor* doctor; // Pointer to the associated doctor
 
 public:
     // Constructor
-    Appointment(const std::string& date, const std::string& time, Doctor* doctor);
+    Appointment(const std::string& date, const std::string& time, Doctor* doctor, int timezoneOffset);
 
-    // Getter functions
+    // Getters
     std::string const& getDate() const;
     std::string const& getTime() const;
+    int getTimezoneOffset() const;
     Doctor* getDoctor() const;
 
     // Static and member functions
-    static bool isValidDateTime(const std::string& date, const std::string& time);
-    bool isDoctorAvailable(const std::string& date, const std::string& time) const;
+    static bool isValidDateTime(const std::string& date, const std::string& time, int timezoneOffset);
+    bool isDoctorAvailable(const std::string& date, const std::string& time, int timezoneOffset) const;
 
     // Print appointment details
     void printInfo() const;
