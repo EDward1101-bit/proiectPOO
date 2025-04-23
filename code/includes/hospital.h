@@ -28,7 +28,7 @@ public:
 
     void addDoctor(Doctor* doctor);
     void addAppointment(Appointment* appointment);
-    void addPatientToDoctor(const std::string& doctorName, Patient* patient);
+    void addPatientToDoctor(const std::string& doctorName, Patient* patient); // matches based on specialty
     bool isDoctorAvailable(const std::string& doctorName, const std::string& date, const std::string& time) const;
     void scheduleAppointment(const std::string& doctorName, Patient* patient, const std::string& date, const std::string& time);
     void dischargePatient(Patient* patient, Doctor* doctor);

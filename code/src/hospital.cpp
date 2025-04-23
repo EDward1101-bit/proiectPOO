@@ -2,7 +2,8 @@
 #include "../includes/doctor.h"
 #include "../includes/appointment.h"
 #include "../includes/patient.h"
-#include <algorithm> // for std::swap and cleanup
+#include "../includes/medical_data.h"
+#include <algorithm>
 
 // Constructor
 Hospital::Hospital(std::string name, Location location)
@@ -56,8 +57,16 @@ void Hospital::addAppointment(Appointment* appointment) {
 }
 
 void Hospital::addPatientToDoctor(const std::string& doctorName, Patient* patient) {
+    if (patient->getDiseases().empty()) return;
+
+    const std::string& disease = patient->getDiseases().begin()->first;
+    auto it = diseaseToSpecialty.find(disease);
+    if (it == diseaseToSpecialty.end()) return;
+
+    const std::string& requiredSpecialty = it->second;
+
     for (Doctor* doctor : doctors) {
-        if (doctor->getName() == doctorName) {
+        if (doctor->getName() == doctorName && doctor->getSpecialty() == requiredSpecialty) {
             doctor->assignPatient(patient);
             return;
         }

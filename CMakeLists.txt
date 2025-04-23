@@ -61,6 +61,7 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         code/src/hospital.cpp
         code/includes/location.h
         code/src/location.cpp
+        code/includes/medical_data.h
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )

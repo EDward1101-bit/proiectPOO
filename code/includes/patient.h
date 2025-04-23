@@ -10,18 +10,20 @@ private:
     std::string name;
     int age;
     char gender;
+    std::string cnp;
     double funds;
     std::map<std::string, double> diseases; // disease name -> treatment cost
 
 public:
     // Constructor
-    Patient(std::string name, int age, char gender, double funds);
+    Patient(std::string name, int age, char gender, std::string cnp, double funds);
 
     // Accessors
     std::string const& getName() const;
     const std::map<std::string, double>& getDiseases() const;
     double getTotalTreatmentCost() const;
     double getFunds() const;
+    std::string getCNP() const;
 
     // Mutators
     void addDisease(const std::string& disease, double cost);
@@ -30,6 +32,8 @@ public:
     bool isHealthy() const;
     void addFunds(double amount);
     void deductFunds(double amount);
+
+    static bool isValidCNP(const std::string& cnp);
 
     void printInfo() const;
 
