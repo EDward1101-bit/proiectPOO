@@ -111,7 +111,7 @@ void runHealthQuiz(Patient* patient, Hospital* hospital) {
 
     std::vector<std::string> recommendedSpecs;
     std::cout << "\nRecommended specialists:\n";
-    for (auto& d : detected) {
+    for (const auto& d : detected) {
         const auto& spec = diseaseToSpecialty.at(d);
         if (Doctor::isValidSpecialty(spec) &&
             std::find(recommendedSpecs.begin(), recommendedSpecs.end(), spec) == recommendedSpecs.end()) {
@@ -275,10 +275,14 @@ int main() {
                         case 4: {
                             printSpacer();
                             std::cout << "Patient name: ";
-                            std::string pn; std::getline(std::cin, pn);
-                            if (auto p = findPatientByName(allPatients, pn)) {
+                            std::string pn;
+                            std::getline(std::cin, pn);
+
+                            // cppcheck-suppress constVariablePointer
+                            if (auto* p = findPatientByName(allPatients, pn)) {
                                 std::cout << "Doctor name: ";
-                                std::string dn; std::getline(std::cin, dn);
+                                std::string dn;
+                                std::getline(std::cin, dn);
                                 hospital->addPatientToDoctor(dn, p);
                             } else {
                                 std::cout << "Patient not found.\n";
