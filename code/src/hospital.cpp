@@ -22,37 +22,55 @@ void Hospital::addAppointment(std::unique_ptr<Appointment> appointment) {
 }
 
 void Hospital::addPatientToDoctor(const std::string& doctorName, Patient* patient) {
-    if (patient->getDiseases().empty()) {
-        std::cerr << "Error: Patient has no diseases to assign to a doctor.\n";
+    const auto& patientDiseases = patient->getDiseases();
+    if (patientDiseases.empty()) {
+        std::cerr << "Error: Patient has no recorded conditions to assign.\n";
         return;
     }
 
-    const std::string& disease = patient->getDiseases().begin()->first;
-    auto it = diseaseToSpecialty.find(disease);
-    if (it == diseaseToSpecialty.end()) {
-        std::cerr << "Error: Disease '" << disease << "' is not recognized.\n";
+    Doctor* targetDoc = nullptr;
+    for (const auto& docPtr : doctors) {
+        if (docPtr->getName() == doctorName) {
+            targetDoc = docPtr.get();
+            break;
+        }
+    }
+    if (!targetDoc) {
+        std::cerr << "Error: Doctor '" << doctorName << "' not found.\n";
         return;
     }
 
-    const std::string& requiredSpecialty = it->second;
-    bool found = false;
-
-    for (const auto& doctor : doctors) {
-        if (doctor->getName() == doctorName) {
-            found = true;
-            if (doctor->getSpecialty() == requiredSpecialty) {
-                doctor->assignPatient(patient);
-                return;
-            } else {
-                std::cerr << "Error: Doctor specialty '" << doctor->getSpecialty()
-                          << "' does not match required specialty '" << requiredSpecialty << "'.\n";
-                return;
-            }
+    const std::string docSpec = targetDoc->getSpecialty();
+    bool match = false;
+    for (const auto& [disease, cost] : patientDiseases) {
+        auto it = diseaseToSpecialty.find(disease);
+        if (it != diseaseToSpecialty.end() && it->second == docSpec) {
+            match = true;
+            break;
         }
     }
 
-    if (!found) {
-        std::cerr << "Error: Doctor '" << doctorName << "' not found.\n";
+    if (match) {
+        targetDoc->assignPatient(patient);
+        std::cout << "Patient '" << patient->getName()
+                  << "' successfully assigned to Dr. " << doctorName << ".\n";
+    } else {
+        std::unordered_set<std::string> neededSpecs;
+        for (const auto& [disease, cost] : patientDiseases) {
+            auto it = diseaseToSpecialty.find(disease);
+            if (it != diseaseToSpecialty.end()) {
+                neededSpecs.insert(it->second);
+            }
+        }
+        std::cerr << "Error: Dr. " << doctorName
+                  << "'s specialty (" << docSpec << ") does not match patient's needs (";
+        bool first = true;
+        for (auto& s : neededSpecs) {
+            if (!first) std::cerr << ", ";
+            std::cerr << s;
+            first = false;
+        }
+        std::cerr << ").\n";
     }
 }
 

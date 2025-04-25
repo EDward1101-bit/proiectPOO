@@ -37,7 +37,6 @@ public:
 
     void printInfo() const;
 
-    // Rule of Three
     Patient(const Patient& other);
     Patient& operator=(const Patient& other);
     ~Patient();

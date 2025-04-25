@@ -5,15 +5,13 @@
 #include <iomanip>
 #include <ctime>
 
-// Constructor
+
 Appointment::Appointment(const std::string& date, const std::string& time, Doctor* doctor, int timezoneOffset)
     : date(date), time(time), doctor(doctor), timezoneOffset(timezoneOffset) {}
 
-// Copy constructor
 Appointment::Appointment(const Appointment& other)
     : date(other.date), time(other.time), doctor(other.doctor), timezoneOffset(other.timezoneOffset) {}
 
-// Copy assignment operator
 Appointment& Appointment::operator=(const Appointment& other) {
     if (this != &other) {
         date = other.date;
@@ -24,7 +22,6 @@ Appointment& Appointment::operator=(const Appointment& other) {
     return *this;
 }
 
-// Destructor
 Appointment::~Appointment() = default;
 
 const std::string& Appointment::getDate() const {

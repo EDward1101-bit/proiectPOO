@@ -6,11 +6,11 @@
 Doctor::Doctor(std::string name, std::string specialty)
     : name(std::move(name)), specialty(std::move(specialty)) {}
 
-std::string const& Doctor::getName() const {
+const std::string& Doctor::getName() const {
     return name;
 }
 
-std::string const& Doctor::getSpecialty() const {
+const std::string& Doctor::getSpecialty() const {
     return specialty;
 }
 
@@ -31,12 +31,9 @@ void Doctor::assignPatient(Patient* p) {
 }
 
 void Doctor::removePatient(const Patient* p) {
-    auto it = std::find_if(patients.begin(), patients.end(), [p](const Patient* patient) {
-        return patient == p;
-    });
-    if (it != patients.end()) {
-        patients.erase(it);
-    }
+    auto it = std::find_if(patients.begin(), patients.end(),
+        [p](const Patient* patient) { return patient == p; });
+    if (it != patients.end()) patients.erase(it);
 }
 
 void Doctor::printInfo() const {
@@ -45,16 +42,12 @@ void Doctor::printInfo() const {
 
 void Doctor::printPatients() const {
     std::cout << "Patients assigned to Dr. " << name << ":\n";
-    for (const auto* patient : patients) {
-        std::cout << *patient << "\n";
+    for (auto* pat : patients) {
+        std::cout << *pat << "\n";
     }
 }
 
-Doctor::~Doctor() {
-    for (Appointment* appointment : appointments) {
-        delete appointment;
-    }
-}
+Doctor::~Doctor() = default;
 
 std::ostream& operator<<(std::ostream& os, const Doctor& d) {
     os << "Doctor: " << d.name << ", Specialty: " << d.specialty;
