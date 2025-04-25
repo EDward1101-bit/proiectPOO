@@ -43,30 +43,18 @@ void clearInput() {
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
 
-void copyHospital(const Hospital& source, Hospital& target) {
-    target = Hospital(source.getName() + " (Restored)", source.getLocation());
-    for (const auto& doctor : source.getDoctors()) {
-        auto newDoctor = std::make_unique<Doctor>(doctor->getName(), doctor->getSpecialty());
-        for (const auto& patient : doctor->getPatientList()) {
-            newDoctor->assignPatient(patient);
+Patient* findPatientByName(const std::vector<std::unique_ptr<Patient>>& patients, const std::string& name) {
+    for (const auto& p : patients) {
+        if (p->getName() == name) {
+            return p.get();
         }
-        for (const auto& appointment : doctor->getAppointments()) {
-            auto newAppointment = std::make_unique<Appointment>(
-                appointment->getDate(),
-                appointment->getTime(),
-                newDoctor.get(),
-                appointment->getTimezoneOffset()
-            );
-            newDoctor->addAppointment(newAppointment.get());
-            target.addAppointment(std::move(newAppointment));
-        }
-        target.addDoctor(std::move(newDoctor));
     }
+    return nullptr;
 }
 
 int main() {
     Location romania("Romania", +2);
-    Hospital hospital("Spitalul Municipal Bucuresti", romania);
+    std::unique_ptr<Hospital> hospital = std::make_unique<Hospital>("Spitalul Municipal Bucuresti", romania);
     std::unique_ptr<Hospital> backupHospital = nullptr;
 
     int patientCounter = 0;
@@ -99,12 +87,12 @@ int main() {
             patientCounter++;
         }
 
-        hospital.addDoctor(std::move(doctor));
+        hospital->addDoctor(std::move(doctor));
     }
 
-    for (const auto& docPtr : hospital.getDoctors()) {
+    for (const auto& docPtr : hospital->getDoctors()) {
         if (!docPtr->getPatientList().empty()) {
-            hospital.scheduleAppointment(docPtr->getName(), docPtr->getPatientList()[0],
+            hospital->scheduleAppointment(docPtr->getName(), docPtr->getPatientList()[0],
                                           "2025-06-01", "09:00");
         }
     }
@@ -130,96 +118,10 @@ int main() {
         clearInput();
 
         switch (choice) {
-            case 1:
-                hospital.printInfo();
-                break;
-            case 2:
-                hospital.printDoctors();
-                break;
-            case 3: {
-                std::cout << "Enter Doctor's Name: ";
-                std::string docName;
-                getline(std::cin, docName);
-                for (const auto& doc : hospital.getDoctors()) {
-                    if (doc->getName() == docName) {
-                        doc->printPatients();
-                    }
-                }
-                break;
-            }
-            case 4:
-                for (const auto& patient : allPatients) {
-                    patient->printInfo();
-                    std::cout << "\n";
-                }
-                break;
-            case 5:
-                hospital.printAppointments();
-                break;
-            case 6: {
-                std::cout << "Enter Doctor's Name for Appointment: ";
-                std::string docName;
-                getline(std::cin, docName);
-                std::cout << "Enter Appointment Date (YYYY-MM-DD): ";
-                std::string date;
-                getline(std::cin, date);
-                std::cout << "Enter Appointment Time (HH:MM): ";
-                std::string time;
-                getline(std::cin, time);
-                if (!hospital.getDoctors().empty()) {
-                    hospital.scheduleAppointment(docName, nullptr, date, time);
-                }
-                break;
-            }
-            case 7: {
-                std::cout << "Enter Doctor's Name: ";
-                std::string docName;
-                getline(std::cin, docName);
-                for (const auto& doc : hospital.getDoctors()) {
-                    if (doc->getName() == docName && !doc->getPatientList().empty()) {
-                        std::cout << "Enter Patient Name to Discharge: ";
-                        std::string patientName;
-                        getline(std::cin, patientName);
-                        for (Patient* p : doc->getPatientList()) {
-                            if (p->getName() == patientName) {
-                                hospital.dischargePatient(p, doc.get());
-                                break;
-                            }
-                        }
-                    }
-                }
-                break;
-            }
-            case 8: {
-                std::cout << "Enter Patient Name to Add Funds: ";
-                std::string patientName;
-                getline(std::cin, patientName);
-                for (auto& patient : allPatients) {
-                    if (patient->getName() == patientName) {
-                        std::cout << "Enter amount to add: ";
-                        double amount;
-                        std::cin >> amount;
-                        clearInput();
-                        patient->addFunds(amount);
-                        std::cout << "Funds updated.\n";
-                    }
-                }
-                break;
-            }
-            case 9:
-                std::cout << "Hospital Profit: $" << hospital.getProfit() << "\n";
-                break;
-            case 10: {
-                auto common = hospital.getMostCommonDiseases();
-                for (const auto& [disease, count] : common) {
-                    std::cout << disease << " - " << count << " patients\n";
-                }
-                break;
-            }
             case 11: {
                 std::cout << "Creating Backup...\n";
-                backupHospital = std::make_unique<Hospital>("Backup - Spitalul Municipal Bucuresti", hospital.getLocation());
-                for (const auto& doctor : hospital.getDoctors()) {
+                backupHospital = std::make_unique<Hospital>("Backup - Spitalul Municipal Bucuresti", hospital->getLocation());
+                for (const auto& doctor : hospital->getDoctors()) {
                     auto newDoctor = std::make_unique<Doctor>(doctor->getName(), doctor->getSpecialty());
                     for (const auto& patient : doctor->getPatientList()) {
                         newDoctor->assignPatient(patient);
@@ -242,11 +144,14 @@ int main() {
             case 12: {
                 if (backupHospital) {
                     std::cout << "Restoring Backup...\n";
-                    hospital = Hospital(backupHospital->getName() + " (Restored)", backupHospital->getLocation());
+                    hospital = std::make_unique<Hospital>(backupHospital->getName() + " (Restored)", backupHospital->getLocation());
                     for (const auto& doctor : backupHospital->getDoctors()) {
                         auto newDoctor = std::make_unique<Doctor>(doctor->getName(), doctor->getSpecialty());
                         for (const auto& patient : doctor->getPatientList()) {
-                            newDoctor->assignPatient(patient);
+                            Patient* existingPatient = findPatientByName(allPatients, patient->getName());
+                            if (existingPatient) {
+                                newDoctor->assignPatient(existingPatient);
+                            }
                         }
                         for (const auto& appointment : doctor->getAppointments()) {
                             auto newAppointment = std::make_unique<Appointment>(
@@ -256,9 +161,9 @@ int main() {
                                 appointment->getTimezoneOffset()
                             );
                             newDoctor->addAppointment(newAppointment.get());
-                            hospital.addAppointment(std::move(newAppointment));
+                            hospital->addAppointment(std::move(newAppointment));
                         }
-                        hospital.addDoctor(std::move(newDoctor));
+                        hospital->addDoctor(std::move(newDoctor));
                     }
                     std::cout << "Hospital restored successfully!\n";
                 } else {
@@ -266,12 +171,6 @@ int main() {
                 }
                 break;
             }
-            case 0:
-                std::cout << "Exiting...\n";
-                break;
-            default:
-                std::cout << "Invalid choice. Try again.\n";
-                break;
         }
     } while (choice != 0);
 

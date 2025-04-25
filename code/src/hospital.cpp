@@ -179,6 +179,10 @@ const Location& Hospital::getLocation() const {
     return location;
 }
 
+const std::string& Hospital::getName() const {
+    return name;
+}
+
 std::ostream& operator<<(std::ostream& os, const Hospital& h) {
     os << "Hospital: " << h.name << ", Location: " << h.location << ", Total Profit: $" << h.totalProfit << "\n";
     return os;

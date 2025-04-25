@@ -35,6 +35,7 @@ public:
     void scheduleAppointment(const std::string& doctorName, Patient* patient, const std::string& date, const std::string& time);
     void dischargePatient(Patient* patient, Doctor* doctor);
 
+    [[nodiscard]] const std::string& getName() const;
     [[nodiscard]] double getProfit() const;
     void printInfo() const;
     void printDoctors() const;
