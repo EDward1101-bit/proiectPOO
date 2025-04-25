@@ -3,14 +3,13 @@
 #include <memory>
 #include <random>
 #include <limits>
-#include "hospital.h"
-#include "location.h"
-#include "doctor.h"
-#include "patient.h"
-#include "appointment.h"
-#include "medical_data.h"
+#include "../includes/hospital.h"
+#include "../includes/location.h"
+#include "../includes/doctor.h"
+#include "../includes/patient.h"
+#include "../includes/appointment.h"
+#include "../includes/medical_data.h"
 
-// Real doctor and patient names
 const std::vector<std::pair<std::string, std::string>> doctorInfo = {
     {"Andrei Popescu", "Cardiologist"},
     {"Ioana Marinescu", "Endocrinologist"},
@@ -31,7 +30,6 @@ const std::vector<std::string> patientNames = {
     "Oana Cernat", "Sebastian Udrea", "Bianca Sima"
 };
 
-// Helper function to generate realistic CNP
 std::string generateCNP(bool male, int year, int month, int day, int index) {
     int genderDigit = male ? 1 : 2;
     char buffer[14];
@@ -45,10 +43,31 @@ void clearInput() {
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
 
+void copyHospital(const Hospital& source, Hospital& target) {
+    target = Hospital(source.getName() + " (Restored)", source.getLocation());
+    for (const auto& doctor : source.getDoctors()) {
+        auto newDoctor = std::make_unique<Doctor>(doctor->getName(), doctor->getSpecialty());
+        for (const auto& patient : doctor->getPatientList()) {
+            newDoctor->assignPatient(patient);
+        }
+        for (const auto& appointment : doctor->getAppointments()) {
+            auto newAppointment = std::make_unique<Appointment>(
+                appointment->getDate(),
+                appointment->getTime(),
+                newDoctor.get(),
+                appointment->getTimezoneOffset()
+            );
+            newDoctor->addAppointment(newAppointment.get());
+            target.addAppointment(std::move(newAppointment));
+        }
+        target.addDoctor(std::move(newDoctor));
+    }
+}
+
 int main() {
     Location romania("Romania", +2);
     Hospital hospital("Spitalul Municipal Bucuresti", romania);
-    Hospital backupHospital("Backup - Spitalul Municipal Bucuresti", romania);
+    std::unique_ptr<Hospital> backupHospital = nullptr;
 
     int patientCounter = 0;
     std::vector<std::unique_ptr<Patient>> allPatients;
@@ -104,6 +123,7 @@ int main() {
         std::cout << "9. View Hospital Total Profit\n";
         std::cout << "10. View Most Common Diseases\n";
         std::cout << "11. Backup Hospital\n";
+        std::cout << "12. Restore Hospital from Backup\n";
         std::cout << "0. Exit\n";
         std::cout << "Enter your choice: ";
         std::cin >> choice;
@@ -196,10 +216,56 @@ int main() {
                 }
                 break;
             }
-            case 11:
-                std::cout << "Backup Created!\n";
-                backupHospital = hospital;
+            case 11: {
+                std::cout << "Creating Backup...\n";
+                backupHospital = std::make_unique<Hospital>("Backup - Spitalul Municipal Bucuresti", hospital.getLocation());
+                for (const auto& doctor : hospital.getDoctors()) {
+                    auto newDoctor = std::make_unique<Doctor>(doctor->getName(), doctor->getSpecialty());
+                    for (const auto& patient : doctor->getPatientList()) {
+                        newDoctor->assignPatient(patient);
+                    }
+                    for (const auto& appointment : doctor->getAppointments()) {
+                        auto newAppointment = std::make_unique<Appointment>(
+                            appointment->getDate(),
+                            appointment->getTime(),
+                            newDoctor.get(),
+                            appointment->getTimezoneOffset()
+                        );
+                        newDoctor->addAppointment(newAppointment.get());
+                        backupHospital->addAppointment(std::move(newAppointment));
+                    }
+                    backupHospital->addDoctor(std::move(newDoctor));
+                }
+                std::cout << "Backup completed successfully!\n";
                 break;
+            }
+            case 12: {
+                if (backupHospital) {
+                    std::cout << "Restoring Backup...\n";
+                    hospital = Hospital(backupHospital->getName() + " (Restored)", backupHospital->getLocation());
+                    for (const auto& doctor : backupHospital->getDoctors()) {
+                        auto newDoctor = std::make_unique<Doctor>(doctor->getName(), doctor->getSpecialty());
+                        for (const auto& patient : doctor->getPatientList()) {
+                            newDoctor->assignPatient(patient);
+                        }
+                        for (const auto& appointment : doctor->getAppointments()) {
+                            auto newAppointment = std::make_unique<Appointment>(
+                                appointment->getDate(),
+                                appointment->getTime(),
+                                newDoctor.get(),
+                                appointment->getTimezoneOffset()
+                            );
+                            newDoctor->addAppointment(newAppointment.get());
+                            hospital.addAppointment(std::move(newAppointment));
+                        }
+                        hospital.addDoctor(std::move(newDoctor));
+                    }
+                    std::cout << "Hospital restored successfully!\n";
+                } else {
+                    std::cout << "No backup found to restore!\n";
+                }
+                break;
+            }
             case 0:
                 std::cout << "Exiting...\n";
                 break;

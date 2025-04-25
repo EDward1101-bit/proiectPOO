@@ -175,6 +175,10 @@ const std::vector<std::unique_ptr<Doctor>>& Hospital::getDoctors() const {
     return doctors;
 }
 
+const Location& Hospital::getLocation() const {
+    return location;
+}
+
 std::ostream& operator<<(std::ostream& os, const Hospital& h) {
     os << "Hospital: " << h.name << ", Location: " << h.location << ", Total Profit: $" << h.totalProfit << "\n";
     return os;
