@@ -29,7 +29,7 @@ Patient* findPatientByName(const std::vector<std::unique_ptr<Patient>>& patients
 
 std::string generateCNP(bool male, int year, int month, int day, int index) {
     int genderDigit = male ? 1 : 2;
-    char buf[14];
+    char buf[32];
     snprintf(buf, sizeof(buf), "%d%02d%02d%02d%02d%03d",
              genderDigit, year % 100, month, day, (index % 52) + 1, index % 1000);
     return std::string(buf);
