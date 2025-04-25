@@ -10,13 +10,14 @@
 #include "../includes/appointment.h"
 #include "../includes/medical_data.h"
 
-void printSpacer() {
-    for (int i = 0; i < 30; ++i) std::cout << "\n";
-}
-
 void clearInput() {
     std::cin.clear();
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+}
+
+void waitForEnter() {
+    std::cout << "[Press Enter to continue]";
+    std::cin.get();
 }
 
 Patient* findPatientByName(const std::vector<std::unique_ptr<Patient>>& patients,
@@ -75,6 +76,7 @@ void runHealthQuiz(Patient* patient, Hospital* hospital) {
 
     if (detected.empty()) {
         std::cout << "\nNo significant conditions detected. You appear healthy!\n";
+        waitForEnter();
         return;
     }
 
@@ -83,8 +85,8 @@ void runHealthQuiz(Patient* patient, Hospital* hospital) {
         std::cout << " - " << d << "\n";
     }
 
-    std::vector<std::string> recommendedSpecs;
     std::cout << "\nRecommended specialists:\n";
+    std::vector<std::string> recommendedSpecs;
     for (const auto& d : detected) {
         const auto& spec = diseaseToSpecialty.at(d);
         if (Doctor::isValidSpecialty(spec) &&
@@ -107,8 +109,9 @@ void runHealthQuiz(Patient* patient, Hospital* hospital) {
         std::string docName;
         std::getline(std::cin, docName);
         hospital->addPatientToDoctor(docName, patient);
-        std::cout << ">> Patient assigned to Dr. " << docName << ".\n";
     }
+
+    waitForEnter();
 }
 
 int main() {
@@ -134,15 +137,16 @@ int main() {
     size_t patCount = 0;
     std::vector<std::string> diseases(knownDiseases.begin(), knownDiseases.end());
 
-    for (size_t i = 0; i < doctorInfo.size() && patCount < patientNames.size(); ++i) {
-        auto doc = std::make_unique<Doctor>(doctorInfo[i].first, doctorInfo[i].second);
+    for (size_t i = 0; i < doctorInfo.size(); ++i) {
+        auto doc = std::make_unique<Doctor>(doctorInfo[i].first,
+                                            doctorInfo[i].second);
         int numP = 2 + (i % 2);
         for (int j = 0; j < numP && patCount < patientNames.size(); ++j) {
-            bool male = (patCount % 2 == 0);
-            int year  = 1980 + (patCount % 30);
-            int month = 1 + (patCount % 12);
-            int day   = 1 + (patCount % 28);
-            auto cnp  = generateCNP(male, year, month, day, patCount);
+            bool male  = (patCount % 2 == 0);
+            int  year  = 1980 + (patCount % 30);
+            int  month = 1 + (patCount % 12);
+            int  day   = 1 + (patCount % 28);
+            auto cnp   = generateCNP(male, year, month, day, patCount);
             double funds = 1000 + patCount * 50;
 
             auto pat = std::make_unique<Patient>(
@@ -152,10 +156,12 @@ int main() {
                 cnp,
                 funds
             );
+
             std::string d = diseases[(i + j) % diseases.size()];
             if (Patient::isValidDisease(d)) {
                 pat->addDisease(d, 200.0 + j * 50);
             }
+
             doc->assignPatient(pat.get());
             allPatients.push_back(std::move(pat));
             ++patCount;
@@ -164,297 +170,337 @@ int main() {
     }
 
     for (const auto& dptr : hospital->getDoctors()) {
-        const auto& plist = dptr->getPatientList();
-        if (!plist.empty()) {
+        if (!dptr->getPatientList().empty()) {
             hospital->scheduleAppointment(
                 dptr->getName(),
-                plist[0],
+                dptr->getPatientList()[0],
                 "2025-06-01",
                 "09:00"
             );
         }
     }
 
-    int mainOpt;
+
+
     while (true) {
-        printSpacer();
+        std::cout << "\n\n";
         std::cout << "=== Spitalul Municipal Bucuresti ===\n"
-                  << "1) Hospital Info    2) Doctors    3) Patients    4) Appointments    5) Analytics    0) Exit\n"
+                  << "1) Hospital Info\n"
+                  << "2) Doctors\n"
+                  << "3) Patients\n"
+                  << "4) Appointments\n"
+                  << "5) Analytics\n"
+                  << "0) Exit\n"
                   << "Select: ";
+
+        int mainOpt;
         if (!(std::cin >> mainOpt)) break;
         clearInput();
 
+        if (mainOpt == 0) {
+            std::cout << "Goodbye!\n";
+            break;
+        }
+
         switch (mainOpt) {
-            case 1:
-                hospital->printInfo();
-                break;
+        case 1:
+            std::cout << "\n";
+            hospital->printInfo();
+            waitForEnter();
+            break;
 
-            case 2: {
-                int opt;
-                while (true) {
-                    printSpacer();
-                    std::cout << "--- Doctors ---\n"
-                              << "1) List all\n"
-                              << "2) View a doctor's patients\n"
-                              << "3) Add new doctor\n"
-                              << "4) Assign existing patient\n"
-                              << "0) Back\n"
-                              << "Choice: ";
-                    if (!(std::cin >> opt)) break;
-                    clearInput();
-                    if (opt == 0) break;
+        case 2: {
+            int opt;
+            while (true) {
+                std::cout << "\n\n";
+                std::cout << "--- Doctors ---\n"
+                          << "1) List all\n"
+                          << "2) View a doctor's patients\n"
+                          << "3) Add new doctor\n"
+                          << "4) Assign existing patient\n"
+                          << "0) Back\n"
+                          << "Choice: ";
+                if (!(std::cin >> opt)) break;
+                clearInput();
+                if (opt == 0) break;
 
-                    switch (opt) {
-                        case 1:
-                            hospital->printDoctors();
-                            break;
-                        case 2: {
-                            std::cout << "Doctor name: ";
-                            std::string dn; std::getline(std::cin, dn);
-                            for (const auto& dptr : hospital->getDoctors()) {
-                                if (dptr->getName() == dn) {
-                                    dptr->printPatients();
-                                    break;
-                                }
-                            }
-                        } break;
-                        case 3: {
-                            std::cout << "New doctor name: ";
-                            std::string dn; std::getline(std::cin, dn);
-                            std::cout << "Specialty: ";
-                            std::string sp; std::getline(std::cin, sp);
-                            if (Doctor::isValidSpecialty(sp)) {
-                                hospital->addDoctor(std::make_unique<Doctor>(dn, sp));
-                                std::cout << "Doctor added.\n";
-                            } else {
-                                std::cout << "Invalid specialty.\n";
-                            }
-                        } break;
-                        case 4: {
-                            std::cout << "Patient name: ";
-                            std::string pn; std::getline(std::cin, pn);
-                            Patient* p = findPatientByName(allPatients, pn);
-                            if (p) {
-                                std::cout << "Doctor name: ";
-                                std::string dn; std::getline(std::cin, dn);
-                                hospital->addPatientToDoctor(dn, p);
-                            } else {
-                                std::cout << "Patient not found.\n";
-                            }
-                        } break;
-                        default:
-                            std::cout << "Invalid choice.\n";
+                switch (opt) {
+                case 1:
+                    std::cout << "\n";
+                    hospital->printDoctors();
+                    waitForEnter();
+                    break;
+                case 2: {
+                    std::cout << "\nDoctor name: ";
+                    std::string dn; std::getline(std::cin, dn);
+                    bool found = false;
+                    for (const auto& dptr : hospital->getDoctors()) {
+                        if (dptr->getName() == dn) {
+                            std::cout << "\n";
+                            dptr->printPatients();
+                            found = true;
+                        }
                     }
-                }
-            } break;
-
-            case 3: {
-                int opt;
-                while (true) {
-                    printSpacer();
-                    std::cout << "--- Patients ---\n"
-                              << "1) List all\n"
-                              << "2) View details\n"
-                              << "3) Register new\n"
-                              << "4) Add funds\n"
-                              << "5) Add disease manually\n"
-                              << "6) Remove disease\n"
-                              << "0) Back\n"
-                              << "Choice: ";
-                    if (!(std::cin >> opt)) break;
-                    clearInput();
-                    if (opt == 0) break;
-
-                    switch (opt) {
-                        case 1:
-                            for (const auto& p : allPatients) {
-                                p->printInfo();
-                                std::cout << "\n";
-                            }
-                            break;
-                        case 2: {
-                            std::cout << "Patient name: ";
-                            std::string pn; std::getline(std::cin, pn);
-                            const Patient* p = findPatientByName(allPatients, pn);
-                            if (p) {
-                                p->printInfo();
-                                std::cout << "Total cost: $" << p->getTotalTreatmentCost() << "\n";
-                            } else {
-                                std::cout << "Not found.\n";
-                            }
-                        } break;
-                        case 3: {
-                            std::cout << "=== New Patient ===\nName: ";
-                            std::string nm; std::getline(std::cin, nm);
-                            if (!Patient::isValidName(nm)) {
-                                std::cout << "Invalid name.\n";
-                                break;
-                            }
-                            std::cout << "CNP: ";
-                            std::string c; std::getline(std::cin, c);
-                            if (!Patient::isValidCNP(c)) {
-                                std::cout << "Invalid CNP.\n";
-                                break;
-                            }
-                            std::cout << "Age: ";
-                            int age; std::cin >> age; clearInput();
-                            std::cout << "Gender (M/F): ";
-                            char g; std::cin >> g; clearInput();
-
-                            auto newP = std::make_unique<Patient>(nm, age, g, c, 0.0);
-                            runHealthQuiz(newP.get(), hospital.get());
-                            allPatients.push_back(std::move(newP));
-                            std::cout << "Patient registered.\n";
-                        } break;
-                        case 4: {
-                            std::cout << "Patient name: ";
-                            std::string pn; std::getline(std::cin, pn);
-                            Patient* p = findPatientByName(allPatients, pn);
-                            if (p) {
-                                std::cout << "Amount: $";
-                                double amt; std::cin >> amt; clearInput();
-                                p->addFunds(amt);
-                                std::cout << "New balance: $" << p->getFunds() << "\n";
-                            } else {
-                                std::cout << "Not found.\n";
-                            }
-                        } break;
-                        case 5: {
-                            std::cout << "Patient name: ";
-                            std::string pn; std::getline(std::cin, pn);
-                            Patient* p = findPatientByName(allPatients, pn);
-                            if (p) {
-                                std::cout << "Disease: ";
-                                std::string d; std::getline(std::cin, d);
-                                if (Patient::isValidDisease(d)) {
-                                    std::cout << "Cost: $";
-                                    double cost; std::cin >> cost; clearInput();
-                                    p->addDisease(d, cost);
-                                    std::cout << "Disease added.\n";
-                                } else {
-                                    std::cout << "Unknown disease.\n";
-                                }
-                            } else {
-                                std::cout << "Not found.\n";
-                            }
-                        } break;
-                        case 6: {
-                            std::cout << "Patient name: ";
-                            std::string pn; std::getline(std::cin, pn);
-                            Patient* p = findPatientByName(allPatients, pn);
-                            if (p) {
-                                std::cout << "Disease to remove: ";
-                                std::string d; std::getline(std::cin, d);
-                                p->removeDisease(d);
-                                std::cout << "Removed if present.\n";
-                            } else {
-                                std::cout << "Not found.\n";
-                            }
-                        } break;
-                        default:
-                            std::cout << "Invalid choice.\n";
+                    if (!found) std::cout << "[Error] Doctor not found.\n";
+                    waitForEnter();
+                } break;
+                case 3: {
+                    std::cout << "\nNew doctor name: ";
+                    std::string dn; std::getline(std::cin, dn);
+                    std::cout << "Specialty: ";
+                    std::string sp; std::getline(std::cin, sp);
+                    if (Doctor::isValidSpecialty(sp)) {
+                        hospital->addDoctor(
+                          std::make_unique<Doctor>(dn, sp)
+                        );
+                        std::cout << "Doctor added.\n";
+                    } else {
+                        std::cout << "[Error] Invalid specialty.\n";
                     }
-                }
-            } break;
-
-            case 4: {
-                int opt;
-                while (true) {
-                    printSpacer();
-                    std::cout << "--- Appointments ---\n"
-                              << "1) List all\n"
-                              << "2) Schedule\n"
-                              << "3) Discharge & recheck\n"
-                              << "0) Back\n"
-                              << "Choice: ";
-                    if (!(std::cin >> opt)) break;
-                    clearInput();
-                    if (opt == 0) break;
-
-                    switch (opt) {
-                        case 1:
-                            hospital->printAppointments();
-                            break;
-                        case 2: {
-                            std::cout << "Doctor: ";
-                            std::string dn; std::getline(std::cin, dn);
-                            std::cout << "Patient: ";
-                            std::string pn; std::getline(std::cin, pn);
-                            std::cout << "Date (YYYY-MM-DD): ";
-                            std::string dt; std::getline(std::cin, dt);
-                            std::cout << "Time (HH:MM): ";
-                            std::string tm; std::getline(std::cin, tm);
-                            Patient* p = findPatientByName(allPatients, pn);
-                            if (p) {
-                                hospital->scheduleAppointment(dn, p, dt, tm);
-                            } else {
-                                std::cout << "Patient not found.\n";
-                            }
-                        } break;
-                        case 3: {
-                            std::cout << "Doctor: ";
-                            std::string dn; std::getline(std::cin, dn);
-                            std::cout << "Patient: ";
-                            std::string pn; std::getline(std::cin, pn);
-                            Patient* p = findPatientByName(allPatients, pn);
-                            Doctor* docPtr = nullptr;
-                            for (const auto& dptr : hospital->getDoctors()) {
-                                if (dptr->getName() == dn) {
-                                    docPtr = dptr.get();
-                                    break;
-                                }
-                            }
-                            if (p && docPtr) {
-                                hospital->dischargePatient(p, docPtr);
-                                p->clearDiseases();
-                                std::cout << "Discharged.\n";
-                            } else {
-                                std::cout << "Doctor or patient not found.\n";
-                            }
-                        } break;
-                        default:
-                            std::cout << "Invalid choice.\n";
+                    waitForEnter();
+                } break;
+                case 4: {
+                    std::cout << "\nPatient name: ";
+                    std::string pn; std::getline(std::cin, pn);
+                    Patient* p = findPatientByName(allPatients, pn);
+                    if (!p) {
+                        std::cout << "[Error] Patient not found.\n";
+                    } else {
+                        std::cout << "Doctor name: ";
+                        std::string dn; std::getline(std::cin, dn);
+                        hospital->addPatientToDoctor(dn, p);
                     }
+                    waitForEnter();
+                } break;
+                default:
+                    std::cout << "[Error] Invalid choice.\n";
+                    waitForEnter();
                 }
-            } break;
+            }
+        } break;
 
-            case 5: {
-                int opt;
-                while (true) {
-                    printSpacer();
-                    std::cout << "--- Analytics ---\n"
-                              << "1) Total profit\n"
-                              << "2) Most common diseases\n"
-                              << "0) Back\n"
-                              << "Choice: ";
-                    if (!(std::cin >> opt)) break;
-                    clearInput();
-                    if (opt == 0) break;
+        case 3: {
+            int opt;
+            while (true) {
+                std::cout << "\n\n";
+                std::cout << "--- Patients ---\n"
+                          << "1) List all\n"
+                          << "2) View details\n"
+                          << "3) Register new\n"
+                          << "4) Add funds\n"
+                          << "5) Add disease manually\n"
+                          << "6) Remove disease\n"
+                          << "0) Back\n"
+                          << "Choice: ";
+                if (!(std::cin >> opt)) break;
+                clearInput();
+                if (opt == 0) break;
 
-                    switch (opt) {
-                        case 1:
-                            std::cout << "Total profit: $" << hospital->getProfit() << "\n";
-                            break;
-                        case 2: {
-                            auto top = hospital->getMostCommonDiseases();
-                            std::cout << "Top diseases:\n";
-                            for (auto const& pr : top) {
-                                std::cout << " - " << pr.first
-                                          << " (" << pr.second << " cases)\n";
-                            }
-                        } break;
-                        default:
-                            std::cout << "Invalid choice.\n";
+                switch (opt) {
+                case 1:
+                    std::cout << "\n";
+                    for (const auto& p : allPatients) {
+                        p->printInfo();
+                        std::cout << "\n";
                     }
+                    waitForEnter();
+                    break;
+                case 2: {
+                    std::cout << "\nPatient name: ";
+                    std::string pn; std::getline(std::cin, pn);
+                    Patient* p = findPatientByName(allPatients, pn);
+                    if (p) {
+                        std::cout << "\n";
+                        p->printInfo();
+                        std::cout << "Total cost: $" << p->getTotalTreatmentCost() << "\n";
+                    } else {
+                        std::cout << "[Error] Patient not found.\n";
+                    }
+                    waitForEnter();
+                } break;
+                case 3: {
+                    std::cout << "\n=== New Patient ===\nName: ";
+                    std::string nm; std::getline(std::cin, nm);
+                    if (!Patient::isValidName(nm)) {
+                        std::cout << "[Error] Invalid name.\n";
+                        waitForEnter();
+                        break;
+                    }
+                    std::cout << "CNP: ";
+                    std::string c; std::getline(std::cin, c);
+                    if (!Patient::isValidCNP(c)) {
+                        std::cout << "[Error] Invalid CNP.\n";
+                        waitForEnter();
+                        break;
+                    }
+                    std::cout << "Age: ";
+                    int age; std::cin >> age; clearInput();
+                    std::cout << "Gender (M/F): ";
+                    char g; std::cin >> g; clearInput();
+
+                    auto newP = std::make_unique<Patient>(nm, age, g, c, 0.0);
+                    runHealthQuiz(newP.get(), hospital.get());
+                    allPatients.push_back(std::move(newP));
+                    std::cout << "Patient registered.\n";
+                    waitForEnter();
+                } break;
+                case 4: {
+                    std::cout << "\nPatient name: ";
+                    std::string pn; std::getline(std::cin, pn);
+                    Patient* p = findPatientByName(allPatients, pn);
+                    if (p) {
+                        std::cout << "Amount: $";
+                        double amt; std::cin >> amt; clearInput();
+                        p->addFunds(amt);
+                        std::cout << "\nNew balance: $" << p->getFunds() << "\n";
+                    } else {
+                        std::cout << "[Error] Patient not found.\n";
+                    }
+                    waitForEnter();
+                } break;
+                case 5: {
+                    std::cout << "\nPatient name: ";
+                    std::string pn; std::getline(std::cin, pn);
+                    Patient* p = findPatientByName(allPatients, pn);
+                    if (p) {
+                        std::cout << "Disease: ";
+                        std::string d; std::getline(std::cin, d);
+                        if (Patient::isValidDisease(d)) {
+                            std::cout << "Cost: $";
+                            double cost; std::cin >> cost; clearInput();
+                            p->addDisease(d, cost);
+                            std::cout << "Disease added.\n";
+                        } else {
+                            std::cout << "[Error] Unknown disease.\n";
+                        }
+                    } else {
+                        std::cout << "[Error] Patient not found.\n";
+                    }
+                    waitForEnter();
+                } break;
+                case 6: {
+                    std::cout << "\nPatient name: ";
+                    std::string pn; std::getline(std::cin, pn);
+                    Patient* p = findPatientByName(allPatients, pn);
+                    if (p) {
+                        std::cout << "Disease to remove: ";
+                        std::string d; std::getline(std::cin, d);
+                        p->removeDisease(d);
+                        std::cout << "Removed if present.\n";
+                    } else {
+                        std::cout << "[Error] Patient not found.\n";
+                    }
+                    waitForEnter();
+                } break;
+                default:
+                    std::cout << "[Error] Invalid choice.\n";
+                    waitForEnter();
                 }
-            } break;
+            }
+        } break;
 
-            case 0:
-                std::cout << "Goodbye!\n";
-                return 0;
+        case 4: {
+            int opt;
+            while (true) {
+                std::cout << "\n\n";
+                std::cout << "--- Appointments ---\n"
+                          << "1) List all\n"
+                          << "2) Schedule\n"
+                          << "3) Discharge & recheck\n"
+                          << "0) Back\n"
+                          << "Choice: ";
+                if (!(std::cin >> opt)) break;
+                clearInput();
+                if (opt == 0) break;
 
-            default:
-                std::cout << "Invalid choice.\n";
+                switch (opt) {
+                case 1:
+                    std::cout << "\n";
+                    hospital->printAppointments();
+                    waitForEnter();
+                    break;
+                case 2: {
+                    std::cout << "\nDoctor: ";
+                    std::string dn; std::getline(std::cin, dn);
+                    std::cout << "Patient: ";
+                    std::string pn; std::getline(std::cin, pn);
+                    std::cout << "Date (YYYY-MM-DD): ";
+                    std::string dt; std::getline(std::cin, dt);
+                    std::cout << "Time (HH:MM): ";
+                    std::string tm; std::getline(std::cin, tm);
+                    Patient* p = findPatientByName(allPatients, pn);
+                    if (p) {
+                        hospital->scheduleAppointment(dn, p, dt, tm);
+                    } else {
+                        std::cout << "[Error] Patient not found.\n";
+                    }
+                    waitForEnter();
+                } break;
+                case 3: {
+                    std::cout << "\nDoctor: ";
+                    std::string dn; std::getline(std::cin, dn);
+                    std::cout << "Patient: ";
+                    std::string pn; std::getline(std::cin, pn);
+                    Patient* p = findPatientByName(allPatients, pn);
+                    Doctor* docPtr = nullptr;
+                    for (const auto& dptr : hospital->getDoctors()) {
+                        if (dptr->getName() == dn) {
+                            docPtr = dptr.get();
+                            break;
+                        }
+                    }
+                    if (p && docPtr) {
+                        hospital->dischargePatient(p, docPtr);
+                        p->clearDiseases();
+                        std::cout << "Discharged.\n";
+                    } else {
+                        std::cout << "[Error] Doctor or patient not found.\n";
+                    }
+                    waitForEnter();
+                } break;
+                default:
+                    std::cout << "[Error] Invalid choice.\n";
+                    waitForEnter();
+                }
+            }
+        } break;
+
+        case 5: {
+            int opt;
+            while (true) {
+                std::cout << "\n\n";
+                std::cout << "--- Analytics ---\n"
+                          << "1) Total profit\n"
+                          << "2) Most common diseases\n"
+                          << "0) Back\n"
+                          << "Choice: ";
+                if (!(std::cin >> opt)) break;
+                clearInput();
+                if (opt == 0) break;
+
+                switch (opt) {
+                case 1:
+                    std::cout << "\nHospital profit: $" << hospital->getProfit() << "\n";
+                    waitForEnter();
+                    break;
+                case 2: {
+                    std::cout << "\nTop diseases:\n";
+                    for (auto const& pr : hospital->getMostCommonDiseases()) {
+                        std::cout << " - " << pr.first
+                                  << " (" << pr.second << " cases)\n";
+                    }
+                    waitForEnter();
+                } break;
+                default:
+                    std::cout << "[Error] Invalid choice.\n";
+                    waitForEnter();
+                }
+            }
+        } break;
+
+        default:
+            std::cout << "[Error] Invalid choice.\n";
+            waitForEnter();
         }
     }
 
