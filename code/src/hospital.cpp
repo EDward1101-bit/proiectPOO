@@ -65,7 +65,7 @@ void Hospital::addPatientToDoctor(const std::string& doctorName, Patient* patien
         std::cerr << "Error: Dr. " << doctorName
                   << "'s specialty (" << docSpec << ") does not match patient's needs (";
         bool first = true;
-        for (auto& s : neededSpecs) {
+        for (const auto& s : neededSpecs) {
             if (!first) std::cerr << ", ";
             std::cerr << s;
             first = false;
@@ -77,7 +77,7 @@ void Hospital::addPatientToDoctor(const std::string& doctorName, Patient* patien
 bool Hospital::isDoctorAvailable(const std::string& doctorName, const std::string& date, const std::string& time) const {
     for (const auto& doctor : doctors) {
         if (doctor->getName() == doctorName) {
-            for (const auto& appointment : doctor->getAppointments()) {
+            for (const auto* appointment : doctor->getAppointments()) {
                 if (appointment->getDate() == date && appointment->getTime() == time) {
                     return false;
                 }
@@ -191,10 +191,6 @@ std::vector<std::pair<std::string, int>> Hospital::getMostCommonDiseases(int top
 
 const std::vector<std::unique_ptr<Doctor>>& Hospital::getDoctors() const {
     return doctors;
-}
-
-const Location& Hospital::getLocation() const {
-    return location;
 }
 
 const std::string& Hospital::getName() const {

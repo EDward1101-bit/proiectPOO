@@ -13,10 +13,6 @@ Location& Location::operator=(const Location& other) {
 
 Location::~Location() = default;
 
-const std::string& Location::getCountry() const {
-    return country;
-}
-
 int Location::getTimezoneOffset() const {
     return timezoneOffset;
 }

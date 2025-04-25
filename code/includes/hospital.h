@@ -42,7 +42,6 @@ public:
     void printAppointments() const;
 
     [[nodiscard]] const std::vector<std::unique_ptr<Appointment>>& getAppointments() const;
-    [[nodiscard]] const Location& getLocation() const;
     [[nodiscard]] std::vector<std::pair<std::string, int>> getMostCommonDiseases(int topN = 5) const;
     [[nodiscard]] const std::vector<std::unique_ptr<Doctor>>& getDoctors() const;
 

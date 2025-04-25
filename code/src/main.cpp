@@ -85,7 +85,7 @@ void runHealthQuiz(Patient* patient, Hospital* hospital) {
 
     for (auto& di : quiz) {
         int positives = 0;
-        for (auto& q : di.questions) {
+        for (const auto& q : di.questions) {
             std::cout << q << " ";
             std::getline(std::cin, answer);
             std::transform(answer.begin(), answer.end(), answer.begin(), ::tolower);
@@ -104,7 +104,7 @@ void runHealthQuiz(Patient* patient, Hospital* hospital) {
     }
 
     std::cout << "\nDetected conditions:\n";
-    for (auto& d : detected) {
+    for (const auto& d : detected) {
         std::cout << " - " << d << "\n";
     }
 

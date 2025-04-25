@@ -20,7 +20,6 @@ public:
 
     [[nodiscard]] const std::string& getDate() const;
     [[nodiscard]] const std::string& getTime() const;
-    [[nodiscard]] Doctor* getDoctor() const;
     [[nodiscard]] int getTimezoneOffset() const;
     [[nodiscard]] bool isDoctorAvailable(const std::string& checkDate, const std::string& checkTime, int tzOffset) const;
 

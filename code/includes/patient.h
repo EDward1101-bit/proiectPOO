@@ -22,7 +22,6 @@ public:
     const std::map<std::string, double>& getDiseases() const;
     double getTotalTreatmentCost() const;
     double getFunds() const;
-    std::string getCNP() const;
 
     void addDisease(const std::string& disease, double cost);
     void removeDisease(const std::string& disease);

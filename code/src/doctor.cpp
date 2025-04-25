@@ -42,7 +42,7 @@ void Doctor::printInfo() const {
 
 void Doctor::printPatients() const {
     std::cout << "Patients assigned to Dr. " << name << ":\n";
-    for (auto* pat : patients) {
+    for(const auto* pat : patients) {
         std::cout << *pat << "\n";
     }
 }

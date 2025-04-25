@@ -15,7 +15,6 @@ public:
     Location& operator=(const Location& other);
     ~Location();
 
-    [[nodiscard]] const std::string& getCountry() const;
     [[nodiscard]] int getTimezoneOffset() const;
 
     friend std::ostream& operator<<(std::ostream& os, const Location& loc);

@@ -36,10 +36,6 @@ int Appointment::getTimezoneOffset() const {
     return timezoneOffset;
 }
 
-Doctor* Appointment::getDoctor() const {
-    return doctor;
-}
-
 bool Appointment::isValidDateTime(const std::string& inputDate, const std::string& inputTime, int timezoneOffset) {
     if (inputDate.size() != 10 || inputDate[4] != '-' || inputDate[7] != '-') {
         return false;

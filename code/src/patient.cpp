@@ -43,10 +43,6 @@ double Patient::getFunds() const {
     return funds;
 }
 
-std::string Patient::getCNP() const {
-    return cnp;
-}
-
 void Patient::addFunds(double amount) {
     funds += amount;
 }
@@ -79,14 +75,8 @@ bool Patient::isValidCNP(const std::string& cnp) {
     int s = cnp[0] - '0';
     if (s < 1 || s > 8) return false;
 
-    std::string yy = cnp.substr(1, 2);
-    std::string mm = cnp.substr(3, 2);
-    std::string dd = cnp.substr(5, 2);
-
-    int year = std::stoi(yy);
-    int month = std::stoi(mm);
-    int day = std::stoi(dd);
-
+    int month = std::stoi(cnp.substr(3, 2));
+    int day   = std::stoi(cnp.substr(5, 2));
     if (month < 1 || month > 12 || day < 1 || day > 31) return false;
 
     return true;
