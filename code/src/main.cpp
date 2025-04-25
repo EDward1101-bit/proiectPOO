@@ -277,9 +277,8 @@ int main() {
                             std::cout << "Patient name: ";
                             std::string pn;
                             std::getline(std::cin, pn);
-
-                            // cppcheck-suppress constVariablePointer
-                            if (auto* p = findPatientByName(allPatients, pn)) {
+                            Patient* p = findPatientByName(allPatients, pn);
+                            if (p) {
                                 std::cout << "Doctor name: ";
                                 std::string dn;
                                 std::getline(std::cin, dn);
