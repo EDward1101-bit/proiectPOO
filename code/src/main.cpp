@@ -97,118 +97,201 @@ int main() {
     }
 
     int choice;
-    do {
-        std::cout << "\n=== Spitalul Municipal Bucuresti ===\n";
-        std::cout << "1. View Hospital Info\n";
-        std::cout << "2. View Doctors List\n";
-        std::cout << "3. View a Doctor's Patients\n";
-        std::cout << "4. View All Patients\n";
-        std::cout << "5. View Appointments\n";
-        std::cout << "6. Schedule a New Appointment\n";
-        std::cout << "7. Discharge a Patient\n";
-        std::cout << "8. Add Funds to a Patient\n";
-        std::cout << "9. View Hospital Total Profit\n";
-        std::cout << "10. View Most Common Diseases\n";
-        std::cout << "0. Exit\n";
-        std::cout << "Enter your choice: ";
-        std::cin >> choice;
-        clearInput();
+do {
+    std::cout << "\n=== Spitalul Municipal Bucuresti ===\n";
+    std::cout << "1. View Hospital Info\n";
+    std::cout << "2. View Doctors List\n";
+    std::cout << "3. View a Doctor's Patients\n";
+    std::cout << "4. View All Patients\n";
+    std::cout << "5. View Appointments\n";
+    std::cout << "6. Schedule a New Appointment\n";
+    std::cout << "7. Discharge a Patient\n";
+    std::cout << "8. Add Funds to a Patient\n";
+    std::cout << "9. View Hospital Total Profit\n";
+    std::cout << "10. View Most Common Diseases\n";
+    std::cout << "11. Assign Existing Patient to Doctor\n";
+    std::cout << "12. Remove Disease from Patient\n";
+    std::cout << "13. Create New Patient\n";
+    std::cout << "14. Create New Doctor\n";
+    std::cout << "0. Exit\n";
+    std::cout << "Enter your choice: ";
+    std::cin >> choice;
+    clearInput();
 
-        switch (choice) {
-            case 1:
-                hospital->printInfo();
-                break;
-            case 2:
-                hospital->printDoctors();
-                break;
-            case 3: {
-                std::cout << "Enter Doctor's Name: ";
-                std::string docName;
-                getline(std::cin, docName);
-                for (const auto& doc : hospital->getDoctors()) {
-                    if (doc->getName() == docName) {
-                        doc->printPatients();
-                    }
+    switch (choice) {
+        case 1:
+            hospital->printInfo();
+            break;
+        case 2:
+            hospital->printDoctors();
+            break;
+        case 3: {
+            std::cout << "Enter Doctor's Name: ";
+            std::string docName;
+            getline(std::cin, docName);
+            for (const auto& doc : hospital->getDoctors()) {
+                if (doc->getName() == docName) {
+                    doc->printPatients();
                 }
-                break;
             }
-            case 4:
-                for (const auto& patient : allPatients) {
-                    patient->printInfo();
-                    std::cout << "\n";
-                }
-                break;
-            case 5:
-                hospital->printAppointments();
-                break;
-            case 6: {
-                std::cout << "Enter Doctor's Name for Appointment: ";
-                std::string docName;
-                getline(std::cin, docName);
-                std::cout << "Enter Appointment Date (YYYY-MM-DD): ";
-                std::string date;
-                getline(std::cin, date);
-                std::cout << "Enter Appointment Time (HH:MM): ";
-                std::string time;
-                getline(std::cin, time);
-                if (!hospital->getDoctors().empty()) {
-                    hospital->scheduleAppointment(docName, nullptr, date, time);
-                }
-                break;
+            break;
+        }
+        case 4:
+            for (const auto& patient : allPatients) {
+                patient->printInfo();
+                std::cout << "CNP: " << patient->getCNP() << "\n\n";
             }
-            case 7: {
-                std::cout << "Enter Doctor's Name: ";
-                std::string docName;
-                getline(std::cin, docName);
-                for (const auto& doc : hospital->getDoctors()) {
-                    if (doc->getName() == docName && !doc->getPatientList().empty()) {
-                        std::cout << "Enter Patient Name to Discharge: ";
-                        std::string patientName;
-                        getline(std::cin, patientName);
-                        for (Patient* p : doc->getPatientList()) {
-                            if (p->getName() == patientName) {
-                                hospital->dischargePatient(p, doc.get());
-                                break;
-                            }
+            break;
+        case 5: {
+            hospital->printAppointments();
+            break;
+        }
+        case 6: {
+            std::cout << "Enter Doctor's Name for Appointment: ";
+            std::string docName;
+            getline(std::cin, docName);
+            std::cout << "Enter Appointment Date (YYYY-MM-DD): ";
+            std::string date;
+            getline(std::cin, date);
+            std::cout << "Enter Appointment Time (HH:MM): ";
+            std::string time;
+            getline(std::cin, time);
+            if (!hospital->getDoctors().empty()) {
+                hospital->scheduleAppointment(docName, nullptr, date, time);
+            }
+            break;
+        }
+        case 7: {
+            std::cout << "Enter Doctor's Name: ";
+            std::string docName;
+            getline(std::cin, docName);
+            for (const auto& doc : hospital->getDoctors()) {
+                if (doc->getName() == docName && !doc->getPatientList().empty()) {
+                    std::cout << "Enter Patient Name to Discharge: ";
+                    std::string patientName;
+                    getline(std::cin, patientName);
+                    for (Patient* p : doc->getPatientList()) {
+                        if (p->getName() == patientName) {
+                            hospital->dischargePatient(p, doc.get());
+                            p->clearDiseases();
+                            break;
                         }
                     }
                 }
-                break;
             }
-            case 8: {
-                std::cout << "Enter Patient Name to Add Funds: ";
-                std::string patientName;
-                getline(std::cin, patientName);
-                for (auto& patient : allPatients) {
-                    if (patient->getName() == patientName) {
-                        std::cout << "Enter amount to add: ";
-                        double amount;
-                        std::cin >> amount;
-                        clearInput();
-                        patient->addFunds(amount);
-                        std::cout << "Funds updated.\n";
+            break;
+        }
+        case 8: {
+            std::cout << "Enter Patient Name to Add Funds: ";
+            std::string patientName;
+            getline(std::cin, patientName);
+            for (auto& patient : allPatients) {
+                if (patient->getName() == patientName) {
+                    std::cout << "Enter amount to add: ";
+                    double amount;
+                    std::cin >> amount;
+                    clearInput();
+                    patient->addFunds(amount);
+                    std::cout << "Funds updated.\n";
+                }
+            }
+            break;
+        }
+        case 9:
+            std::cout << "Hospital Profit: $" << hospital->getProfit() << "\n";
+            break;
+        case 10: {
+            auto common = hospital->getMostCommonDiseases();
+            for (const auto& [disease, count] : common) {
+                std::cout << disease << " - " << count << " patients\n";
+            }
+            break;
+        }
+        case 11: {  // Assign Existing Patient to Doctor
+            std::cout << "Enter Patient Name: ";
+            std::string patientName;
+            getline(std::cin, patientName);
+            std::cout << "Enter Doctor's Name: ";
+            std::string doctorName;
+            getline(std::cin, doctorName);
+            Patient* patient = findPatientByName(allPatients, patientName);
+            if (patient) {
+                for (auto& doctor : hospital->getDoctors()) {
+                    if (doctor->getName() == doctorName) {
+                        hospital->addPatientToDoctor(doctorName, patient);
+                        std::cout << "Patient assigned to doctor successfully!\n";
                     }
                 }
-                break;
+            } else {
+                std::cout << "Patient not found.\n";
             }
-            case 9:
-                std::cout << "Hospital Profit: $" << hospital->getProfit() << "\n";
-                break;
-            case 10: {
-                auto common = hospital->getMostCommonDiseases();
-                for (const auto& [disease, count] : common) {
-                    std::cout << disease << " - " << count << " patients\n";
-                }
-                break;
-            }
-            case 0:
-                std::cout << "Exiting...\n";
-                break;
-            default:
-                std::cout << "Invalid choice. Try again.\n";
-                break;
+            break;
         }
-    } while (choice != 0);
+        case 12: {  // Remove Disease from Patient
+            std::cout << "Enter Patient Name: ";
+            std::string patientName;
+            getline(std::cin, patientName);
+            std::cout << "Enter Disease to Remove: ";
+            std::string disease;
+            getline(std::cin, disease);
+            for (auto& patient : allPatients) {
+                if (patient->getName() == patientName) {
+                    patient->removeDisease(disease);
+                    std::cout << "Disease removed successfully!\n";
+                }
+            }
+            break;
+        }
+        case 13: {  // Create New Patient
+            std::cout << "Enter Patient Name: ";
+            std::string patientName;
+            getline(std::cin, patientName);
+            if (!Patient::isValidName(patientName)) {
+                std::cout << "Invalid name format.\n";
+                break;
+            }
+            std::cout << "Enter Patient CNP: ";
+            std::string cnp;
+            getline(std::cin, cnp);
+            if (!Patient::isValidCNP(cnp)) {
+                std::cout << "Invalid CNP format.\n";
+                break;
+            }
+            std::cout << "Enter Patient Age: ";
+            int age;
+            std::cin >> age;
+            clearInput();
+            double funds = 1000;
+            auto patient = std::make_unique<Patient>(patientName, age, 'M', cnp, funds);
+            allPatients.push_back(std::move(patient));
+            std::cout << "Patient added successfully!\n";
+            break;
+        }
+        case 14: {
+            std::cout << "Enter Doctor Name: ";
+            std::string doctorName;
+            getline(std::cin, doctorName);
+            std::cout << "Enter Doctor Specialty: ";
+            std::string specialty;
+            getline(std::cin, specialty);
+            if (!Doctor::isValidSpecialty(specialty)) {
+                std::cout << "Invalid specialty.\n";
+                break;
+            }
+            auto doctor = std::make_unique<Doctor>(doctorName, specialty);
+            hospital->addDoctor(std::move(doctor));
+            std::cout << "Doctor added successfully!\n";
+            break;
+        }
+        case 0:
+            std::cout << "Exiting...\n";
+            break;
+        default:
+            std::cout << "Invalid choice. Try again.\n";
+            break;
+    }
+} while (choice != 0);
+
 
     return 0;
 }
