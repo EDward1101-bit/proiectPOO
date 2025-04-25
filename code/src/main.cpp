@@ -185,11 +185,10 @@ int main() {
         clearInput();
 
         switch (mainOpt) {
-            case 1: {
-                printSpacer();
+            case 1:
                 hospital->printInfo();
                 break;
-            }
+
             case 2: {
                 int opt;
                 while (true) {
@@ -203,27 +202,23 @@ int main() {
                               << "Choice: ";
                     if (!(std::cin >> opt)) break;
                     clearInput();
-
                     if (opt == 0) break;
+
                     switch (opt) {
                         case 1:
                             hospital->printDoctors();
                             break;
                         case 2: {
-                            printSpacer();
                             std::cout << "Doctor name: ";
-                            std::string dn;
-                            std::getline(std::cin, dn);
+                            std::string dn; std::getline(std::cin, dn);
                             for (const auto& dptr : hospital->getDoctors()) {
                                 if (dptr->getName() == dn) {
                                     dptr->printPatients();
                                     break;
                                 }
                             }
-                            break;
-                        }
+                        } break;
                         case 3: {
-                            printSpacer();
                             std::cout << "New doctor name: ";
                             std::string dn; std::getline(std::cin, dn);
                             std::cout << "Specialty: ";
@@ -234,10 +229,8 @@ int main() {
                             } else {
                                 std::cout << "Invalid specialty.\n";
                             }
-                            break;
-                        }
+                        } break;
                         case 4: {
-                            printSpacer();
                             std::cout << "Patient name: ";
                             std::string pn; std::getline(std::cin, pn);
                             Patient* p = findPatientByName(allPatients, pn);
@@ -248,14 +241,13 @@ int main() {
                             } else {
                                 std::cout << "Patient not found.\n";
                             }
-                            break;
-                        }
+                        } break;
                         default:
                             std::cout << "Invalid choice.\n";
                     }
                 }
-                break;
-            }
+            } break;
+
             case 3: {
                 int opt;
                 while (true) {
@@ -271,8 +263,8 @@ int main() {
                               << "Choice: ";
                     if (!(std::cin >> opt)) break;
                     clearInput();
-
                     if (opt == 0) break;
+
                     switch (opt) {
                         case 1:
                             for (const auto& p : allPatients) {
@@ -281,20 +273,17 @@ int main() {
                             }
                             break;
                         case 2: {
-                            printSpacer();
                             std::cout << "Patient name: ";
                             std::string pn; std::getline(std::cin, pn);
-                            Patient* p = findPatientByName(allPatients, pn);
+                            const Patient* p = findPatientByName(allPatients, pn);
                             if (p) {
                                 p->printInfo();
                                 std::cout << "Total cost: $" << p->getTotalTreatmentCost() << "\n";
                             } else {
                                 std::cout << "Not found.\n";
                             }
-                            break;
-                        }
+                        } break;
                         case 3: {
-                            printSpacer();
                             std::cout << "=== New Patient ===\nName: ";
                             std::string nm; std::getline(std::cin, nm);
                             if (!Patient::isValidName(nm)) {
@@ -316,10 +305,8 @@ int main() {
                             runHealthQuiz(newP.get(), hospital.get());
                             allPatients.push_back(std::move(newP));
                             std::cout << "Patient registered.\n";
-                            break;
-                        }
+                        } break;
                         case 4: {
-                            printSpacer();
                             std::cout << "Patient name: ";
                             std::string pn; std::getline(std::cin, pn);
                             Patient* p = findPatientByName(allPatients, pn);
@@ -331,10 +318,8 @@ int main() {
                             } else {
                                 std::cout << "Not found.\n";
                             }
-                            break;
-                        }
+                        } break;
                         case 5: {
-                            printSpacer();
                             std::cout << "Patient name: ";
                             std::string pn; std::getline(std::cin, pn);
                             Patient* p = findPatientByName(allPatients, pn);
@@ -352,10 +337,8 @@ int main() {
                             } else {
                                 std::cout << "Not found.\n";
                             }
-                            break;
-                        }
+                        } break;
                         case 6: {
-                            printSpacer();
                             std::cout << "Patient name: ";
                             std::string pn; std::getline(std::cin, pn);
                             Patient* p = findPatientByName(allPatients, pn);
@@ -367,14 +350,13 @@ int main() {
                             } else {
                                 std::cout << "Not found.\n";
                             }
-                            break;
-                        }
+                        } break;
                         default:
                             std::cout << "Invalid choice.\n";
                     }
                 }
-                break;
-            }
+            } break;
+
             case 4: {
                 int opt;
                 while (true) {
@@ -387,14 +369,13 @@ int main() {
                               << "Choice: ";
                     if (!(std::cin >> opt)) break;
                     clearInput();
-
                     if (opt == 0) break;
+
                     switch (opt) {
                         case 1:
                             hospital->printAppointments();
                             break;
                         case 2: {
-                            printSpacer();
                             std::cout << "Doctor: ";
                             std::string dn; std::getline(std::cin, dn);
                             std::cout << "Patient: ";
@@ -409,10 +390,8 @@ int main() {
                             } else {
                                 std::cout << "Patient not found.\n";
                             }
-                            break;
-                        }
+                        } break;
                         case 3: {
-                            printSpacer();
                             std::cout << "Doctor: ";
                             std::string dn; std::getline(std::cin, dn);
                             std::cout << "Patient: ";
@@ -432,14 +411,13 @@ int main() {
                             } else {
                                 std::cout << "Doctor or patient not found.\n";
                             }
-                            break;
-                        }
+                        } break;
                         default:
                             std::cout << "Invalid choice.\n";
                     }
                 }
-                break;
-            }
+            } break;
+
             case 5: {
                 int opt;
                 while (true) {
@@ -451,8 +429,8 @@ int main() {
                               << "Choice: ";
                     if (!(std::cin >> opt)) break;
                     clearInput();
-
                     if (opt == 0) break;
+
                     switch (opt) {
                         case 1:
                             std::cout << "Total profit: $" << hospital->getProfit() << "\n";
@@ -464,17 +442,17 @@ int main() {
                                 std::cout << " - " << pr.first
                                           << " (" << pr.second << " cases)\n";
                             }
-                            break;
-                        }
+                        } break;
                         default:
                             std::cout << "Invalid choice.\n";
                     }
                 }
-                break;
-            }
+            } break;
+
             case 0:
                 std::cout << "Goodbye!\n";
                 return 0;
+
             default:
                 std::cout << "Invalid choice.\n";
         }
