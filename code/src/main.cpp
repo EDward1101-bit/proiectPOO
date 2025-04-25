@@ -3,6 +3,7 @@
 #include <memory>
 #include <limits>
 #include <algorithm>
+#include <cstdio>
 #include "../includes/hospital.h"
 #include "../includes/location.h"
 #include "../includes/doctor.h"
@@ -181,9 +182,10 @@ int main() {
     }
 
 
+
     while (true) {
-        std::cout << "\n\n";
-        std::cout << "=== Spitalul Municipal Bucuresti ===\n"
+        std::cout << "\n\n"
+                  << "=== Spitalul Municipal Bucuresti ===\n"
                   << "1) Hospital Info\n"
                   << "2) Doctors\n"
                   << "3) Patients\n"
@@ -202,6 +204,7 @@ int main() {
         }
 
         switch (mainOpt) {
+
         case 1:
             std::cout << "\n";
             hospital->printInfo();
@@ -211,8 +214,8 @@ int main() {
         case 2: {
             int opt;
             while (true) {
-                std::cout << "\n\n";
-                std::cout << "--- Doctors ---\n"
+                std::cout << "\n\n"
+                          << "--- Doctors ---\n"
                           << "1) List all\n"
                           << "2) View a doctor's patients\n"
                           << "3) Add new doctor\n"
@@ -281,8 +284,8 @@ int main() {
         case 3: {
             int opt;
             while (true) {
-                std::cout << "\n\n";
-                std::cout << "--- Patients ---\n"
+                std::cout << "\n\n"
+                          << "--- Patients ---\n"
                           << "1) List all\n"
                           << "2) View details\n"
                           << "3) Register new\n"
@@ -307,7 +310,7 @@ int main() {
                 case 2: {
                     std::cout << "\nPatient name: ";
                     std::string pn; std::getline(std::cin, pn);
-                    Patient* p = findPatientByName(allPatients, pn);
+                    const Patient* p = findPatientByName(allPatients, pn);
                     if (p) {
                         std::cout << "\n";
                         p->printInfo();
@@ -401,8 +404,8 @@ int main() {
         case 4: {
             int opt;
             while (true) {
-                std::cout << "\n\n";
-                std::cout << "--- Appointments ---\n"
+                std::cout << "\n\n"
+                          << "--- Appointments ---\n"
                           << "1) List all\n"
                           << "2) Schedule\n"
                           << "3) Discharge & recheck\n"
@@ -467,8 +470,8 @@ int main() {
         case 5: {
             int opt;
             while (true) {
-                std::cout << "\n\n";
-                std::cout << "--- Analytics ---\n"
+                std::cout << "\n\n"
+                          << "--- Analytics ---\n"
                           << "1) Total profit\n"
                           << "2) Most common diseases\n"
                           << "0) Back\n"
