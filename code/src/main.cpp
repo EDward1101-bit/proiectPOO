@@ -181,7 +181,6 @@ int main() {
     }
 
 
-
     while (true) {
         std::cout << "\n\n";
         std::cout << "=== Spitalul Municipal Bucuresti ===\n"
