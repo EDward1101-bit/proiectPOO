@@ -183,6 +183,10 @@ const std::string& Hospital::getName() const {
     return name;
 }
 
+const std::vector<std::unique_ptr<Appointment>>& Hospital::getAppointments() const {
+    return appointments;
+}
+
 std::ostream& operator<<(std::ostream& os, const Hospital& h) {
     os << "Hospital: " << h.name << ", Location: " << h.location << ", Total Profit: $" << h.totalProfit << "\n";
     return os;
