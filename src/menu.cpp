@@ -98,8 +98,7 @@ void Menu::doctorsMenu() {
 
                 Doctor* doctor = hospital.findDoctorByName(doctorName);
                 if (doctor) {
-                    if (doctor->hasPatient(patientName)) {
-                        doctor->removePatient(nullptr); // simulate removal
+                    if (doctor->dischargePatient(patientName)) {
                         std::cout << "Patient discharged.\n";
                     } else {
                         std::cout << "Patient not found under this doctor.\n";
