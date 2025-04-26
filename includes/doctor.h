@@ -22,8 +22,6 @@ public:
 
     bool dischargePatient(const std::string& patientName);
     void assignPatient(Patient* patient);
-    void removePatient(const Patient* patient);
-    bool hasPatient(const std::string& patientName) const;
 
     friend std::ostream& operator<<(std::ostream& os, const Doctor& doctor);
 };

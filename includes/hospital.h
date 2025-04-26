@@ -25,7 +25,6 @@ public:
 
     const std::string& getName() const;
     const std::vector<std::unique_ptr<Doctor>>& getDoctors() const;
-    const std::vector<std::unique_ptr<Appointment>>& getAppointments() const;
 
     void addDoctor(std::unique_ptr<Doctor> doctor);
     void addAppointment(std::unique_ptr<Appointment> appointment);

@@ -27,19 +27,6 @@ bool Doctor::dischargePatient(const std::string& patientName) {
     return false;
 }
 
-void Doctor::removePatient(const Patient* patient) {
-    patients.erase(std::remove(patients.begin(), patients.end(), patient), patients.end());
-}
-
-bool Doctor::hasPatient(const std::string& patientName) const {
-    for (const auto& p : patients) {
-        if (p && p->getName() == patientName) {
-            return true;
-        }
-    }
-    return false;
-}
-
 std::ostream& operator<<(std::ostream& os, const Doctor& doctor) {
     os << "Doctor Name: " << doctor.name << ", Specialty: " << doctor.specialty;
     if (!doctor.patients.empty()) {

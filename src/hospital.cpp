@@ -34,7 +34,6 @@ Hospital::~Hospital() {}
 
 const std::string& Hospital::getName() const { return name; }
 const std::vector<std::unique_ptr<Doctor>>& Hospital::getDoctors() const { return doctors; }
-const std::vector<std::unique_ptr<Appointment>>& Hospital::getAppointments() const { return appointments; }
 
 void Hospital::addDoctor(std::unique_ptr<Doctor> doctor) {
     doctors.push_back(std::move(doctor));
