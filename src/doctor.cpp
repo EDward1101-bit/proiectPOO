@@ -31,7 +31,7 @@ std::ostream& operator<<(std::ostream& os, const Doctor& doctor) {
     os << "Doctor Name: " << doctor.name << ", Specialty: " << doctor.specialty;
     if (!doctor.patients.empty()) {
         os << ", Patients: ";
-        for (const auto& p : doctor.patients) {
+        for (const Patient* p : doctor.patients){
             os << p->getName() << " ";
         }
     }

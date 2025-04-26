@@ -91,7 +91,7 @@ void loadAppointments(Hospital& hospital, const std::vector<std::unique_ptr<Pati
     }
 }
 
-void assignPatients(Hospital& hospital, std::vector<std::unique_ptr<Patient>>& patients) {
+void assignPatients(const Hospital& hospital, std::vector<std::unique_ptr<Patient>>& patients) {
     auto& doctors = hospital.getDoctors();
     if (doctors.empty()) {
         std::cerr << "No doctors available to assign patients.\n";
