@@ -56,6 +56,11 @@ void Menu::doctorsMenu() {
                 const Doctor* doctor = hospital.findDoctorByName(doctorName);
                 if (doctor) {
                     std::cout << *doctor << "\n";
+                    std::cout << "Specialty: " << doctor->getSpecialty() << "\n";
+                    std::cout << "Patients:\n";
+                    for (const auto& p : doctor->getPatients()) {
+                        std::cout << "- " << p->getName() << "\n";
+                    }
                 } else {
                     std::cout << "Doctor not found.\n";
                 }
@@ -94,8 +99,9 @@ void Menu::doctorsMenu() {
 
                 Doctor* doctor = hospital.findDoctorByName(doctorName);
                 if (doctor) {
-                    if (doctor->dischargePatient(patientName)) {
-                        std::cout << "Patient discharged successfully.\n";
+                    if (doctor->hasPatient(patientName)) {
+                        doctor->dischargePatient(patientName);
+                        std::cout << "Patient discharged.\n";
                     } else {
                         std::cout << "Patient not found under this doctor.\n";
                     }
@@ -118,8 +124,8 @@ void Menu::patientsMenu() {
         std::cout << "\n--- Patients Menu ---\n";
         std::cout << "1. List all patients\n";
         std::cout << "2. Add disease to patient\n";
-        std::cout << "3. Remove disease from patient\n";
-        std::cout << "4. Check if patient is healthy\n";
+        std::cout << "3. Show patient details\n";
+        std::cout << "4. Validate a CNP\n";
         std::cout << "0. Back to main menu\n";
         std::cout << "Choice: ";
         std::cin >> choice;
@@ -128,9 +134,7 @@ void Menu::patientsMenu() {
         switch (choice) {
             case 1:
                 for (const auto& p : patients) {
-                    if (p) {
-                        std::cout << *p << "\n";
-                    }
+                    std::cout << *p << "\n";
                 }
                 break;
             case 2: {
@@ -143,43 +147,35 @@ void Menu::patientsMenu() {
                 for (const auto& p : patients) {
                     if (p->getName() == patientName) {
                         p->addDisease(disease);
-                        std::cout << "Disease added.\n";
                         break;
                     }
                 }
                 break;
             }
             case 3: {
-                std::string patientName, disease;
-                std::cout << "Enter patient's name: ";
-                std::getline(std::cin, patientName);
-                std::cout << "Enter disease to remove: ";
-                std::getline(std::cin, disease);
-
-                for (const auto& p : patients) {
-                    if (p->getName() == patientName) {
-                        p->removeDisease(disease);
-                        std::cout << "Disease removed.\n";
-                        break;
-                    }
-                }
-                break;
-            }
-            case 4: {
                 std::string patientName;
                 std::cout << "Enter patient's name: ";
                 std::getline(std::cin, patientName);
 
                 for (const auto& p : patients) {
                     if (p->getName() == patientName) {
-                        if (p->isHealthy()) {
-                            std::cout << "Patient is healthy.\n";
-                        } else {
-                            std::cout << "Patient has diseases.\n";
+                        std::cout << "CNP: " << p->getCNP() << ", Age: " << p->getAge()
+                                  << ", Gender: " << p->getGender() << "\n";
+                        std::cout << "Diseases: ";
+                        for (const auto& d : p->getDiseases()) {
+                            std::cout << d << " ";
                         }
+                        std::cout << "\n";
                         break;
                     }
                 }
+                break;
+            }
+            case 4: {
+                std::string cnp;
+                std::cout << "Enter CNP: ";
+                std::getline(std::cin, cnp);
+                std::cout << (Patient::isValidCNP(cnp) ? "CNP is valid.\n" : "CNP is invalid.\n");
                 break;
             }
             case 0:
@@ -194,8 +190,8 @@ void Menu::appointmentsMenu() {
     int choice;
     do {
         std::cout << "\n--- Appointments Menu ---\n";
-        std::cout << "1. List all appointments\n";
-        std::cout << "2. Add a new appointment\n";
+        std::cout << "1. List appointments \n";
+        std::cout << "2. Add new appointment\n";
         std::cout << "0. Back to main menu\n";
         std::cout << "Choice: ";
         std::cin >> choice;
@@ -203,13 +199,18 @@ void Menu::appointmentsMenu() {
 
         switch (choice) {
             case 1:
-                hospital.listAllAppointments();
+                for (const auto& app : hospital.getAppointments()) {
+                    std::cout << *app << "\n";
+                    std::cout << (app->isInFuture() ? "In future\n" : "In the past\n");
+                    std::cout << "Doctor: " << app->getDoctor()->getName()
+                              << ", Patient: " << app->getPatient()->getName() << "\n";
+                }
                 break;
             case 2: {
                 std::string doctorName, patientName, date, time;
                 std::cout << "Enter doctor's name: ";
                 std::getline(std::cin, doctorName);
-                const Doctor* doctor = hospital.findDoctorByName(doctorName);
+                Doctor* doctor = hospital.findDoctorByName(doctorName);
                 if (!doctor) {
                     std::cout << "Doctor not found.\n";
                     break;
@@ -224,6 +225,7 @@ void Menu::appointmentsMenu() {
                         break;
                     }
                 }
+
                 if (!patient) {
                     std::cout << "Patient not found.\n";
                     break;
@@ -234,12 +236,12 @@ void Menu::appointmentsMenu() {
                 std::cout << "Enter time (HH:MM): ";
                 std::getline(std::cin, time);
 
-                auto appointment = std::make_unique<Appointment>(date, time, const_cast<Doctor*>(doctor), patient);
-                if (appointment->isValidDateTime()) {
+                auto appointment = std::make_unique<Appointment>(date, time, doctor, patient);
+                if (appointment->isValidDateTime() && appointment->isInFuture()) {
                     hospital.addAppointment(std::move(appointment));
-                    std::cout << "Appointment added successfully.\n";
+                    std::cout << "Appointment added.\n";
                 } else {
-                    std::cout << "Invalid appointment date/time. Must be in the future.\n";
+                    std::cout << "Invalid date/time.\n";
                 }
                 break;
             }
