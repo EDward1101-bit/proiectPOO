@@ -21,7 +21,7 @@ public:
     const std::string& getSpecialty() const;
     const std::vector<Patient*>& getPatients() const;
 
-
+    bool dischargePatient(const std::string& patientName);
     void assignPatient(Patient* patient);
     void removePatient(const Patient* patient);
     bool hasPatient(const std::string& patientName) const;

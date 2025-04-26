@@ -6,6 +6,18 @@
 Doctor::Doctor(const std::string& name, const std::string& specialty)
     : name(name), specialty(specialty) {}
 
+bool Doctor::dischargePatient(const std::string& patientName) {
+    auto it = std::remove_if(patients.begin(), patients.end(),
+        [&patientName](Patient* p) {
+            return p && p->getName() == patientName;
+        });
+
+    if (it != patients.end()) {
+        patients.erase(it, patients.end());
+        return true;
+    }
+    return false;
+}
 
 const std::string& Doctor::getName() const {
     return name;

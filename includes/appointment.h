@@ -26,7 +26,7 @@ public:
 
 
     bool isInFuture() const;
-    static bool isValidDateTime(const std::string& date, const std::string& time);
+    bool isValidDateTime() const;
 
 
     friend std::ostream& operator<<(std::ostream& os, const Appointment& appointment);

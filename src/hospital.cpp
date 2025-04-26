@@ -2,7 +2,7 @@
 #include "../includes/doctor.h"
 #include "../includes/appointment.h"
 #include "../includes/patient.h"
-#include <algorithm> // pentru std::sort
+#include <algorithm>
 
 
 Hospital::Hospital(const std::string& name)
@@ -51,7 +51,6 @@ const std::vector<std::unique_ptr<Appointment>>& Hospital::getAppointments() con
     return appointments;
 }
 
-// Funcții utile
 void Hospital::addDoctor(std::unique_ptr<Doctor> doctor) {
     doctors.push_back(std::move(doctor));
 }
@@ -94,8 +93,7 @@ void Hospital::listAllAppointments() const {
         }
     }
 
-    std::sort(sortedAppointments.begin(), sortedAppointments.end(),
-        [](const Appointment* a, const Appointment* b) {
+    std::sort(sortedAppointments.begin(), sortedAppointments.end(),[](const Appointment* a, const Appointment* b) {
             if (a->getDate() != b->getDate())
                 return a->getDate() < b->getDate();
             return a->getTime() < b->getTime();

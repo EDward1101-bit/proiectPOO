@@ -27,17 +27,23 @@ Patient* Appointment::getPatient() const {
 }
 
 
-bool Appointment::isValidDateTime(const std::string& date, const std::string& time) {
+bool Appointment::isValidDateTime() const {
+    std::tm tm{};
     std::istringstream ss(date + " " + time);
-    std::tm tm = {};
     ss >> std::get_time(&tm, "%Y-%m-%d %H:%M");
 
     if (ss.fail()) {
         return false;
     }
+    std::time_t appointmentTime = mktime(&tm);
+    if (appointmentTime == -1) {
+        return false;
+    }
+    std::time_t now = std::time(nullptr);
 
-    return true;
+    return difftime(appointmentTime, now) > 0;
 }
+
 
 
 bool Appointment::isInFuture() const {

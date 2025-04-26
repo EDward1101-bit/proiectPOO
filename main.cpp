@@ -32,16 +32,32 @@ void loadPatients(std::vector<std::unique_ptr<Patient>>& patients, const std::st
         std::cerr << "Error opening patients file.\n";
         return;
     }
+
     std::string line;
     while (std::getline(fin, line)) {
         std::istringstream iss(line);
-        std::string name, cnp, ageStr, genderStr;
-        if (std::getline(iss, name, ',') && std::getline(iss, cnp, ',') &&
-            std::getline(iss, ageStr, ',') && std::getline(iss, genderStr)) {
+        std::string name, cnp, ageStr, genderStr, diseasesStr;
+
+        if (std::getline(iss, name, ',') &&
+            std::getline(iss, cnp, ',') &&
+            std::getline(iss, ageStr, ',') &&
+            std::getline(iss, genderStr, ',') &&
+            std::getline(iss, diseasesStr)) {
+
             int age = std::stoi(ageStr);
             char gender = genderStr.empty() ? 'U' : genderStr[0];
-            patients.push_back(std::make_unique<Patient>(name, cnp, age, gender));
-        }
+            auto patient = std::make_unique<Patient>(name, cnp, age, gender);
+
+            std::istringstream diseaseStream(diseasesStr);
+            std::string disease;
+            while (std::getline(diseaseStream, disease, '|')) {
+                if (!disease.empty()) {
+                    patient->addDisease(disease);
+                }
+            }
+
+            patients.push_back(std::move(patient));
+            }
     }
 }
 
@@ -68,7 +84,6 @@ void loadAppointments(Hospital& hospital, const std::vector<std::unique_ptr<Pati
                     break;
                 }
             }
-
             if (doctor && patient) {
                 hospital.addAppointment(std::make_unique<Appointment>(date, time, doctor, patient));
             }
@@ -76,6 +91,21 @@ void loadAppointments(Hospital& hospital, const std::vector<std::unique_ptr<Pati
     }
 }
 
+void assignPatients(Hospital& hospital, std::vector<std::unique_ptr<Patient>>& patients) {
+    auto& doctors = hospital.getDoctors();
+    if (doctors.empty()) {
+        std::cerr << "No doctors available to assign patients.\n";
+        return;
+    }
+
+    int doctorIndex = 0;
+    for (auto& p : patients) {
+        if (p) {
+            doctors[doctorIndex]->assignPatient(p.get());
+            doctorIndex = (doctorIndex + 1) % doctors.size();
+        }
+    }
+}
 
 int main() {
         Hospital hospital("Spitalul Municipal");
@@ -83,6 +113,7 @@ int main() {
 
         loadDoctors(hospital, "data/doctors.csv");
         loadPatients(patients, "data/patients.csv");
+        assignPatients(hospital, patients);
         loadAppointments(hospital, patients, "data/appointments.csv");
 
         Menu menu(hospital, patients);
