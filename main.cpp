@@ -1,8 +1,8 @@
-#include "code/includes/hospital.h"
-#include "code/includes/doctor.h"
-#include "code/includes/patient.h"
-#include "code/includes/appointment.h"
-#include "code/includes/menu.h"
+#include "includes/hospital.h"
+#include "includes/doctor.h"
+#include "includes/patient.h"
+#include "includes/appointment.h"
+#include "includes/menu.h"
 
 #include <fstream>
 #include <sstream>
