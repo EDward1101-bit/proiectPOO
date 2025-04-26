@@ -4,11 +4,7 @@
 #include <string>
 #include <vector>
 #include <memory>
-#include <map>
-#include "doctor.h"
-#include "appointment.h"
-#include "patient.h"
-#include "location.h"
+#include <iostream>
 
 class Doctor;
 class Appointment;
@@ -17,33 +13,30 @@ class Patient;
 class Hospital {
 private:
     std::string name;
-    Location location;
     std::vector<std::unique_ptr<Doctor>> doctors;
     std::vector<std::unique_ptr<Appointment>> appointments;
-    double totalProfit = 0.0;
 
 public:
-    Hospital(std::string name, const Location& location);
-    Hospital(const Hospital& other) = delete;
-    Hospital& operator=(const Hospital& other) = delete;
+
+    Hospital(const std::string& name);
+
+    Hospital(const Hospital& other);
+
+    Hospital& operator=(const Hospital& other);
+
+
     ~Hospital();
+
+    const std::string& getName() const;
+    const std::vector<std::unique_ptr<Doctor>>& getDoctors() const;
+    const std::vector<std::unique_ptr<Appointment>>& getAppointments() const;
+
 
     void addDoctor(std::unique_ptr<Doctor> doctor);
     void addAppointment(std::unique_ptr<Appointment> appointment);
-    void addPatientToDoctor(const std::string& doctorName, Patient* patient);
-    [[nodiscard]] bool isDoctorAvailable(const std::string& doctorName, const std::string& date, const std::string& time) const;
-    void scheduleAppointment(const std::string& doctorName, Patient* patient, const std::string& date, const std::string& time);
-    void dischargePatient(Patient* patient, Doctor* doctor);
-
-    [[nodiscard]] const std::string& getName() const;
-    [[nodiscard]] double getProfit() const;
-    void printInfo() const;
-    void printDoctors() const;
-    void printAppointments() const;
-
-    [[nodiscard]] const std::vector<std::unique_ptr<Appointment>>& getAppointments() const;
-    [[nodiscard]] std::vector<std::pair<std::string, int>> getMostCommonDiseases(int topN = 5) const;
-    [[nodiscard]] const std::vector<std::unique_ptr<Doctor>>& getDoctors() const;
+    Doctor* findDoctorByName(const std::string& name) const;
+    void listAllDoctors() const;
+    void listAllAppointments() const;
 
     friend std::ostream& operator<<(std::ostream& os, const Hospital& hospital);
 };

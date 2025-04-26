@@ -1,28 +1,14 @@
 #include "../includes/appointment.h"
 #include "../includes/doctor.h"
-#include <iostream>
-#include <sstream>
+#include "../includes/patient.h"
 #include <iomanip>
+#include <sstream>
 #include <ctime>
 
 
-Appointment::Appointment(const std::string& date, const std::string& time, Doctor* doctor, int timezoneOffset)
-    : date(date), time(time), doctor(doctor), timezoneOffset(timezoneOffset) {}
+Appointment::Appointment(const std::string& date, const std::string& time, Doctor* doctor, Patient* patient)
+    : date(date), time(time), doctor(doctor), patient(patient) {}
 
-Appointment::Appointment(const Appointment& other)
-    : date(other.date), time(other.time), doctor(other.doctor), timezoneOffset(other.timezoneOffset) {}
-
-Appointment& Appointment::operator=(const Appointment& other) {
-    if (this != &other) {
-        date = other.date;
-        time = other.time;
-        doctor = other.doctor;
-        timezoneOffset = other.timezoneOffset;
-    }
-    return *this;
-}
-
-Appointment::~Appointment() = default;
 
 const std::string& Appointment::getDate() const {
     return date;
@@ -32,88 +18,59 @@ const std::string& Appointment::getTime() const {
     return time;
 }
 
-int Appointment::getTimezoneOffset() const {
-    return timezoneOffset;
+Doctor* Appointment::getDoctor() const {
+    return doctor;
 }
 
-bool Appointment::isValidDateTime(const std::string& inputDate, const std::string& inputTime, int timezoneOffset) {
-    if (inputDate.size() != 10 || inputDate[4] != '-' || inputDate[7] != '-') {
-        return false;
-    }
+Patient* Appointment::getPatient() const {
+    return patient;
+}
 
-    if (inputTime.size() != 5 || inputTime[2] != ':') {
-        return false;
-    }
 
-    int year, month, day;
-    try {
-        year = std::stoi(inputDate.substr(0, 4));
-        month = std::stoi(inputDate.substr(5, 2));
-        day = std::stoi(inputDate.substr(8, 2));
-    } catch (const std::exception&) {
-        return false;
-    }
-
-    if (year <= 0 || month < 1 || month > 12 || day < 1 || day > 31) {
-        return false;
-    }
-
-    const int days_in_month[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
-    bool isLeap = (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0));
-    int maxDay = (month == 2 && isLeap) ? 29 : days_in_month[month - 1];
-
-    if (day > maxDay) {
-        return false;
-    }
-
-    int hour, minute;
-    try {
-        hour = std::stoi(inputTime.substr(0, 2));
-        minute = std::stoi(inputTime.substr(3, 2));
-    } catch (const std::exception&) {
-        return false;
-    }
-
-    if (hour < 0 || hour > 23 || minute < 0 || minute > 59) {
-        return false;
-    }
-
+bool Appointment::isValidDateTime(const std::string& date, const std::string& time) {
+    std::istringstream ss(date + " " + time);
     std::tm tm = {};
-    tm.tm_year = year - 1900;
-    tm.tm_mon = month - 1;
-    tm.tm_mday = day;
-    tm.tm_hour = hour - timezoneOffset;
-    tm.tm_min = minute;
-    tm.tm_sec = 0;
-    tm.tm_isdst = -1;
+    ss >> std::get_time(&tm, "%Y-%m-%d %H:%M");
 
-    std::time_t appointmentTime = std::mktime(&tm);
-    if (appointmentTime == -1) return false;
-
-    std::time_t now = std::time(nullptr);
-    return appointmentTime >= now;
-}
-
-bool Appointment::isDoctorAvailable(const std::string& checkDate, const std::string& checkTime, int tzOffset) const {
-    for (const auto* appointment : doctor->getAppointments()) {
-        if (appointment->getDate() == checkDate &&
-            appointment->getTime() == checkTime &&
-            appointment->getTimezoneOffset() == tzOffset) {
-            return false;
-        }
+    if (ss.fail()) {
+        return false;
     }
+
     return true;
 }
 
-void Appointment::printInfo() const {
-    std::cout << "Appointment with Dr. " << doctor->getName()
-              << " on " << date << " at " << time
-              << " (UTC" << (timezoneOffset >= 0 ? "+" : "") << timezoneOffset << ")\n";
+
+bool Appointment::isInFuture() const {
+    std::istringstream ss(date + " " + time);
+    std::tm tm = {};
+    ss >> std::get_time(&tm, "%Y-%m-%d %H:%M");
+
+    if (ss.fail()) {
+        return false;
+    }
+
+    std::time_t appointmentTime = std::mktime(&tm);
+    std::time_t now = std::time(nullptr);
+
+    return appointmentTime > now;
 }
 
-std::ostream& operator<<(std::ostream& os, const Appointment& app) {
-    os << "Appointment with Dr. " << app.doctor->getName()
-       << " on " << app.date << " at " << app.time
-       << " (UTC" << (app.timezoneOffset >= 0 ? "+" : "") << app.timezoneOffset << ")";
+
+std::ostream& operator<<(std::ostream& os, const Appointment& appointment) {
+    os << "Appointment:\n"
+       << " Date: " << appointment.date << "\n"
+       << " Time: " << appointment.time << "\n"
+       << " Doctor: ";
+    if (appointment.doctor) {
+        os << *appointment.doctor;
+    } else {
+        os << "None\n";
+    }
+    os << " Patient: ";
+    if (appointment.patient) {
+        os << *appointment.patient;
+    } else {
+        os << "None\n";
+    }
     return os;
 }

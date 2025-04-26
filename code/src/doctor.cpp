@@ -1,10 +1,11 @@
 #include "../includes/doctor.h"
-#include "../includes/medical_data.h"
-#include <iostream>
+#include "../includes/patient.h"
 #include <algorithm>
 
-Doctor::Doctor(std::string name, std::string specialty)
-    : name(std::move(name)), specialty(std::move(specialty)) {}
+
+Doctor::Doctor(const std::string& name, const std::string& specialty)
+    : name(name), specialty(specialty) {}
+
 
 const std::string& Doctor::getName() const {
     return name;
@@ -14,46 +15,47 @@ const std::string& Doctor::getSpecialty() const {
     return specialty;
 }
 
-const std::vector<Patient*>& Doctor::getPatientList() const {
+const std::vector<Patient*>& Doctor::getPatients() const {
     return patients;
 }
 
-void Doctor::addAppointment(Appointment* appointment) {
-    appointments.push_back(appointment);
-}
-
-const std::vector<Appointment*>& Doctor::getAppointments() const {
-    return appointments;
-}
-
-void Doctor::assignPatient(Patient* p) {
-    patients.push_back(p);
-}
-
-void Doctor::removePatient(const Patient* p) {
-    auto it = std::find_if(patients.begin(), patients.end(),
-        [p](const Patient* patient) { return patient == p; });
-    if (it != patients.end()) patients.erase(it);
-}
-
-void Doctor::printInfo() const {
-    std::cout << "Doctor: " << name << ", Specialty: " << specialty << "\n";
-}
-
-void Doctor::printPatients() const {
-    std::cout << "Patients assigned to Dr. " << name << ":\n";
-    for(const auto* pat : patients) {
-        std::cout << *pat << "\n";
+void Doctor::assignPatient(Patient* patient) {
+    if (patient) {
+        patients.push_back(patient);
     }
 }
 
-Doctor::~Doctor() = default;
-
-std::ostream& operator<<(std::ostream& os, const Doctor& d) {
-    os << "Doctor: " << d.name << ", Specialty: " << d.specialty;
-    return os;
+void Doctor::removePatient(const Patient* patient) {
+    patients.erase(
+        std::remove_if(patients.begin(), patients.end(),
+            [patient](const Patient* p) {
+                return p == patient;
+            }),
+        patients.end()
+    );
 }
 
-bool Doctor::isValidSpecialty(const std::string& specialty) {
-    return knownSpecialties.count(specialty) > 0;
+bool Doctor::hasPatient(const std::string& patientName) const {
+    for (const auto& p : patients) {
+        if (p && p->getName() == patientName) {
+            return true;
+        }
+    }
+    return false;
+}
+
+std::ostream& operator<<(std::ostream& os, const Doctor& doctor) {
+    os << "Doctor: " << doctor.name
+       << ", Specialty: " << doctor.specialty
+       << ", Patients: ";
+    if (doctor.patients.empty()) {
+        os << "None";
+    } else {
+        for (const auto& p : doctor.patients) {
+            if (p) {
+                os << "[" << p->getName() << "] ";
+            }
+        }
+    }
+    return os;
 }

@@ -3,39 +3,31 @@
 
 #include <string>
 #include <vector>
-#include "patient.h"
-#include "appointment.h"
+#include <iostream>
 
 class Patient;
-class Appointment;
 
 class Doctor {
 private:
     std::string name;
     std::string specialty;
     std::vector<Patient*> patients;
-    std::vector<Appointment*> appointments;
 
 public:
-    Doctor(std::string name, std::string specialty);
+    Doctor(const std::string& name, const std::string& specialty);
 
-    [[nodiscard]] const std::string& getName() const;
-    [[nodiscard]] const std::string& getSpecialty() const;
-    [[nodiscard]] const std::vector<Patient*>& getPatientList() const;
-    [[nodiscard]] const std::vector<Appointment*>& getAppointments() const;
 
-    void addAppointment(Appointment* appointment);
-    void assignPatient(Patient* p);
-    void removePatient(const Patient* p);
+    const std::string& getName() const;
+    const std::string& getSpecialty() const;
+    const std::vector<Patient*>& getPatients() const;
 
-    void printInfo() const;
-    void printPatients() const;
 
-    ~Doctor();
+    void assignPatient(Patient* patient);
+    void removePatient(const Patient* patient);
+    bool hasPatient(const std::string& patientName) const;
 
-    friend std::ostream& operator<<(std::ostream& os, const Doctor& d);
 
-    static bool isValidSpecialty(const std::string& specialty);
+    friend std::ostream& operator<<(std::ostream& os, const Doctor& doctor);
 };
 
 #endif // DOCTOR_H
