@@ -11,8 +11,6 @@ Appointment::Appointment(const std::string& date, const std::string& time, Docto
 
 const std::string& Appointment::getDate() const { return date; }
 const std::string& Appointment::getTime() const { return time; }
-Doctor* Appointment::getDoctor() const { return doctor; }
-Patient* Appointment::getPatient() const { return patient; }
 
 bool Appointment::isValidDateTime() const {
     std::tm tm{};

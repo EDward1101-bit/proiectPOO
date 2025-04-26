@@ -21,9 +21,6 @@ public:
 
     const std::string& getDate() const;
     const std::string& getTime() const;
-    Doctor* getDoctor() const;
-    Patient* getPatient() const;
-
 
     bool isInFuture() const;
     bool isValidDateTime() const;
