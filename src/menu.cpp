@@ -219,22 +219,13 @@ void Menu::patientsMenu() {
 
                 for (const auto& p : patients) {
                     if (p->getName() == patientName) {
-                        std::cout << "CNP: " << p->getCNP() << ", Age: " << p->getAge()
-                                  << ", Gender: " << p->getGender() << "\n";
-                        if (p->isHealthy()) {
-                            std::cout << "Patient is healthy.\n";
-                        } else {
-                            std::cout << "Diseases: ";
-                            for (const auto& d : p->getDiseases()) {
-                                std::cout << d << " ";
-                            }
-                            std::cout << "\n";
-                        }
+                        std::cout << *p << "\n";
                         break;
                     }
                 }
                 break;
             }
+
             case 0:
                 break;
             default:
