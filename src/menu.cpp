@@ -5,6 +5,7 @@
 #include "../includes/appointment.h"
 
 #include <iostream>
+#include <limits>
 
 Menu::Menu(Hospital& hospital, std::vector<std::unique_ptr<Patient>>& patients)
     : hospital(hospital), patients(patients) {}
@@ -12,34 +13,24 @@ Menu::Menu(Hospital& hospital, std::vector<std::unique_ptr<Patient>>& patients)
 void Menu::showMainMenu() {
     int choice;
     do {
-        std::cout << "\n=== Hospital Management Menu ===\n";
+        std::cout << "\n--- Main Menu ---\n";
         std::cout << "1. Doctors Menu\n";
         std::cout << "2. Patients Menu\n";
         std::cout << "3. Appointments Menu\n";
         std::cout << "0. Exit\n";
         std::cout << "Choice: ";
         std::cin >> choice;
-        std::cin.ignore();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
         switch (choice) {
-            case 1:
-                doctorsMenu();
-                break;
-            case 2:
-                patientsMenu();
-                break;
-            case 3:
-                appointmentsMenu();
-                break;
-            case 0:
-                std::cout << "Goodbye!\n";
-                break;
-            default:
-                std::cout << "Invalid choice. Try again.\n";
+            case 1: doctorsMenu(); break;
+            case 2: patientsMenu(); break;
+            case 3: appointmentsMenu(); break;
+            case 0: std::cout << "Goodbye!\n"; break;
+            default: std::cout << "Invalid choice. Try again.\n";
         }
     } while (choice != 0);
 }
-
 
 void Menu::doctorsMenu() {
     int choice;
@@ -52,7 +43,7 @@ void Menu::doctorsMenu() {
         std::cout << "0. Back to main menu\n";
         std::cout << "Choice: ";
         std::cin >> choice;
-        std::cin.ignore();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
         switch (choice) {
             case 1:
@@ -62,7 +53,7 @@ void Menu::doctorsMenu() {
                 std::string doctorName;
                 std::cout << "Enter doctor's name: ";
                 std::getline(std::cin, doctorName);
-                Doctor* doctor = hospital.findDoctorByName(doctorName);
+                const Doctor* doctor = hospital.findDoctorByName(doctorName);
                 if (doctor) {
                     std::cout << *doctor << "\n";
                 } else {
@@ -74,25 +65,23 @@ void Menu::doctorsMenu() {
                 std::string doctorName, patientName;
                 std::cout << "Enter doctor's name: ";
                 std::getline(std::cin, doctorName);
-                Doctor* doctor = hospital.findDoctorByName(doctorName);
-                if (!doctor) {
-                    std::cout << "Doctor not found.\n";
-                    break;
-                }
-                std::cout << "Enter patient's name to assign: ";
+                std::cout << "Enter patient's name: ";
                 std::getline(std::cin, patientName);
-                Patient* foundPatient = nullptr;
+
+                Doctor* doctor = hospital.findDoctorByName(doctorName);
+                Patient* patient = nullptr;
                 for (const auto& p : patients) {
                     if (p->getName() == patientName) {
-                        foundPatient = p.get();
+                        patient = p.get();
                         break;
                     }
                 }
-                if (foundPatient) {
-                    doctor->assignPatient(foundPatient);
+
+                if (doctor && patient) {
+                    doctor->assignPatient(patient);
                     std::cout << "Patient assigned successfully.\n";
                 } else {
-                    std::cout << "Patient not found.\n";
+                    std::cout << "Doctor or patient not found.\n";
                 }
                 break;
             }
@@ -100,17 +89,18 @@ void Menu::doctorsMenu() {
                 std::string doctorName, patientName;
                 std::cout << "Enter doctor's name: ";
                 std::getline(std::cin, doctorName);
-                Doctor* doctor = hospital.findDoctorByName(doctorName);
-                if (!doctor) {
-                    std::cout << "Doctor not found.\n";
-                    break;
-                }
-                std::cout << "Enter patient's name to discharge: ";
+                std::cout << "Enter patient's name: ";
                 std::getline(std::cin, patientName);
-                if (doctor->dischargePatient(patientName)) {
-                    std::cout << "Patient discharged successfully.\n";
+
+                Doctor* doctor = hospital.findDoctorByName(doctorName);
+                if (doctor) {
+                    if (doctor->dischargePatient(patientName)) {
+                        std::cout << "Patient discharged successfully.\n";
+                    } else {
+                        std::cout << "Patient not found under this doctor.\n";
+                    }
                 } else {
-                    std::cout << "Patient not found under this doctor.\n";
+                    std::cout << "Doctor not found.\n";
                 }
                 break;
             }
@@ -121,7 +111,6 @@ void Menu::doctorsMenu() {
         }
     } while (choice != 0);
 }
-
 
 void Menu::patientsMenu() {
     int choice;
@@ -134,14 +123,12 @@ void Menu::patientsMenu() {
         std::cout << "0. Back to main menu\n";
         std::cout << "Choice: ";
         std::cin >> choice;
-        std::cin.ignore();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
         switch (choice) {
             case 1:
-                if (patients.empty()) {
-                    std::cout << "No patients available.\n";
-                } else {
-                    for (const auto& p : patients) {
+                for (const auto& p : patients) {
+                    if (p) {
                         std::cout << *p << "\n";
                     }
                 }
@@ -150,20 +137,15 @@ void Menu::patientsMenu() {
                 std::string patientName, disease;
                 std::cout << "Enter patient's name: ";
                 std::getline(std::cin, patientName);
-                Patient* patient = nullptr;
+                std::cout << "Enter disease to add: ";
+                std::getline(std::cin, disease);
+
                 for (const auto& p : patients) {
                     if (p->getName() == patientName) {
-                        patient = p.get();
+                        p->addDisease(disease);
+                        std::cout << "Disease added.\n";
                         break;
                     }
-                }
-                if (patient) {
-                    std::cout << "Enter disease to add: ";
-                    std::getline(std::cin, disease);
-                    patient->addDisease(disease);
-                    std::cout << "Disease added.\n";
-                } else {
-                    std::cout << "Patient not found.\n";
                 }
                 break;
             }
@@ -171,20 +153,15 @@ void Menu::patientsMenu() {
                 std::string patientName, disease;
                 std::cout << "Enter patient's name: ";
                 std::getline(std::cin, patientName);
-                Patient* patient = nullptr;
+                std::cout << "Enter disease to remove: ";
+                std::getline(std::cin, disease);
+
                 for (const auto& p : patients) {
                     if (p->getName() == patientName) {
-                        patient = p.get();
+                        p->removeDisease(disease);
+                        std::cout << "Disease removed.\n";
                         break;
                     }
-                }
-                if (patient) {
-                    std::cout << "Enter disease to remove: ";
-                    std::getline(std::cin, disease);
-                    patient->removeDisease(disease);
-                    std::cout << "Disease removed.\n";
-                } else {
-                    std::cout << "Patient not found.\n";
                 }
                 break;
             }
@@ -192,21 +169,16 @@ void Menu::patientsMenu() {
                 std::string patientName;
                 std::cout << "Enter patient's name: ";
                 std::getline(std::cin, patientName);
-                Patient* patient = nullptr;
+
                 for (const auto& p : patients) {
                     if (p->getName() == patientName) {
-                        patient = p.get();
+                        if (p->isHealthy()) {
+                            std::cout << "Patient is healthy.\n";
+                        } else {
+                            std::cout << "Patient has diseases.\n";
+                        }
                         break;
                     }
-                }
-                if (patient) {
-                    if (patient->isHealthy()) {
-                        std::cout << "Patient is healthy.\n";
-                    } else {
-                        std::cout << "Patient has diseases.\n";
-                    }
-                } else {
-                    std::cout << "Patient not found.\n";
                 }
                 break;
             }
@@ -227,17 +199,17 @@ void Menu::appointmentsMenu() {
         std::cout << "0. Back to main menu\n";
         std::cout << "Choice: ";
         std::cin >> choice;
-        std::cin.ignore();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
         switch (choice) {
             case 1:
                 hospital.listAllAppointments();
-            break;
+                break;
             case 2: {
                 std::string doctorName, patientName, date, time;
                 std::cout << "Enter doctor's name: ";
                 std::getline(std::cin, doctorName);
-                Doctor* doctor = hospital.findDoctorByName(doctorName);
+                const Doctor* doctor = hospital.findDoctorByName(doctorName);
                 if (!doctor) {
                     std::cout << "Doctor not found.\n";
                     break;
@@ -252,7 +224,6 @@ void Menu::appointmentsMenu() {
                         break;
                     }
                 }
-
                 if (!patient) {
                     std::cout << "Patient not found.\n";
                     break;
@@ -263,12 +234,12 @@ void Menu::appointmentsMenu() {
                 std::cout << "Enter time (HH:MM): ";
                 std::getline(std::cin, time);
 
-                auto appointment = std::make_unique<Appointment>(date, time, doctor, patient);
+                auto appointment = std::make_unique<Appointment>(date, time, const_cast<Doctor*>(doctor), patient);
                 if (appointment->isValidDateTime()) {
                     hospital.addAppointment(std::move(appointment));
                     std::cout << "Appointment added successfully.\n";
                 } else {
-                    std::cout << "Invalid appointment date/time. Must be in the future and correct format.\n";
+                    std::cout << "Invalid appointment date/time. Must be in the future.\n";
                 }
                 break;
             }
@@ -279,4 +250,3 @@ void Menu::appointmentsMenu() {
         }
     } while (choice != 0);
 }
-

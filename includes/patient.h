@@ -32,7 +32,6 @@ public:
     bool isHealthy() const;
     static bool isValidCNP(const std::string& cnp);
 
-
     friend std::ostream& operator<<(std::ostream& os, const Patient& patient);
 };
 

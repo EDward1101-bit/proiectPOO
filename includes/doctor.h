@@ -16,7 +16,6 @@ private:
 public:
     Doctor(const std::string& name, const std::string& specialty);
 
-
     const std::string& getName() const;
     const std::string& getSpecialty() const;
     const std::vector<Patient*>& getPatients() const;
@@ -25,7 +24,6 @@ public:
     void assignPatient(Patient* patient);
     void removePatient(const Patient* patient);
     bool hasPatient(const std::string& patientName) const;
-
 
     friend std::ostream& operator<<(std::ostream& os, const Doctor& doctor);
 };

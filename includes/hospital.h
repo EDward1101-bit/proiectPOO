@@ -17,20 +17,15 @@ private:
     std::vector<std::unique_ptr<Appointment>> appointments;
 
 public:
-
     explicit Hospital(const std::string& name);
 
     Hospital(const Hospital& other);
-
     Hospital& operator=(const Hospital& other);
-
-
     ~Hospital();
 
     const std::string& getName() const;
     const std::vector<std::unique_ptr<Doctor>>& getDoctors() const;
     const std::vector<std::unique_ptr<Appointment>>& getAppointments() const;
-
 
     void addDoctor(std::unique_ptr<Doctor> doctor);
     void addAppointment(std::unique_ptr<Appointment> appointment);

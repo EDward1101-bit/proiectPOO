@@ -1,10 +1,8 @@
 #include "../includes/patient.h"
-#include <regex>
-
+#include <algorithm>
 
 Patient::Patient(const std::string& name, const std::string& cnp, int age, char gender)
     : name(name), cnp(cnp), age(age), gender(gender) {}
-
 
 Patient::Patient(const Patient& other)
     : name(other.name), cnp(other.cnp), age(other.age), gender(other.gender), diseases(other.diseases) {}
@@ -20,27 +18,13 @@ Patient& Patient::operator=(const Patient& other) {
     return *this;
 }
 
-Patient::~Patient() = default;
+Patient::~Patient() {}
 
-const std::string& Patient::getName() const {
-    return name;
-}
-
-const std::string& Patient::getCNP() const {
-    return cnp;
-}
-
-int Patient::getAge() const {
-    return age;
-}
-
-char Patient::getGender() const {
-    return gender;
-}
-
-const std::set<std::string>& Patient::getDiseases() const {
-    return diseases;
-}
+const std::string& Patient::getName() const { return name; }
+const std::string& Patient::getCNP() const { return cnp; }
+int Patient::getAge() const { return age; }
+char Patient::getGender() const { return gender; }
+const std::set<std::string>& Patient::getDiseases() const { return diseases; }
 
 void Patient::addDisease(const std::string& disease) {
     diseases.insert(disease);
@@ -55,24 +39,23 @@ bool Patient::isHealthy() const {
 }
 
 bool Patient::isValidCNP(const std::string& cnp) {
-    return std::regex_match(cnp, std::regex("\\d{13}"));
+    return cnp.length() == 13 && std::all_of(cnp.begin(), cnp.end(), ::isdigit);
 }
 
-
 std::ostream& operator<<(std::ostream& os, const Patient& patient) {
-    os << "Name: " << patient.name << "\n";
-    os << "CNP: " << patient.cnp << "\n";
-    os << "Age: " << patient.age << "\n";
-    os << "Gender: " << patient.gender << "\n";
-    os << "Diseases: ";
-    if (patient.diseases.empty()) {
-        os << "None";
-    } else {
+    os << "Patient Name: " << patient.name
+       << ", CNP: " << patient.cnp
+       << ", Age: " << patient.age
+       << ", Gender: " << patient.gender;
+
+    if (!patient.diseases.empty()) {
+        os << ", Diseases: ";
         for (const auto& disease : patient.diseases) {
             os << disease << " ";
         }
+    } else {
+        os << ", Healthy";
     }
-    os << "\n";
+
     return os;
 }
-
