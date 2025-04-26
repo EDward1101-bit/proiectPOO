@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <limits>
+#include <sstream>
 
 Menu::Menu(Hospital& hospital, std::vector<std::unique_ptr<Patient>>& patients)
     : hospital(hospital), patients(patients) {}
@@ -40,6 +41,7 @@ void Menu::doctorsMenu() {
         std::cout << "2. Find doctor by name\n";
         std::cout << "3. Assign patient to doctor\n";
         std::cout << "4. Discharge patient from doctor\n";
+        std::cout << "5. Remove disease from patient\n";
         std::cout << "0. Back to main menu\n";
         std::cout << "Choice: ";
         std::cin >> choice;
@@ -56,10 +58,6 @@ void Menu::doctorsMenu() {
                 const Doctor* doctor = hospital.findDoctorByName(doctorName);
                 if (doctor) {
                     std::cout << *doctor << "\n";
-                    std::cout << "Specialty: " << doctor->getSpecialty() << "\n";
-                    for (const auto& p : doctor->getPatients()) {
-                        std::cout << "- " << p->getName() << "\n";
-                    }
                 } else {
                     std::cout << "Doctor not found.\n";
                 }
@@ -108,6 +106,31 @@ void Menu::doctorsMenu() {
                 }
                 break;
             }
+            case 5: {
+                std::string doctorName, patientName, disease;
+                std::cout << "Enter doctor's name: ";
+                std::getline(std::cin, doctorName);
+                std::cout << "Enter patient's name: ";
+                std::getline(std::cin, patientName);
+                std::cout << "Enter disease to remove: ";
+                std::getline(std::cin, disease);
+
+                Doctor* doctor = hospital.findDoctorByName(doctorName);
+                if (doctor) {
+                    for (auto& p : doctor->getPatients()) {
+                        if (p->getName() == patientName) {
+                            p->removeDisease(disease);
+                            std::cout << "Disease removed (if existed).\n";
+                            goto EndCase5;
+                        }
+                    }
+                    std::cout << "Patient not found under this doctor.\n";
+                } else {
+                    std::cout << "Doctor not found.\n";
+                }
+                EndCase5:;
+                break;
+            }
             case 0:
                 break;
             default:
@@ -121,10 +144,8 @@ void Menu::patientsMenu() {
     do {
         std::cout << "\n--- Patients Menu ---\n";
         std::cout << "1. List all patients\n";
-        std::cout << "2. Add disease to patient\n";
-        std::cout << "3. Remove disease from patient\n";
-        std::cout << "4. Show patient details\n";
-        std::cout << "5. Validate a CNP\n";
+        std::cout << "2. Add new patient\n";
+        std::cout << "3. Show patient details\n";
         std::cout << "0. Back to main menu\n";
         std::cout << "Choice: ";
         std::cin >> choice;
@@ -137,36 +158,61 @@ void Menu::patientsMenu() {
                 }
                 break;
             case 2: {
-                std::string patientName, disease;
-                std::cout << "Enter patient's name: ";
-                std::getline(std::cin, patientName);
-                std::cout << "Enter disease to add: ";
-                std::getline(std::cin, disease);
+                std::string name, cnp, genderStr, diseasesStr;
+                int age;
 
-                for (const auto& p : patients) {
-                    if (p->getName() == patientName) {
-                        p->addDisease(disease);
-                        break;
+                std::cout << "Enter name: ";
+                std::getline(std::cin, name);
+
+                std::cout << "Enter CNP: ";
+                std::getline(std::cin, cnp);
+                if (!Patient::isValidCNP(cnp)) {
+                    std::cout << "Invalid CNP. Patient not added.\n";
+                    break;
+                }
+
+                std::cout << "Enter age: ";
+                if (!(std::cin >> age)) {
+                    std::cout << "Invalid age. Patient not added.\n";
+                    std::cin.clear(); // clear the error flag
+                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                    break;
+                }
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+                std::cout << "Enter gender (M/F): ";
+                std::getline(std::cin, genderStr);
+                if (genderStr.empty()) {
+                    std::cout << "Invalid gender. Patient not added.\n";
+                    break;
+                }
+                char gender = toupper(genderStr[0]);
+                if (gender != 'M' && gender != 'F') {
+                    std::cout << "Invalid gender. Patient not added.\n";
+                    break;
+                }
+
+                std::cout << "Enter diseases (comma-separated, leave empty if none): ";
+                std::getline(std::cin, diseasesStr);
+
+                auto newPatient = std::make_unique<Patient>(name, cnp, age, gender);
+
+                if (!diseasesStr.empty()) {
+                    std::istringstream diseaseStream(diseasesStr);
+                    std::string disease;
+                    while (std::getline(diseaseStream, disease, ',')) {
+                        if (!disease.empty()) {
+                            newPatient->addDisease(disease);
+                        }
                     }
                 }
+
+                patients.push_back(std::move(newPatient));
+                std::cout << "Patient added successfully.\n";
                 break;
             }
+
             case 3: {
-                std::string patientName, disease;
-                std::cout << "Enter patient's name: ";
-                std::getline(std::cin, patientName);
-                std::cout << "Enter disease to remove: ";
-                std::getline(std::cin, disease);
-
-                for (const auto& p : patients) {
-                    if (p->getName() == patientName) {
-                        p->removeDisease(disease);
-                        break;
-                    }
-                }
-                break;
-            }
-            case 4: {
                 std::string patientName;
                 std::cout << "Enter patient's name: ";
                 std::getline(std::cin, patientName);
@@ -189,13 +235,6 @@ void Menu::patientsMenu() {
                 }
                 break;
             }
-            case 5: {
-                std::string cnp;
-                std::cout << "Enter CNP: ";
-                std::getline(std::cin, cnp);
-                std::cout << (Patient::isValidCNP(cnp) ? "CNP is valid.\n" : "CNP is invalid.\n");
-                break;
-            }
             case 0:
                 break;
             default:
@@ -208,7 +247,7 @@ void Menu::appointmentsMenu() {
     int choice;
     do {
         std::cout << "\n--- Appointments Menu ---\n";
-        std::cout << "1. List appointments (sorted)\n";
+        std::cout << "1. List appointments\n";
         std::cout << "2. Add new appointment\n";
         std::cout << "0. Back to main menu\n";
         std::cout << "Choice: ";

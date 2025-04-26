@@ -50,12 +50,15 @@ std::ostream& operator<<(std::ostream& os, const Patient& patient) {
 
     if (!patient.diseases.empty()) {
         os << ", Diseases: ";
-        for (const auto& disease : patient.diseases) {
-            os << disease << " ";
+        auto it = patient.diseases.begin();
+        os << *it;
+        ++it;
+        for (; it != patient.diseases.end(); ++it) {
+            os << ", " << *it;
         }
     } else {
         os << ", Healthy";
     }
-
     return os;
 }
+
