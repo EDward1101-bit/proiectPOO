@@ -220,11 +220,14 @@ void Menu::patientsMenu() {
                 for (const auto& p : patients) {
                     if (p->getName() == patientName) {
                         std::cout << *p << "\n";
+                        std::cout << "Press ENTER to continue...\n";
+                        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                         break;
                     }
                 }
                 break;
             }
+
 
             case 0:
                 break;
