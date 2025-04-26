@@ -18,7 +18,7 @@ private:
 
 public:
 
-    Hospital(const std::string& name);
+    explicit Hospital(const std::string& name);
 
     Hospital(const Hospital& other);
 

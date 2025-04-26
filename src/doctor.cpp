@@ -8,7 +8,7 @@ Doctor::Doctor(const std::string& name, const std::string& specialty)
 
 bool Doctor::dischargePatient(const std::string& patientName) {
     auto it = std::remove_if(patients.begin(), patients.end(),
-        [&patientName](Patient* p) {
+        [&patientName](const Patient* p) {
             return p && p->getName() == patientName;
         });
 
