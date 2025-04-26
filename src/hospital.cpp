@@ -43,14 +43,15 @@ void Hospital::addAppointment(std::unique_ptr<Appointment> appointment) {
     appointments.push_back(std::move(appointment));
 }
 
-Doctor* Hospital::findDoctorByName(const std::string& name) const {
+Doctor* Hospital::findDoctorByName(const std::string& doctorName) const {
     for (const auto& doctor : doctors) {
-        if (doctor && doctor->getName() == name) {
+        if (doctor && doctor->getName() == doctorName) {
             return doctor.get();
         }
     }
     return nullptr;
 }
+
 
 void Hospital::listAllDoctors() const {
     for (const auto& doctor : doctors) {

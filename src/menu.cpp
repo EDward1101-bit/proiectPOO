@@ -149,7 +149,14 @@ void Menu::patientsMenu() {
         std::cout << "0. Back to main menu\n";
         std::cout << "Choice: ";
         std::cin >> choice;
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        if (std::cin.fail()) {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            choice = -1;
+        } else {
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        }
+
 
         switch (choice) {
             case 1:
