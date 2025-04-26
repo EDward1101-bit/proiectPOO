@@ -21,10 +21,6 @@ Patient& Patient::operator=(const Patient& other) {
 Patient::~Patient() {}
 
 const std::string& Patient::getName() const { return name; }
-const std::string& Patient::getCNP() const { return cnp; }
-int Patient::getAge() const { return age; }
-char Patient::getGender() const { return gender; }
-const std::set<std::string>& Patient::getDiseases() const { return diseases; }
 
 void Patient::addDisease(const std::string& disease) {
     diseases.insert(disease);
@@ -32,10 +28,6 @@ void Patient::addDisease(const std::string& disease) {
 
 void Patient::removeDisease(const std::string& disease) {
     diseases.erase(disease);
-}
-
-bool Patient::isHealthy() const {
-    return diseases.empty();
 }
 
 bool Patient::isValidCNP(const std::string& cnp) {

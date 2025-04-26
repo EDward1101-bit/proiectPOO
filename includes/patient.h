@@ -22,14 +22,9 @@ public:
     ~Patient();
 
     const std::string& getName() const;
-    const std::string& getCNP() const;
-    int getAge() const;
-    char getGender() const;
-    const std::set<std::string>& getDiseases() const;
 
     void addDisease(const std::string& disease);
     void removeDisease(const std::string& disease);
-    bool isHealthy() const;
     static bool isValidCNP(const std::string& cnp);
 
     friend std::ostream& operator<<(std::ostream& os, const Patient& patient);
