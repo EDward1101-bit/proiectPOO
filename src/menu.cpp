@@ -115,7 +115,7 @@ void Menu::doctorsMenu() {
                 std::cout << "Enter disease to remove: ";
                 std::getline(std::cin, disease);
 
-                Doctor* doctor = hospital.findDoctorByName(doctorName);
+                const Doctor* doctor = hospital.findDoctorByName(doctorName);
                 if (doctor) {
                     for (auto& p : doctor->getPatients()) {
                         if (p->getName() == patientName) {
