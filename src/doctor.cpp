@@ -28,7 +28,7 @@ bool Doctor::dischargePatient(const std::string& patientName) {
 }
 
 std::ostream& operator<<(std::ostream& os, const Doctor& doctor) {
-    os << "Doctor Name: " << doctor.name << ", Specialty: " << doctor.specialty;
+    os << "Doctor Name: " << doctor.name << ", Specialty: " << doctor.getSpecialty();
     if (!doctor.patients.empty()) {
         os << ", Patients: ";
         for (const Patient* p : doctor.patients){
