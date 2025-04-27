@@ -181,7 +181,7 @@ void Menu::patientsMenu() {
                 std::cout << "Enter age: ";
                 if (!(std::cin >> age)) {
                     std::cout << "Invalid age. Patient not added.\n";
-                    std::cin.clear(); // clear the error flag
+                    std::cin.clear();
                     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                     break;
                 }
@@ -288,6 +288,11 @@ void Menu::appointmentsMenu() {
                 std::getline(std::cin, date);
                 std::cout << "Enter time (HH:MM): ";
                 std::getline(std::cin, time);
+
+                if (!hospital.isDoctorAvailable(doctor, date, time)) {
+                    std::cout << "Doctor already has an appointment at that time.\n";
+                    break;
+                }
 
                 auto appointment = std::make_unique<Appointment>(date, time, doctor, patient);
                 if (appointment->isValidDateTime() && appointment->isInFuture()) {

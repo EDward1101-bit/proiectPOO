@@ -78,6 +78,17 @@ void Hospital::listAllAppointments() const {
     }
 }
 
+bool Hospital::isDoctorAvailable(const Doctor* doctor, const std::string& date, const std::string& time) const {
+    for (const auto& appointment : appointments) {
+        if (appointment && appointment->getDoctor() == doctor) {
+            if (appointment->getDate() == date && appointment->getTime() == time) {
+                return false;
+            }
+        }
+    }
+    return true; // Doctorul e liber
+}
+
 std::ostream& operator<<(std::ostream& os, const Hospital& hospital) {
     os << "Hospital Name: " << hospital.name;
     return os;

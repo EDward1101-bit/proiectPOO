@@ -67,7 +67,10 @@ void loadAppointments(Hospital& hospital, const std::vector<std::unique_ptr<Pati
         std::cerr << "Error opening appointments file.\n";
         return;
     }
+
+    std::vector<std::tuple<std::string, std::string, std::string, std::string>> validAppointments;
     std::string line;
+
     while (std::getline(fin, line)) {
         std::istringstream iss(line);
         std::string doctorName, patientName, date, time;
@@ -84,11 +87,25 @@ void loadAppointments(Hospital& hospital, const std::vector<std::unique_ptr<Pati
                     break;
                 }
             }
+
             if (doctor && patient) {
-                hospital.addAppointment(std::make_unique<Appointment>(date, time, doctor, patient));
+                auto appointment = std::make_unique<Appointment>(date, time, doctor, patient);
+
+                if (appointment->isValidDateTime() && appointment->isInFuture()) {
+                    validAppointments.push_back({doctorName, patientName, date, time});
+                    hospital.addAppointment(std::move(appointment));
+                }
             }
-        }
+            }
     }
+    fin.close();
+
+    // suprascriem fisierul cu  prog valide
+    std::ofstream fout(filename, std::ios::trunc);
+    for (const auto& [doctorName, patientName, date, time] : validAppointments) {
+        fout << doctorName << "," << patientName << "," << date << "," << time << "\n";
+    }
+    fout.close();
 }
 
 void assignPatients(const Hospital& hospital, std::vector<std::unique_ptr<Patient>>& patients) {

@@ -29,6 +29,8 @@ public:
     void addDoctor(std::unique_ptr<Doctor> doctor);
     void addAppointment(std::unique_ptr<Appointment> appointment);
     Doctor* findDoctorByName(const std::string& name) const;
+    bool isDoctorAvailable(const Doctor* doctor, const std::string& date, const std::string& time) const;
+
     void listAllDoctors() const;
     void listAllAppointments() const;
 
