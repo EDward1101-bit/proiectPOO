@@ -1,7 +1,10 @@
 #include "../includes/hospital.h"
 #include "../includes/doctor.h"
 #include "../includes/appointment.h"
+#include "../includes/patient.h"
 #include <algorithm>
+#include <fstream>
+#include <string>
 
 Hospital::Hospital(const std::string& name) : name(name) {}
 
@@ -87,6 +90,24 @@ bool Hospital::isDoctorAvailable(const Doctor* doctor, const std::string& date, 
         }
     }
     return true; // Doctorul e liber
+}
+
+void Hospital::saveAppointmentsToCSV(const std::string& filename) const {
+    std::ofstream fout(filename, std::ios::trunc); // suprascrie fisierul
+    if (!fout.is_open()) {
+        std::cerr << "Error opening appointments file for writing.\n";
+        return;
+    }
+
+    for (const auto& appointment : appointments) {
+        if (appointment) {
+            fout << appointment->getDoctor()->getName() << ","
+                 << appointment->getPatient()->getName() << ","
+                 << appointment->getDate() << ","
+                 << appointment->getTime() << "\n";
+        }
+    }
+    fout.close();
 }
 
 std::ostream& operator<<(std::ostream& os, const Hospital& hospital) {
