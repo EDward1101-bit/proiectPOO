@@ -11,6 +11,21 @@
 Menu::Menu(Hospital& hospital, std::vector<std::unique_ptr<Patient>>& patients)
     : hospital(hospital), patients(patients) {}
 
+
+std::string readValidName(const std::string& prompt) {
+    std::string name;
+    while (true) {
+        std::cout << prompt;
+        std::getline(std::cin, name);
+
+        if (!name.empty() && name.find_first_not_of(' ') != std::string::npos) {
+            break;
+        }
+        std::cout << "Invalid input. Please enter a non-empty string.\n";
+    }
+    return name;
+}
+
 void Menu::showMainMenu() {
     int choice;
     do {
@@ -52,9 +67,8 @@ void Menu::doctorsMenu() {
                 hospital.listAllDoctors();
                 break;
             case 2: {
-                std::string doctorName;
-                std::cout << "Enter doctor's name: ";
-                std::getline(std::cin, doctorName);
+                std::string doctorName = readValidName("Enter doctor's name: ");
+
                 const Doctor* doctor = hospital.findDoctorByName(doctorName);
                 if (doctor) {
                     std::cout << *doctor << "\n";
@@ -64,11 +78,10 @@ void Menu::doctorsMenu() {
                 break;
             }
             case 3: {
-                std::string doctorName, patientName;
-                std::cout << "Enter doctor's name: ";
-                std::getline(std::cin, doctorName);
-                std::cout << "Enter patient's name: ";
-                std::getline(std::cin, patientName);
+                std::string doctorName = readValidName("Enter doctor's name: ");
+
+                std::string patientName = readValidName("Enter patient's name: ");
+
 
                 Doctor* doctor = hospital.findDoctorByName(doctorName);
                 Patient* patient = nullptr;
@@ -88,11 +101,9 @@ void Menu::doctorsMenu() {
                 break;
             }
             case 4: {
-                std::string doctorName, patientName;
-                std::cout << "Enter doctor's name: ";
-                std::getline(std::cin, doctorName);
-                std::cout << "Enter patient's name: ";
-                std::getline(std::cin, patientName);
+                std::string doctorName = readValidName("Enter doctor's name: ");
+                std::string patientName = readValidName("Enter patient's name: ");
+
 
                 Doctor* doctor = hospital.findDoctorByName(doctorName);
                 if (doctor) {
@@ -107,11 +118,11 @@ void Menu::doctorsMenu() {
                 break;
             }
             case 5: {
-                std::string doctorName, patientName, disease;
-                std::cout << "Enter doctor's name: ";
-                std::getline(std::cin, doctorName);
-                std::cout << "Enter patient's name: ";
-                std::getline(std::cin, patientName);
+                std::string disease;
+                std::string doctorName = readValidName("Enter doctor's name: ");
+
+                std::string patientName = readValidName("Enter patient's name: ");
+
                 std::cout << "Enter disease to remove: ";
                 std::getline(std::cin, disease);
 
@@ -165,11 +176,11 @@ void Menu::patientsMenu() {
                 }
                 break;
             case 2: {
-                std::string name, cnp, genderStr, diseasesStr;
+                std::string cnp, genderStr, diseasesStr;
                 int age;
 
-                std::cout << "Enter name: ";
-                std::getline(std::cin, name);
+                std::string name = readValidName("Enter patient's name: ");
+
 
                 std::cout << "Enter CNP: ";
                 std::getline(std::cin, cnp);
@@ -220,9 +231,7 @@ void Menu::patientsMenu() {
             }
 
             case 3: {
-                std::string patientName;
-                std::cout << "Enter patient's name: ";
-                std::getline(std::cin, patientName);
+                std::string patientName = readValidName("Enter patient's name: ");
 
                 for (const auto& p : patients) {
                     if (p->getName() == patientName) {
