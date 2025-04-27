@@ -4,6 +4,7 @@
 #include <string>
 #include <set>
 #include <iostream>
+#include <set>
 
 class Patient {
 private:
@@ -17,11 +18,17 @@ public:
     Patient(const std::string& name, const std::string& cnp, int age, char gender);
     Patient(const Patient& other);
 
+    const std::string& getName() const;
+    const std::string& getCNP() const;
+    int getAge() const;
+    char getGender() const;
+    const std::set<std::string>& getDiseases() const;
+
     Patient& operator=(const Patient& other);
 
     ~Patient();
 
-    const std::string& getName() const;
+
 
     void addDisease(const std::string& disease);
     void removeDisease(const std::string& disease);

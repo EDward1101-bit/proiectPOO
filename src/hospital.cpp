@@ -110,6 +110,38 @@ void Hospital::saveAppointmentsToCSV(const std::string& filename) const {
     fout.close();
 }
 
+void Hospital::savePatientsToCSV(const std::vector<std::unique_ptr<Patient>>& patients, const std::string& filename) {
+    std::ofstream fout(filename, std::ios::trunc); // ștergem și rescriem
+
+    if (!fout.is_open()) {
+        std::cerr << "Error opening patients file for writing.\n";
+        return;
+    }
+
+    for (const auto& patientPtr : patients) {
+        if (patientPtr) {
+            fout << patientPtr->getName() << ","
+                 << patientPtr->getCNP() << ","
+                 << patientPtr->getAge() << ","
+                 << patientPtr->getGender() << ",";
+
+            if (!patientPtr->getDiseases().empty()) {
+                auto it = patientPtr->getDiseases().begin();
+                fout << *it;
+                ++it;
+                for (; it != patientPtr->getDiseases().end(); ++it) {
+                    fout << "|" << *it;
+                }
+            } else {
+                fout << "Healthy";
+            }
+
+            fout << "\n";
+        }
+    }
+    fout.close();
+}
+
 std::ostream& operator<<(std::ostream& os, const Hospital& hospital) {
     os << "Hospital Name: " << hospital.name;
     return os;

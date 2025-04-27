@@ -136,6 +136,7 @@ int main() {
         Menu menu(hospital, patients);
         menu.showMainMenu();
         hospital.saveAppointmentsToCSV("data/appointments.csv");
+        hospital.savePatientsToCSV(patients, "data/patients.csv");
 
         return 0;
 }
