@@ -32,7 +32,7 @@ std::ostream& operator<<(std::ostream& os, const Doctor& doctor) {
     os << "Patients: ";
 
     bool first = true;
-    for (const auto& patient : doctor.getPatients()) {
+    for (const auto* patient : doctor.getPatients()) {
         if (patient) {
             if (!first) {
                 os << ", ";
