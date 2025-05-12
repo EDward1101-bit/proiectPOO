@@ -100,7 +100,7 @@ void loadAppointments(Hospital& hospital, const std::vector<std::unique_ptr<Pati
     }
     fin.close();
 
-    // suprascriem fisierul cu  prog valide
+    // suprascriem fisierul cu prog valide
     std::ofstream fout(filename, std::ios::trunc);
     for (const auto& [doctorName, patientName, date, time] : validAppointments) {
         fout << doctorName << "," << patientName << "," << date << "," << time << "\n";
