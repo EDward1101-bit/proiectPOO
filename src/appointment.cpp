@@ -52,7 +52,7 @@ bool Appointment::isInFuture() const {
         return false;
     }
 
-    std::tm* appointmentLocalTm = std::localtime(&appointmentTimeT);
+    const std::tm* appointmentLocalTm = std::localtime(&appointmentTimeT);
     int weekday = appointmentLocalTm->tm_wday;
     if (weekday == 0 || weekday == 6) {
         return false;
