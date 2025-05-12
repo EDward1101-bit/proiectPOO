@@ -66,17 +66,17 @@ void Hospital::listAllDoctors() const {
 
 void Hospital::listAllAppointments() const {
     std::vector<const Appointment*> sortedAppointments;
-    for (const auto& app : appointments) {
-        sortedAppointments.push_back(app.get());
+    for (const auto& appt : appointments) {
+        sortedAppointments.push_back(appt.get());
     }
 
     std::sort(sortedAppointments.begin(), sortedAppointments.end(), [](const Appointment* a, const Appointment* b) {
         return a->getDate() < b->getDate() || (a->getDate() == b->getDate() && a->getTime() < b->getTime());
     });
 
-    for (const auto& app : sortedAppointments) {
-        if (app) {
-            std::cout << *app << "\n";
+    for (const auto& appt : sortedAppointments) {
+        if (appt) {
+            std::cout << *appt << "\n";
         }
     }
 }

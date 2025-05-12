@@ -25,30 +25,46 @@ bool Appointment::isValidDateTime() const {
 }
 
 bool Appointment::isInFuture() const {
+    using namespace std::chrono;
 
     std::tm appointmentTm{};
     std::istringstream input(date + " " + time);
     input >> std::get_time(&appointmentTm, "%Y-%m-%d %H:%M");
 
+    if (input.fail()) {
+        return false;
+    }
+
+    appointmentTm.tm_isdst = -1;
     std::time_t appointmentTimeT = std::mktime(&appointmentTm);
     if (appointmentTimeT == -1) {
         return false;
     }
 
-    std::time_t currentTimeT = std::time(nullptr);
-    system_clock::time_point now = system_clock::from_time_t(currentTimeT);
-    system_clock::time_point appointmentTime = system_clock::from_time_t(appointmentTimeT);
+    system_clock::time_point now = system_clock::now();
+    std::time_t nowT = system_clock::to_time_t(now);
 
-    if (appointmentTime <= now) {
+    if (appointmentTimeT <= nowT) {
         return false;
     }
 
-    std::tm currentTm = *std::localtime(&currentTimeT);
-    currentTm.tm_year += 1;
-    std::time_t nextYearTimeT = std::mktime(&currentTm);
-    system_clock::time_point oneYearLater = system_clock::from_time_t(nextYearTimeT);
+    if (system_clock::from_time_t(appointmentTimeT) - now < hours(24 * 7)) {
+        return false;
+    }
 
-    if (appointmentTime > oneYearLater) {
+    std::tm* appointmentLocalTm = std::localtime(&appointmentTimeT);
+    int weekday = appointmentLocalTm->tm_wday;
+    if (weekday == 0 || weekday == 6) {
+        return false;
+    }
+
+    int hour = appointmentLocalTm->tm_hour;
+    int minute = appointmentLocalTm->tm_min;
+    int totalMinutes = hour * 60 + minute;
+    int startMinutes = 8 * 60 + 30;
+    int endMinutes = 18 * 60 + 45;
+
+    if (totalMinutes < startMinutes || totalMinutes > endMinutes) {
         return false;
     }
 
