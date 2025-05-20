@@ -13,6 +13,7 @@ private:
     std::string time;
     Doctor* doctor;
     Patient* patient;
+    bool procesata = false;
 
 public:
 
@@ -23,8 +24,11 @@ public:
     const std::string& getTime() const;
     Doctor* getDoctor() const;
     Patient* getPatient() const;
-
     bool isInFuture() const;
+    bool isProcesata() const;
+    void seteazaProcesata();
+
+
     bool isValidDateTime() const;
 
 
