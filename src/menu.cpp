@@ -291,49 +291,70 @@ void Menu::appointmentsMenu() {
                 hospital.listAllAppointments();
                 break;
             case 2: {
-                std::string doctorName, patientName, date, time;
-                std::cout << "Enter doctor's name: ";
-                std::getline(std::cin, doctorName);
-                Doctor* doctor = hospital.findDoctorByName(doctorName);
-                if (!doctor) {
-                    std::cout << "Doctor not found.\n";
-                    break;
-                }
+    std::string doctorName, patientName, date, time;
+    std::cout << "Enter doctor's name: ";
+    std::getline(std::cin, doctorName);
+    Doctor* doctor = hospital.findDoctorByName(doctorName);
+    if (!doctor) {
+        std::cout << "Doctor not found.\n";
+        break;
+    }
 
-                std::cout << "Enter patient's name: ";
-                std::getline(std::cin, patientName);
-                Patient* patient = nullptr;
-                for (const auto& p : patients) {
-                    if (p->getName() == patientName) {
-                        patient = p.get();
-                        break;
-                    }
-                }
+    std::cout << "Enter patient's name: ";
+    std::getline(std::cin, patientName);
+    Patient* patient = nullptr;
+    for (const auto& p : patients) {
+        if (p->getName() == patientName) {
+            patient = p.get();
+            break;
+        }
+    }
+    if (!patient) {
+        std::cout << "Patient not found.\n";
+        break;
+    }
 
-                if (!patient) {
-                    std::cout << "Patient not found.\n";
-                    break;
-                }
+    // Verificam daca pacientul este asignat acestui doctor
+    const auto& assigned = doctor->getPatients();
+    if (std::find(assigned.begin(), assigned.end(), patient) == assigned.end()) {
+        std::cout << "Patient is not assigned to this doctor.\n";
+        break;
+    }
 
-                std::cout << "Enter date (YYYY-MM-DD): ";
-                std::getline(std::cin, date);
-                std::cout << "Enter time (HH:MM): ";
-                std::getline(std::cin, time);
+    // Verificam daca specialitatea doctorului acopera boala pacientului
+    bool specialtyMatch = false;
+    for (const std::string& disease : patient->getDiseases()) {
+        auto it = diseaseToSpecialty.find(disease);
+        if (it != diseaseToSpecialty.end() && it->second == doctor->getSpecialty()) {
+            specialtyMatch = true;
+            break;
+        }
+    }
 
-                if (!hospital.isDoctorAvailable(doctor, date, time)) {
-                    std::cout << "Doctor already has an appointment at that time.\n";
-                    break;
-                }
+    if (!specialtyMatch) {
+        std::cout << "Doctor is not qualified to treat any of the patient's diseases.\n";
+        break;
+    }
 
-                auto appointment = std::make_unique<Appointment>(date, time, doctor, patient);
-                if (appointment->isValidDateTime() && appointment->isInFuture()) {
-                    hospital.addAppointment(std::move(appointment));
-                    std::cout << "Appointment added.\n";
-                } else {
-                    std::cout << "Invalid date/time.\n";
-                }
-                break;
-            }
+    std::cout << "Enter date (YYYY-MM-DD): ";
+    std::getline(std::cin, date);
+    std::cout << "Enter time (HH:MM): ";
+    std::getline(std::cin, time);
+
+    if (!hospital.isDoctorAvailable(doctor, date, time)) {
+        std::cout << "Doctor already has an appointment at that time.\n";
+        break;
+    }
+
+    auto appointment = std::make_unique<Appointment>(date, time, doctor, patient);
+    if (appointment->isValidDateTime() && appointment->isInFuture()) {
+        hospital.addAppointment(std::move(appointment));
+        std::cout << "Appointment added.\n";
+    } else {
+        std::cout << "Invalid date/time.\n";
+    }
+    break;
+}
             case 0:
                 break;
             default:
