@@ -5,6 +5,9 @@
 #include <set>
 #include <iostream>
 #include <set>
+#include <vector>
+#include <memory>
+#include "ServiciuMedical.h"
 
 class Patient {
 private:
@@ -13,6 +16,10 @@ private:
     int age;
     char gender;
     std::set<std::string> diseases;
+    std::vector<std::shared_ptr<ServiciuMedical>> istoricServicii;
+    bool esteExternat = false;
+    bool esteHealthy = false;
+
 
 public:
     Patient(const std::string& name, const std::string& cnp, int age, char gender);
@@ -23,6 +30,17 @@ public:
     int getAge() const;
     char getGender() const;
     const std::set<std::string>& getDiseases() const;
+
+    void adaugaServiciu(const std::shared_ptr<ServiciuMedical>& serviciu);
+    bool esteBolnav() const;
+    bool esteProcesabil() const;
+    void setExternat(bool);
+    bool getExternat() const;
+    void setHealthy(bool);
+    bool getHealthy() const;
+    double calculeazaCostTotal() const;
+    const std::vector<std::shared_ptr<ServiciuMedical>>& getIstoric() const;
+
 
     Patient& operator=(const Patient& other);
 

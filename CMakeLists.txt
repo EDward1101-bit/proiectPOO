@@ -61,6 +61,12 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         src/hospital.cpp
         src/menu.cpp
         includes/ServiciuMedical.h
+        includes/Consultatie.h
+        includes/Internare.h
+        src/Internare.cpp
+        src/Consultatie.cpp
+        includes/TratamentSpecializat.h
+        src/TratamentSpecializat.cpp
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )

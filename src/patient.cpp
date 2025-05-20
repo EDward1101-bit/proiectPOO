@@ -38,6 +38,47 @@ bool Patient::isValidCNP(const std::string& cnp) {
     return cnp.length() == 13 && std::all_of(cnp.begin(), cnp.end(), ::isdigit);
 }
 
+void Patient::adaugaServiciu(const std::shared_ptr<ServiciuMedical>& serviciu) {
+    istoricServicii.push_back(serviciu);
+}
+
+bool Patient::esteBolnav() const {
+    return !diseases.empty();
+}
+
+bool Patient::esteProcesabil() const {
+    return !esteExternat;
+}
+
+void Patient::setExternat(bool val) {
+    esteExternat = val;
+}
+
+bool Patient::getExternat() const {
+    return esteExternat;
+}
+
+void Patient::setHealthy(bool val) {
+    esteHealthy = val;
+}
+
+bool Patient::getHealthy() const {
+    return esteHealthy;
+}
+
+double Patient::calculeazaCostTotal() const {
+    double total = 0;
+    for (const auto& s : istoricServicii) {
+        total += s->getCost();
+    }
+    return total;
+}
+
+const std::vector<std::shared_ptr<ServiciuMedical>>& Patient::getIstoric() const {
+    return istoricServicii;
+}
+
+
 std::ostream& operator<<(std::ostream& os, const Patient& patient) {
     os << "Patient Name: " << patient.name
        << ", CNP: " << patient.cnp
