@@ -3,6 +3,8 @@
 
 #include <vector>
 #include <memory>
+#include <map>
+#include <string>
 
 class Hospital;
 class Patient;
@@ -11,13 +13,15 @@ class Menu {
 private:
     Hospital& hospital;
     std::vector<std::unique_ptr<Patient>>& patients;
+    const std::map<std::string, std::string>& diseaseToSpecialty;  // NOU
 
     void doctorsMenu();
     void patientsMenu();
     void appointmentsMenu();
 
 public:
-    Menu(Hospital& hospital, std::vector<std::unique_ptr<Patient>>& patients);
+    Menu(Hospital& hospital, std::vector<std::unique_ptr<Patient>>& patients,
+         const std::map<std::string, std::string>& diseaseToSpecialty); // NOU
 
     void showMainMenu();
 };

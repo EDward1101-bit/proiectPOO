@@ -7,9 +7,12 @@
 #include <iostream>
 #include <limits>
 #include <sstream>
+#include <algorithm>
 
-Menu::Menu(Hospital& hospital, std::vector<std::unique_ptr<Patient>>& patients)
-    : hospital(hospital), patients(patients) {}
+Menu::Menu(Hospital& hospital, std::vector<std::unique_ptr<Patient>>& patients,
+           const std::map<std::string, std::string>& diseaseToSpecialty)
+    : hospital(hospital), patients(patients), diseaseToSpecialty(diseaseToSpecialty) {}
+
 
 
 std::string readValidName(const std::string& prompt) {
@@ -79,9 +82,7 @@ void Menu::doctorsMenu() {
             }
             case 3: {
                 std::string doctorName = readValidName("Enter doctor's name: ");
-
                 std::string patientName = readValidName("Enter patient's name: ");
-
 
                 Doctor* doctor = hospital.findDoctorByName(doctorName);
                 Patient* patient = nullptr;
@@ -92,14 +93,35 @@ void Menu::doctorsMenu() {
                     }
                 }
 
-                if (doctor && patient) {
-                    doctor->assignPatient(patient);
-                    std::cout << "Patient assigned successfully.\n";
-                } else {
+                if (!doctor || !patient) {
                     std::cout << "Doctor or patient not found.\n";
+                    break;
+                }
+
+                bool matched = false;
+                for (const std::string& disease : patient->getDiseases()) {
+                    auto it = diseaseToSpecialty.find(disease);
+                    if (it != diseaseToSpecialty.end() && it->second == doctor->getSpecialty()) {
+                        const auto& assigned = doctor->getPatients();
+                        if (std::find(assigned.begin(), assigned.end(), patient) == assigned.end()) {
+                            doctor->assignPatient(patient);
+                            std::cout << "Patient assigned successfully.\n";
+                            matched = true;
+                            break;
+                        } else {
+                            std::cout << "Patient already assigned to this doctor.\n";
+                            matched = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!matched) {
+                    std::cout << "Doctor is not qualified for any of the patient's diseases.\n";
                 }
                 break;
             }
+
             case 4: {
                 std::string doctorName = readValidName("Enter doctor's name: ");
                 std::string patientName = readValidName("Enter patient's name: ");

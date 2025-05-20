@@ -166,7 +166,8 @@ int main() {
 
         loadAppointments(hospital, patients, "data/appointments.csv");
 
-        Menu menu(hospital, patients);
+        Menu menu(hospital, patients, diseaseToSpecialty);
+
         menu.showMainMenu();
         hospital.saveAppointmentsToCSV("data/appointments.csv");
         hospital.savePatientsToCSV(patients, "data/patients.csv");
