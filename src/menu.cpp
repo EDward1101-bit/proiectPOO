@@ -30,16 +30,29 @@ std::string readValidName(const std::string& prompt) {
 }
 
 void Menu::showMainMenu() {
-    int choice;
+    int choice = -1;
+    int loopCounter = 0;
+    const int MAX_LOOPS = 50;
+
     do {
+        if (++loopCounter > MAX_LOOPS) {
+            std::cerr << "Too many invalid inputs. Exiting.\n";
+            break;
+        }
+
         std::cout << "\n--- Main Menu ---\n";
         std::cout << "1. Doctors Menu\n";
         std::cout << "2. Patients Menu\n";
         std::cout << "3. Appointments Menu\n";
         std::cout << "0. Exit\n";
         std::cout << "Choice: ";
-        std::cin >> choice;
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::string input;
+        std::getline(std::cin, input);
+        std::istringstream iss(input);
+        if (!(iss >> choice)) {
+            choice = -1;
+        }
+
 
         switch (choice) {
             case 1: doctorsMenu(); break;
@@ -62,8 +75,12 @@ void Menu::doctorsMenu() {
         std::cout << "5. Remove disease from patient\n";
         std::cout << "0. Back to main menu\n";
         std::cout << "Choice: ";
-        std::cin >> choice;
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::string input;
+        std::getline(std::cin, input);
+        std::istringstream iss(input);
+        if (!(iss >> choice)) {
+            choice = -1;
+        }
 
         switch (choice) {
             case 1:
@@ -283,8 +300,12 @@ void Menu::appointmentsMenu() {
         std::cout << "2. Add new appointment\n";
         std::cout << "0. Back to main menu\n";
         std::cout << "Choice: ";
-        std::cin >> choice;
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::string input;
+        std::getline(std::cin, input);
+        std::istringstream iss(input);
+        if (!(iss >> choice)) {
+            choice = -1;
+        }
 
         switch (choice) {
             case 1:

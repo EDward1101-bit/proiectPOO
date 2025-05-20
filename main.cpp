@@ -110,7 +110,7 @@ void loadAppointments(Hospital& hospital, const std::vector<std::unique_ptr<Pati
     fout.close();
 }
 
-void assignPatients(Hospital& hospital,
+void assignPatients(const Hospital& hospital,
                     std::vector<std::unique_ptr<Patient>>& patients,
                     const std::map<std::string, std::string>& diseaseToSpecialty) {
     for (auto& p : patients) {
