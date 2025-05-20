@@ -24,6 +24,9 @@ public:
          const std::map<std::string, std::string>& diseaseToSpecialty);
 
     void showMainMenu();
+    void genereazaFacturaPacient();
+    void showPatientDetails();
+
 };
 
 #endif // MENU_H

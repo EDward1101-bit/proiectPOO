@@ -4,6 +4,7 @@
 #include "../includes/patient.h"
 #include "../includes/Consultatie.h"
 #include "../includes/TratamentSpecializat.h"
+#include "../includes/InterventieChirurgicala.h"
 #include "../includes/Internare.h"
 #include <algorithm>
 #include <fstream>
@@ -170,10 +171,19 @@ void Hospital::proceseazaProgramare(Appointment& programare,
         std::uniform_real_distribution<> costDist(200.0, 500.0);
         double cost = costDist(gen);
 
-        auto tratament = std::make_shared<TratamentSpecializat>(
-            programare.getDate(), programare.getTime(), doctor, pacient, boala, cost);
+        if (boala == "fractură") {
+            // Intervenție specială pentru fractură
+            std::uniform_int_distribution<> durataDist(1, 4); // între 1–4 ore
+            int durata = durataDist(gen);
+            auto interventie = std::make_shared<InterventieChirurgicala>(
+                programare.getDate(), programare.getTime(), doctor, pacient, "Operație fractură", durata);
+            pacient->adaugaServiciu(interventie);
+        } else {
+            auto tratament = std::make_shared<TratamentSpecializat>(
+                programare.getDate(), programare.getTime(), doctor, pacient, boala, cost);
+            pacient->adaugaServiciu(tratament);
+        }
 
-        pacient->adaugaServiciu(tratament);
     }
 
     programare.seteazaProcesata();
@@ -189,6 +199,35 @@ void Hospital::proceseazaToateProgramarile(const std::map<std::string, std::stri
                       << " la " << appointment->getDate() << " " << appointment->getTime() << "\n";
             proceseazaProgramare(*appointment, diseaseToSpecialty);
         }
+    }
+}
+
+void Hospital::genereazaFactura(Patient& pacient) const {
+    if (pacient.getIstoric().empty()) {
+        std::cout << "Fișa pacientului este goală. Nu există servicii.\n";
+        return;
+    }
+
+    std::cout << "\n===== FACTURĂ PACIENT =====\n";
+    std::cout << "Nume: " << pacient.getName() << "\n";
+    std::cout << "CNP: " << pacient.getCNP() << "\n";
+    std::cout << "------------------------------\n";
+
+    double total = 0;
+    for (const auto& serviciu : pacient.getIstoric()) {
+        serviciu->print(std::cout);
+        double cost = serviciu->getCost();
+        std::cout << " → Cost: " << cost << " RON\n";
+        total += cost;
+    }
+
+    std::cout << "------------------------------\n";
+    std::cout << "TOTAL DE PLATĂ: " << total << " RON\n";
+    std::cout << "==============================\n";
+
+    if (!pacient.getExternat()) {
+        std::cout << "Pacientul a fost acum marcat ca externat.\n";
+        const_cast<Patient&>(pacient).setExternat(true);
     }
 }
 

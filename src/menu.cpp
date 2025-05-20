@@ -195,7 +195,8 @@ void Menu::patientsMenu() {
         std::cout << "\n--- Patients Menu ---\n";
         std::cout << "1. List all patients\n";
         std::cout << "2. Add new patient\n";
-        std::cout << "3. Show patient details\n";
+        std::cout << "3. Show patient details (incl. medical history)\n";
+        std::cout << "4. Generate invoice for a patient\n";
         std::cout << "0. Back to main menu\n";
         std::cout << "Choice: ";
         std::string input;
@@ -282,6 +283,9 @@ void Menu::patientsMenu() {
                 break;
             }
 
+            case 4:
+                genereazaFacturaPacient();
+                break;
 
             case 0:
                 break;
@@ -295,8 +299,9 @@ void Menu::appointmentsMenu() {
     int choice;
     do {
         std::cout << "\n--- Appointments Menu ---\n";
-        std::cout << "1. List appointments\n";
+        std::cout << "1. List all appointments\n";
         std::cout << "2. Add new appointment\n";
+        std::cout << "3. Process all appointments (simulation)\n";
         std::cout << "0. Back to main menu\n";
         std::cout << "Choice: ";
         std::string input;
@@ -375,10 +380,72 @@ void Menu::appointmentsMenu() {
     }
     break;
 }
+            case 3:
+                hospital.proceseazaToateProgramarile(diseaseToSpecialty);
+                break;
             case 0:
                 break;
             default:
                 std::cout << "Invalid choice. Try again.\n";
         }
     } while (choice != 0);
+}
+
+
+
+void Menu::genereazaFacturaPacient() {
+    std::cout << "Introdu numele pacientului: ";
+    std::string nume;
+    std::getline(std::cin, nume);
+
+    for (auto& pacient : patients) {
+        if (pacient && pacient->getName() == nume) {
+            hospital.genereazaFactura(*pacient);
+            return;
+        }
+    }
+
+    std::cout << "Pacientul nu a fost găsit.\n";
+}
+
+void Menu::showPatientDetails() {
+    std::cout << "Introdu numele pacientului: ";
+    std::string nume;
+    std::getline(std::cin, nume);
+
+    for (const auto& pacient : patients) {
+        if (pacient && pacient->getName() == nume) {
+            std::cout << "\n=== Detalii pacient ===\n";
+            std::cout << "Nume: " << pacient->getName() << "\n";
+            std::cout << "CNP: " << pacient->getCNP() << "\n";
+            std::cout << "Vârstă: " << pacient->getAge() << "\n";
+            std::cout << "Gen: " << pacient->getGender() << "\n";
+            std::cout << "Externat: " << (pacient->getExternat() ? "DA" : "NU") << "\n";
+            std::cout << "Sănătos: " << (pacient->getHealthy() ? "DA" : "NU") << "\n";
+
+            if (!pacient->getDiseases().empty()) {
+                std::cout << "Afecțiuni curente: ";
+                for (const auto& boala : pacient->getDiseases())
+                    std::cout << boala << ", ";
+                std::cout << "\n";
+            } else {
+                std::cout << "Pacientul nu are boli active.\n";
+            }
+
+            const auto& istoric = pacient->getIstoric();
+            if (!istoric.empty()) {
+                std::cout << "\n--- Istoric servicii medicale ---\n";
+                for (const auto& serviciu : istoric) {
+                    serviciu->print(std::cout);
+                    std::cout << " → Cost: " << serviciu->getCost() << " RON\n";
+                }
+            } else {
+                std::cout << "Nu există servicii înregistrate pentru acest pacient.\n";
+            }
+
+            return;
+        }
+    }
+
+    std::cout << "Pacientul nu a fost găsit.\n";
 }

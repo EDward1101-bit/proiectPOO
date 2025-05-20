@@ -36,6 +36,7 @@ public:
     void proceseazaProgramare(Appointment& programare,
                               const std::map<std::string, std::string>& diseaseToSpecialty);
     void proceseazaToateProgramarile(const std::map<std::string, std::string>& diseaseToSpecialty);
+    void genereazaFactura(Patient& pacient) const;
 
 
     void listAllDoctors() const;
