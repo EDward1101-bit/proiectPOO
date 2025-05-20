@@ -1,8 +1,21 @@
-Heart Disease,Cardiologist
-Diabetes,Endocrinologist
-Brain Tumor,Neurologist
-Pneumonia,Pulmonologist
-Skin Rash,Dermatologist
-Bone Fracture,Orthopedist
-Allergy,Allergist
-Flu,General Practitioner
+diabet,endocrinologie
+hipertensiune,cardiologie
+gripa,medicina generala
+fractura,ortopedie
+arsura,chirurgie plastica
+depresie,psihiatrie
+covid-19,medicina interna
+migrena,neurologie
+sinuzita,otorinolaringologie
+alergie,alergologie
+astm,pneumologie
+eczema,dermatologie
+gastrita,gastroenterologie
+anemie,hematologie
+otita,otorinolaringologie
+tuse,medicina generala
+bronșită,pneumologie
+insuficienta renala,nefrologie
+glaucom,oftalmologie
+carie,stomatologie
+

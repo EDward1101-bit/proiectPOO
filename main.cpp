@@ -4,11 +4,13 @@
 #include "includes/appointment.h"
 #include "includes/menu.h"
 
+#include <map>
 #include <fstream>
 #include <sstream>
 #include <iostream>
 #include <vector>
 #include <memory>
+#include <algorithm>
 
 void loadDoctors(Hospital& hospital, const std::string& filename) {
     std::ifstream fin(filename);
@@ -108,20 +110,49 @@ void loadAppointments(Hospital& hospital, const std::vector<std::unique_ptr<Pati
     fout.close();
 }
 
-void assignPatients(const Hospital& hospital, std::vector<std::unique_ptr<Patient>>& patients) {
-    auto& doctors = hospital.getDoctors();
-    if (doctors.empty()) {
-        std::cerr << "No doctors available to assign patients.\n";
-        return;
-    }
-
-    int doctorIndex = 0;
+void assignPatients(Hospital& hospital,
+                    std::vector<std::unique_ptr<Patient>>& patients,
+                    const std::map<std::string, std::string>& diseaseToSpecialty) {
     for (auto& p : patients) {
-        if (p) {
-            doctors[doctorIndex]->assignPatient(p.get());
-            doctorIndex = (doctorIndex + 1) % doctors.size();
+        if (!p) continue;
+
+        for (const std::string& disease : p->getDiseases()) {
+            auto it = diseaseToSpecialty.find(disease);
+            if (it == diseaseToSpecialty.end()) continue;
+
+            const std::string& requiredSpecialty = it->second;
+
+            for (const auto& doc : hospital.getDoctors()) {
+                if (doc->getSpecialty() == requiredSpecialty) {
+                    const auto& assigned = doc->getPatients();
+                    if (std::find(assigned.begin(), assigned.end(), p.get()) == assigned.end()) {
+                        doc->assignPatient(p.get());
+                        break;
+                    }
+                }
+            }
         }
     }
+}
+
+std::map<std::string, std::string> loadDiseaseSpecialty(const std::string& filename) {
+    std::map<std::string, std::string> mapping;
+    std::ifstream fin(filename);
+    if (!fin.is_open()) {
+        std::cerr << "Error opening disease_specialty file.\n";
+        return mapping;
+    }
+
+    std::string line;
+    while (std::getline(fin, line)) {
+        std::istringstream iss(line);
+        std::string disease, specialty;
+        if (std::getline(iss, disease, ',') && std::getline(iss, specialty)) {
+            mapping[disease] = specialty;
+        }
+    }
+
+    return mapping;
 }
 
 int main() {
@@ -130,13 +161,34 @@ int main() {
 
         loadDoctors(hospital, "data/doctors.csv");
         loadPatients(patients, "data/patients.csv");
-        assignPatients(hospital, patients);
+        auto diseaseToSpecialty = loadDiseaseSpecialty("data/disease_specialty.csv");
+        assignPatients(hospital, patients, diseaseToSpecialty);
+
         loadAppointments(hospital, patients, "data/appointments.csv");
 
         Menu menu(hospital, patients);
         menu.showMainMenu();
         hospital.saveAppointmentsToCSV("data/appointments.csv");
         hospital.savePatientsToCSV(patients, "data/patients.csv");
+
+
+
+/*
+    std::cout << "\n--- Pacienti neasignati niciunui doctor ---\n";
+    for (const auto& p : patients) {
+        bool assigned = false;
+        for (const auto& doc : hospital.getDoctors()) {
+            const auto& list = doc->getPatients();
+            if (std::find(list.begin(), list.end(), p.get()) != list.end()) {
+                assigned = true;
+                break;
+            }
+        }
+        if (!assigned) {
+            std::cout << *p << "\n";
+        }
+    }
+*/
 
         return 0;
 }
