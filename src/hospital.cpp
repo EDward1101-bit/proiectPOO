@@ -2,9 +2,13 @@
 #include "../includes/doctor.h"
 #include "../includes/appointment.h"
 #include "../includes/patient.h"
+#include "../includes/Consultatie.h"
+#include "../includes/TratamentSpecializat.h"
+#include "../includes/Internare.h"
 #include <algorithm>
 #include <fstream>
 #include <string>
+#include <random>
 
 Hospital::Hospital(const std::string& name) : name(name) {}
 
@@ -108,6 +112,84 @@ void Hospital::saveAppointmentsToCSV(const std::string& filename) const {
         }
     }
     fout.close();
+}
+
+
+void Hospital::proceseazaProgramare(Appointment& programare,
+                                    const std::map<std::string, std::string>& diseaseToSpecialty) {
+
+
+    if (programare.isProcesata()) {
+        std::cout << "Programarea a fost deja procesată.\n";
+        return;
+    }
+
+    Doctor* doctor = programare.getDoctor();
+    Patient* pacient = programare.getPatient();
+
+    if (!doctor || !pacient) {
+        std::cout << "Programare invalidă: doctor sau pacient lipsă.\n";
+        return;
+    }
+
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> boolDist(0, 1);
+    bool esteBolnav = boolDist(gen);  // 50% șansă
+
+    if (!esteBolnav) {
+        std::cout << pacient->getName() << " este sănătos.\n";
+        pacient->setHealthy(true);
+        pacient->setExternat(true);
+
+        auto consult = std::make_shared<Consultatie>(
+            programare.getDate(), programare.getTime(), doctor, pacient, 0.0);
+        pacient->adaugaServiciu(consult);
+    } else {
+        std::vector<std::string> boli;
+        for (const auto& pair : diseaseToSpecialty)
+            boli.push_back(pair.first);
+
+        if (boli.empty()) {
+            std::cout << "Nu există boli definite în sistem.\n";
+            return;
+        }
+
+        std::uniform_int_distribution<> boalaDist(0, boli.size() - 1);
+        std::string boala = boli[boalaDist(gen)];
+        std::string specialitateNecesara = diseaseToSpecialty.at(boala);
+
+        if (doctor->getSpecialty() != specialitateNecesara) {
+            std::cout << "Doctorul nu este specializat pentru boala aleasă: " << boala << "\n";
+            return;
+        }
+
+        std::cout << pacient->getName() << " a fost diagnosticat cu " << boala << "\n";
+        pacient->addDisease(boala);
+
+        std::uniform_real_distribution<> costDist(200.0, 500.0);
+        double cost = costDist(gen);
+
+        auto tratament = std::make_shared<TratamentSpecializat>(
+            programare.getDate(), programare.getTime(), doctor, pacient, boala, cost);
+
+        pacient->adaugaServiciu(tratament);
+    }
+
+    programare.seteazaProcesata();
+    std::cout << "Programarea a fost procesată.\n";
+}
+
+void Hospital::proceseazaToateProgramarile(const std::map<std::string, std::string>& diseaseToSpecialty) {
+    for (auto& appointment : appointments) {
+        if (!appointment->isProcesata()) {
+            std::cout << "\n> Procesare programare: "
+                      << appointment->getPatient()->getName()
+                      << " cu Dr. " << appointment->getDoctor()->getName()
+                      << " la " << appointment->getDate() << " " << appointment->getTime() << "\n";
+            proceseazaProgramare(*appointment, diseaseToSpecialty);
+        }
+    }
 }
 
 void Hospital::savePatientsToCSV(const std::vector<std::unique_ptr<Patient>>& patients, const std::string& filename) {

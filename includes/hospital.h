@@ -5,6 +5,7 @@
 #include <vector>
 #include <memory>
 #include <iostream>
+#include <map>
 
 class Doctor;
 class Appointment;
@@ -32,6 +33,9 @@ public:
     bool isDoctorAvailable(const Doctor* doctor, const std::string& date, const std::string& time) const;
     void saveAppointmentsToCSV(const std::string& filename) const;
     static void savePatientsToCSV(const std::vector<std::unique_ptr<Patient>>& patients, const std::string& filename);
+    void proceseazaProgramare(Appointment& programare,
+                              const std::map<std::string, std::string>& diseaseToSpecialty);
+    void proceseazaToateProgramarile(const std::map<std::string, std::string>& diseaseToSpecialty);
 
 
     void listAllDoctors() const;
