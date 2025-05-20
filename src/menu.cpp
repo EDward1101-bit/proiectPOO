@@ -198,14 +198,13 @@ void Menu::patientsMenu() {
         std::cout << "3. Show patient details\n";
         std::cout << "0. Back to main menu\n";
         std::cout << "Choice: ";
-        std::cin >> choice;
-        if (std::cin.fail()) {
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::string input;
+        std::getline(std::cin, input);
+        std::istringstream iss(input);
+        if (!(iss >> choice)) {
             choice = -1;
-        } else {
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         }
+
 
 
         switch (choice) {
