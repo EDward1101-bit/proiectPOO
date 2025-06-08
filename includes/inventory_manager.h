@@ -4,17 +4,14 @@
 #include <vector>
 #include <memory>
 #include <string>
-#include "inventory_item.h"
-
-#include <unordered_map>
 #include <map>
+#include "inventory_item.h"
 
 class InventoryManager {
 private:
     std::vector<std::unique_ptr<InventoryItem>> items;
     double budget;
 
-    // Preset
     std::map<std::string, int> presetLimits;
     std::map<std::string, int> presetCount;
 
@@ -33,6 +30,8 @@ public:
     void addItemFromPreset();
 
     void removeItemById(int id);
+    void cloneMostRentableItem();
+
     void listAll() const;
     void listSortedByRentability() const;
     void listExpiringSoon() const;
@@ -40,4 +39,5 @@ public:
     void autoManage();
     void showMenu();
 };
+
 #endif // INVENTORY_MANAGER_H

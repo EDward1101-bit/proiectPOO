@@ -12,9 +12,6 @@ MedicalEquipment::MedicalEquipment(const std::string& name, double price, int wa
 MedicalEquipment::MedicalEquipment(const MedicalEquipment& other)
     : InventoryItem(other), warrantyMonths(other.warrantyMonths) {}
 
-bool MedicalEquipment::isExpiringSoon() const {
-    return false;
-}
 
 double MedicalEquipment::getRentabilityScore() const {
     return (warrantyMonths > 0 && price > 0) ? static_cast<double>(warrantyMonths) / price : 0;

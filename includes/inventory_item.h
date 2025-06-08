@@ -18,20 +18,18 @@ public:
     InventoryItem(const InventoryItem& other);
     virtual ~InventoryItem() = default;
 
-    // Funcții virtuale overridable
     virtual void display(std::ostream& os) const = 0;
     virtual std::unique_ptr<InventoryItem> clone() const = 0;
 
     virtual bool isExpiringSoon() const { return false; }
     virtual double getRentabilityScore() const { return 0; }
 
-    // Funcții utile pentru manevră internă
     int getId() const;
+    const std::string& getName() const { return name; }
     double priceValue() const;
     bool hasName(const std::string& query) const;
 };
 
-// operator<< delegat către display
 inline std::ostream& operator<<(std::ostream& os, const InventoryItem& item) {
     item.display(os);
     return os;
