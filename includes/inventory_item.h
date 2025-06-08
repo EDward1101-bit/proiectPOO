@@ -4,9 +4,6 @@
 #include <string>
 #include <memory>
 #include <iostream>
-#include <chrono>
-#include <iomanip>
-#include <sstream>
 
 class InventoryItem {
 protected:
@@ -21,17 +18,20 @@ public:
     InventoryItem(const InventoryItem& other);
     virtual ~InventoryItem() = default;
 
-    // Funcții virtuale pure sau overridable
-    virtual std::unique_ptr<InventoryItem> clone() const = 0;
+    // Funcții virtuale overridable
     virtual void display(std::ostream& os) const = 0;
+    virtual std::unique_ptr<InventoryItem> clone() const = 0;
+
     virtual bool isExpiringSoon() const { return false; }
     virtual double getRentabilityScore() const { return 0; }
 
-    double priceValue() const;
+    // Funcții utile pentru manevră internă
     int getId() const;
+    double priceValue() const;
     bool hasName(const std::string& query) const;
 };
 
+// operator<< delegat către display
 inline std::ostream& operator<<(std::ostream& os, const InventoryItem& item) {
     item.display(os);
     return os;

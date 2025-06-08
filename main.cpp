@@ -3,6 +3,7 @@
 #include "includes/patient.h"
 #include "includes/appointment.h"
 #include "includes/menu.h"
+#include "includes/inventory_manager.h"
 
 #include <map>
 #include <fstream>
@@ -156,6 +157,9 @@ std::map<std::string, std::string> loadDiseaseSpecialty(const std::string& filen
 }
 
 int main() {
+        InventoryManager inv;
+        inv.loadBudget("data/admin.csv");
+        inv.loadFromCSV("data/inventory.csv");
         Hospital hospital("Spitalul Municipal");
         std::vector<std::unique_ptr<Patient>> patients;
 
@@ -168,9 +172,29 @@ int main() {
 
         Menu menu(hospital, patients, diseaseToSpecialty);
 
-        menu.showMainMenu();
-        hospital.saveAppointmentsToCSV("data/appointments.csv");
-        hospital.savePatientsToCSV(patients, "data/patients.csv");
+    std::string choice;
+    while (true) {
+        std::cout << "\n=== MAIN MENU ===\n"
+                  << "1. Spital (Pacienti, Doctori...)\n"
+                  << "2. Inventar Medical\n"
+                  << "0. Exit\n"
+                  << "Choice: ";
+        std::getline(std::cin, choice);
+
+        if (choice == "1") {
+            menu.showMainMenu();
+            hospital.saveAppointmentsToCSV("data/appointments.csv");
+            hospital.savePatientsToCSV(patients, "data/patients.csv");
+        } else if (choice == "2") {
+            inv.showMenu();
+            inv.saveToCSV("data/inventory.csv");
+            inv.saveBudget("data/admin.csv");
+        } else if (choice == "0") {
+            break;
+        } else {
+            std::cout << "Invalid.\n";
+        }
+    }
 
 
 
