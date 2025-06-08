@@ -6,7 +6,7 @@ This project is a Hospital Management System. The system is designed to manage d
 * Scheduling appointments
 * Tracking doctor availability
 * Displaying hospital information
-
+* Manage hospital inventory
 
 | Marius MC | https://github.com/mcmarius/oop-template     |
 
