@@ -10,7 +10,16 @@
 
 using namespace std;
 
-InventoryManager::InventoryManager() : budget(0.0) {}
+InventoryManager::InventoryManager() : budget(0.0) {
+    presetLimits["Paracetamol"] = 3;
+    presetLimits["Defibrillator"] = 3;
+    presetLimits["BatteryDefibKit"] = 3;
+
+    presetCount["Paracetamol"] = 0;
+    presetCount["Defibrillator"] = 0;
+    presetCount["BatteryDefibKit"] = 0;
+}
+
 
 void InventoryManager::loadFromCSV(const string& filename) {
     ifstream fin(filename);
@@ -134,6 +143,121 @@ void InventoryManager::listExpiringSoon() const {
         if (item->isExpiringSoon()) cout << *item << "\n";
     }
 }
+void InventoryManager::addItemFromPreset() {
+    cout << "\nAvailable options:\n"
+         << "1. Paracetamol (Medication)\n"
+         << "2. Defibrillator (Equipment)\n"
+         << "3. BatteryDefibKit (ExpirableEquipment)\n"
+         << "Choose (1-3): ";
+
+    std::string opt;
+    getline(cin, opt);
+
+    string name;
+    double price;
+    std::unique_ptr<InventoryItem> item;
+
+    if (opt == "1") {
+        name = "Paracetamol";
+        if (presetCount[name] >= presetLimits[name])
+            throw std::runtime_error("Limit reached for " + name);
+
+        price = 5.0;
+        auto expiry = chrono::floor<chrono::days>(chrono::system_clock::now()) + chrono::days(180);
+        item = std::make_unique<Medication>(name, price, expiry);
+    }
+    else if (opt == "2") {
+        name = "Defibrillator";
+        if (presetCount[name] >= presetLimits[name])
+            throw std::runtime_error("Limit reached for " + name);
+
+        price = 800.0;
+        item = std::make_unique<MedicalEquipment>(name, price, 24);
+    }
+    else if (opt == "3") {
+        name = "BatteryDefibKit";
+        if (presetCount[name] >= presetLimits[name])
+            throw std::runtime_error("Limit reached for " + name);
+
+        price = 300.0;
+        auto expiry = chrono::floor<chrono::days>(chrono::system_clock::now()) + chrono::days(365);
+        item = std::make_unique<ExpirableEquipment>(name, price, expiry, 12);
+    }
+    else {
+        throw std::runtime_error("Invalid option.");
+    }
+
+    if (item->priceValue() > budget) {
+        throw std::runtime_error("Insufficient funds.");
+    }
+
+    presetCount[name]++;
+    addItem(std::move(item));
+}
+
+void InventoryManager::autoManage() {
+    std::vector<std::unique_ptr<InventoryItem>> keptItems;
+    int sold = 0, replaced = 0;
+
+    for (auto& item : items) {
+        if (item->isExpiringSoon()) {
+            sold++;
+            budget += item->priceValue() * 0.25; // Recuperezi 25%
+            std::string name;
+
+            if (auto m = dynamic_cast<Medication*>(item.get()))
+                name = "Paracetamol";
+            else if (auto e = dynamic_cast<MedicalEquipment*>(item.get()))
+                name = "Defibrillator";
+            else if (auto x = dynamic_cast<ExpirableEquipment*>(item.get()))
+                name = "BatteryDefibKit";
+            else continue;
+
+            if (presetCount[name] < presetLimits[name]) {
+                try {
+                    // Simulăm apăsarea pe preset
+                    if (name == "Paracetamol") {
+                        auto expiry = chrono::floor<chrono::days>(chrono::system_clock::now()) + chrono::days(180);
+                        auto newItem = std::make_unique<Medication>(name, 5.0, expiry);
+                        if (newItem->priceValue() <= budget) {
+                            presetCount[name]++;
+                            budget -= newItem->priceValue();
+                            keptItems.push_back(std::move(newItem));
+                            replaced++;
+                        }
+                    }
+                    else if (name == "Defibrillator") {
+                        auto newItem = std::make_unique<MedicalEquipment>(name, 800.0, 24);
+                        if (newItem->priceValue() <= budget) {
+                            presetCount[name]++;
+                            budget -= newItem->priceValue();
+                            keptItems.push_back(std::move(newItem));
+                            replaced++;
+                        }
+                    }
+                    else if (name == "BatteryDefibKit") {
+                        auto expiry = chrono::floor<chrono::days>(chrono::system_clock::now()) + chrono::days(365);
+                        auto newItem = std::make_unique<ExpirableEquipment>(name, 300.0, expiry, 12);
+                        if (newItem->priceValue() <= budget) {
+                            presetCount[name]++;
+                            budget -= newItem->priceValue();
+                            keptItems.push_back(std::move(newItem));
+                            replaced++;
+                        }
+                    }
+                } catch (...) {
+                    // Ignorăm fallback
+                }
+            }
+        } else {
+            keptItems.push_back(std::move(item));
+        }
+    }
+
+    items = std::move(keptItems);
+    cout << "Auto-manage done: sold = " << sold << ", replaced = " << replaced << ", budget = $" << budget << "\n";
+}
+
 
 void InventoryManager::showMenu() {
     string input;
@@ -142,13 +266,25 @@ void InventoryManager::showMenu() {
              << "1. List all\n"
              << "2. List expiring soon\n"
              << "3. Sort by rentability\n"
-             << "4. Save & Exit\n"
+             << "4. Add item\n"
+             << "5. Auto-manage (sell expired, refill)\n"
+             << "6. Save & Exit\n"
              << "Choice: ";
         getline(cin, input);
         if (input == "1") listAll();
         else if (input == "2") listExpiringSoon();
         else if (input == "3") listSortedByRentability();
-        else if (input == "4") break;
+        else if (input == "4") {
+            try {
+                addItemFromPreset();
+            } catch (const std::exception& e) {
+                cout << "Error: " << e.what() << "\n";
+            }
+        }
+        else if (input == "5") {
+            autoManage();
+        }
+        else if (input == "6") break;
         else cout << "Invalid.\n";
     }
 }
