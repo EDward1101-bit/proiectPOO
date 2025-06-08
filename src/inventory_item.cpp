@@ -15,7 +15,3 @@ int InventoryItem::getId() const {
 double InventoryItem::priceValue() const {
     return price;
 }
-
-bool InventoryItem::hasName(const std::string& query) const {
-    return name == query;
-}

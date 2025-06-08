@@ -11,18 +11,20 @@
 using namespace std;
 using namespace std::chrono;
 
-InventoryManager::InventoryManager() : budget(0.0) {
-    presetLimits = {
-        {"Paracetamol", 3},
-        {"Defibrillator", 3},
-        {"BatteryDefibKit", 3}
-    };
-    presetCount = {
-        {"Paracetamol", 0},
-        {"Defibrillator", 0},
-        {"BatteryDefibKit", 0}
-    };
-}
+InventoryManager::InventoryManager()
+    : budget(0.0),
+      presetLimits{
+              {"Paracetamol", 3},
+              {"Defibrillator", 3},
+              {"BatteryDefibKit", 3}
+      },
+      presetCount{
+              {"Paracetamol", 0},
+              {"Defibrillator", 0},
+              {"BatteryDefibKit", 0}
+      }
+{}
+
 
 void InventoryManager::loadFromCSV(const string& filename) {
     ifstream fin(filename);
@@ -183,7 +185,7 @@ void InventoryManager::showMenu() {
 
 std::unique_ptr<InventoryItem> InventoryManager::parseCSVLine(const std::string& line) const {
     std::istringstream iss(line);
-    std::string type, name, priceStr, d1, d2;
+    std::string type, name, priceStr, d1;
     if (!getline(iss, type, ',') ||
         !getline(iss, name, ',') ||
         !getline(iss, priceStr, ',')) {
@@ -205,6 +207,7 @@ std::unique_ptr<InventoryItem> InventoryManager::parseCSVLine(const std::string&
     }
 
     if (type == "ExpirableEquipment") {
+        std::string d2;
         if (!getline(iss, d1, ',') || !getline(iss, d2)) return nullptr;
         auto expiry = Medication::parseDate(d1);
         int warranty = std::stoi(d2);

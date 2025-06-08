@@ -27,7 +27,6 @@ public:
     int getId() const;
     const std::string& getName() const { return name; }
     double priceValue() const;
-    bool hasName(const std::string& query) const;
 };
 
 inline std::ostream& operator<<(std::ostream& os, const InventoryItem& item) {
