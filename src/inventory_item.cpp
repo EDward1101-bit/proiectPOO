@@ -8,12 +8,12 @@ InventoryItem::InventoryItem(const std::string& name, double price)
 InventoryItem::InventoryItem(const InventoryItem& other)
     : id(++current_id), name(other.name), price(other.price) {}
 
-int InventoryItem::getId() const {
-    return id;
-}
-
 double InventoryItem::priceValue() const {
     return price;
+}
+
+int InventoryItem::getId() const {
+    return id;
 }
 
 bool InventoryItem::hasName(const std::string& query) const {

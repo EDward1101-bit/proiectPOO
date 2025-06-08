@@ -62,6 +62,8 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         src/menu.cpp
         includes/inventory_item.h
         src/inventory_item.cpp
+        includes/medication.h
+        src/medication.cpp
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )
