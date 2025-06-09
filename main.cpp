@@ -175,7 +175,7 @@ int main() {
     std::string choice;
     while (true) {
         std::cout << "\n=== MAIN MENU ===\n"
-                  << "1. Spital (Pacienti, Doctori...)\n"
+                  << "1. Spital\n"
                   << "2. Inventar Medical\n"
                   << "0. Exit\n"
                   << "Choice: ";
