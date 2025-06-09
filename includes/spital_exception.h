@@ -21,7 +21,7 @@ public:
 
 class InsufficientBudgetException : public SpitalException {
 public:
-    InsufficientBudgetException(double price)
+    explicit InsufficientBudgetException(double price)
         : SpitalException("Buget insuficient pentru achizitia itemului (pret: " + std::to_string(price) + ")") {}
 };
 
