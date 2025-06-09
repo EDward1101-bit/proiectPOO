@@ -1,6 +1,5 @@
 #include "../includes/patient.h"
 #include <algorithm>
-#include "../includes/spital_exception.h"
 
 Patient::Patient(const std::string& name, const std::string& cnp, int age, char gender)
     : name(name), cnp(cnp), age(age), gender(gender) {}
@@ -36,9 +35,6 @@ void Patient::removeDisease(const std::string& disease) {
 }
 
 bool Patient::isValidCNP(const std::string& cnp) {
-    if (!Patient::isValidCNP(cnp)) {
-        throw InvalidCNPException();
-    }
     return cnp.length() == 13 && std::all_of(cnp.begin(), cnp.end(), ::isdigit);
 }
 

@@ -223,8 +223,7 @@ void Menu::patientsMenu() {
                 std::cout << "Enter CNP: ";
                 std::getline(std::cin, cnp);
                 if (!Patient::isValidCNP(cnp)) {
-                    std::cout << "Invalid CNP. Patient not added.\n";
-                    break;
+                    throw InvalidCNPException();
                 }
 
                 std::cout << "Enter age: ";
