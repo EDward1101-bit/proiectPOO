@@ -4,26 +4,4 @@
 2
 1
 0
-2
-2
-Alex Popa
-5010101123456
-24
-M
-Flu,Covid
-0
-1
-1
-3
-Andrei Popescu
-Alex Popa
-0
-3
-2
-Andrei Popescu
-Alex Popa
-2025-08-15
-09:30
-1
-0
 0
