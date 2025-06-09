@@ -4,7 +4,7 @@
 #include "includes/appointment.h"
 #include "includes/menu.h"
 #include "includes/inventory_manager.h"
-
+#include "includes/spital_exception.h"
 #include <map>
 #include <fstream>
 #include <sstream>
@@ -182,7 +182,12 @@ int main() {
         std::getline(std::cin, choice);
 
         if (choice == "1") {
-            menu.showMainMenu();
+            try {
+                menu.showMainMenu();
+            } catch (const SpitalException& e) {
+                std::cerr << "Eroare: " << e.what() << "\n";
+            }
+
             hospital.saveAppointmentsToCSV("data/appointments.csv");
             hospital.savePatientsToCSV(patients, "data/patients.csv");
         } else if (choice == "2") {

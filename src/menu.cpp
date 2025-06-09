@@ -3,7 +3,7 @@
 #include "../includes/doctor.h"
 #include "../includes/patient.h"
 #include "../includes/appointment.h"
-
+#include "../includes/spital_exception.h"
 #include <iostream>
 #include <limits>
 #include <sstream>
@@ -362,9 +362,9 @@ void Menu::appointmentsMenu() {
     std::getline(std::cin, time);
 
     if (!hospital.isDoctorAvailable(doctor, date, time)) {
-        std::cout << "Doctor already has an appointment at that time.\n";
-        break;
+        throw AppointmentConflictException();
     }
+
 
     auto appointment = std::make_unique<Appointment>(date, time, doctor, patient);
     if (appointment->isValidDateTime() && appointment->isInFuture()) {

@@ -2,6 +2,7 @@
 #include "../includes/medication.h"
 #include "../includes/medical_equipment.h"
 #include "../includes/expirable_equipment.h"
+#include "../includes/spital_exception.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -64,9 +65,9 @@ void InventoryManager::saveBudget(const string& filename) const {
 
 void InventoryManager::addItem(unique_ptr<InventoryItem> item) {
     if (item->priceValue() > budget) {
-        cerr << "Insufficient budget for: " << item->getName() << "\n";
-        return;
+        throw InsufficientBudgetException(item->priceValue());
     }
+
     budget -= item->priceValue();
     items.push_back(std::move(item));
 }
