@@ -12,6 +12,8 @@ public:
     Medication();
     Medication(const std::string& name, double price, const std::chrono::sys_days& expiryDate);
     Medication(const Medication& other);
+    virtual ~Medication() override = default;
+
 
     bool isExpiringSoon() const override;
     double getRentabilityScore() const override;
