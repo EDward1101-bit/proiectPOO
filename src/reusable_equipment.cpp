@@ -11,7 +11,10 @@ ReusableEquipment::ReusableEquipment(const std::string& name, double price, int 
       currentUsage(currentUsage) {}
 
 ReusableEquipment::ReusableEquipment(const ReusableEquipment& other)
-    : MedicalEquipment(other), usageLimit(other.usageLimit), currentUsage(other.currentUsage) {}
+    : InventoryItem(other),
+      MedicalEquipment(other),
+      usageLimit(other.usageLimit),
+      currentUsage(other.currentUsage) {}
 
 bool ReusableEquipment::isExpiringSoon() const {
     return currentUsage >= usageLimit;
