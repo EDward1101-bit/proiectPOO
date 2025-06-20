@@ -3,6 +3,8 @@
 #include "../includes/medical_equipment.h"
 #include "../includes/expirable_equipment.h"
 #include "../includes/spital_exception.h"
+#include "../includes/reusable_equipment.h"
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -17,12 +19,14 @@ InventoryManager::InventoryManager()
       presetLimits{
               {"Paracetamol", 3},
               {"Defibrillator", 3},
-              {"BatteryDefibKit", 3}
+              {"BatteryDefibKit", 3},
+              {"ReusableScalpel", 3}
       },
       presetCount{
               {"Paracetamol", 0},
               {"Defibrillator", 0},
-              {"BatteryDefibKit", 0}
+              {"BatteryDefibKit", 0},
+              {"ReusableScalpel", 0}
       }
 {}
 
@@ -43,15 +47,25 @@ void InventoryManager::loadFromCSV(const string& filename) {
 void InventoryManager::saveToCSV(const string& filename) const {
     ofstream fout(filename);
     for (const auto& item : items) {
-        if (dynamic_cast<const ExpirableEquipment*>(item.get()))
-            fout << "ExpirableEquipment,";
-        else if (dynamic_cast<const Medication*>(item.get()))
-            fout << "Medication,";
-        else if (dynamic_cast<const MedicalEquipment*>(item.get()))
-            fout << "Equipment,";
-        fout << item->getName() << "," << item->priceValue() << "\n";
+        if (auto* re = dynamic_cast<const ReusableEquipment*>(item.get())) {
+            fout << "ReusableEquipment," << item->getName() << "," << item->priceValue()
+                 << "," << re->getWarrantyMonths() << "," << re->getUsageLeft() << "\n";
+        }
+        else if (auto* ex = dynamic_cast<const ExpirableEquipment*>(item.get())) {
+            fout << "ExpirableEquipment," << item->getName() << "," << item->priceValue()
+                 << "," << Medication::formatDate(ex->getExpiryDate()) << "," << ex->getWarrantyMonths() << "\n";
+        }
+        else if (auto* med = dynamic_cast<const Medication*>(item.get())) {
+            fout << "Medication," << item->getName() << "," << item->priceValue()
+                 << "," << Medication::formatDate(med->getExpiryDate()) << "\n";
+        }
+        else if (auto* eq = dynamic_cast<const MedicalEquipment*>(item.get())) {
+            fout << "Equipment," << item->getName() << "," << item->priceValue()
+                 << "," << eq->getWarrantyMonths() << "\n";
+        }
     }
 }
+
 
 void InventoryManager::loadBudget(const string& filename) {
     ifstream fin(filename);
@@ -73,7 +87,7 @@ void InventoryManager::addItem(unique_ptr<InventoryItem> item) {
 }
 
 void InventoryManager::addItemFromPreset() {
-    cout << "\nAvailable Presets:\n1. Paracetamol\n2. Defibrillator\n3. BatteryDefibKit\nChoice: ";
+    cout << "\nAvailable Presets:\n1. Paracetamol\n2. Defibrillator\n3. BatteryDefibKit\n4. ReusableScalpel\nChoice: ";
     string opt;
     getline(cin, opt);
     string name;
@@ -90,7 +104,11 @@ void InventoryManager::addItemFromPreset() {
         name = "BatteryDefibKit";
         if (presetCount[name] >= presetLimits[name]) throw runtime_error("Limit reached");
         item = make_unique<ExpirableEquipment>(name, 300.0, floor<days>(system_clock::now()) + days(365), 12);
-    } else {
+    }else if (opt == "4") {
+        name = "ReusableScalpel";
+        if (presetCount[name] >= presetLimits[name]) throw runtime_error("Limit reached");
+        item = make_unique<ReusableEquipment>(name, 100.0, 12, 50);
+    }else {
         throw runtime_error("Invalid preset");
     }
     presetCount[name]++;
@@ -164,7 +182,7 @@ void InventoryManager::showMenu() {
     string input;
     while (true) {
         cout << "\n=== INVENTORY MENU ===\n"
-             << "1. List all\n2. List expiring soon\n3. Sort by rentability\n4. Add from preset\n"
+             << "1. List all\n2. List expiring soon\n3. Sort by rentability\n4. Add inventory item\n"
              << "5. Auto-manage\n6. Remove item by ID\n7. Clone most rentable\n8. Save & Exit\nChoice: ";
         getline(cin, input);
         if (input == "1") listAll();
@@ -186,7 +204,8 @@ void InventoryManager::showMenu() {
 
 std::unique_ptr<InventoryItem> InventoryManager::parseCSVLine(const std::string& line) const {
     std::istringstream iss(line);
-    std::string type, name, priceStr, d1;
+    std::string type, name, priceStr;
+
     if (!getline(iss, type, ',') ||
         !getline(iss, name, ',') ||
         !getline(iss, priceStr, ',')) {
@@ -196,25 +215,42 @@ std::unique_ptr<InventoryItem> InventoryManager::parseCSVLine(const std::string&
     double price = std::stod(priceStr);
 
     if (type == "Medication") {
-        if (!getline(iss, d1)) return nullptr;
-        auto expiry = Medication::parseDate(d1);
+        std::string expiryStr;
+        if (!getline(iss, expiryStr)) return nullptr;
+        auto expiry = Medication::parseDate(expiryStr);
         return std::make_unique<Medication>(name, price, expiry);
     }
 
     if (type == "Equipment") {
-        if (!getline(iss, d1)) return nullptr;
-        int warranty = std::stoi(d1);
+        std::string warrantyStr;
+        if (!getline(iss, warrantyStr)) return nullptr;
+        int warranty = std::stoi(warrantyStr);
         return std::make_unique<MedicalEquipment>(name, price, warranty);
     }
 
     if (type == "ExpirableEquipment") {
-        std::string d2;
-        if (!getline(iss, d1, ',') || !getline(iss, d2)) return nullptr;
-        auto expiry = Medication::parseDate(d1);
-        int warranty = std::stoi(d2);
+        std::string expiryStr, warrantyStr;
+        if (!getline(iss, expiryStr, ',') || !getline(iss, warrantyStr)) return nullptr;
+        auto expiry = Medication::parseDate(expiryStr);
+        int warranty = std::stoi(warrantyStr);
         return std::make_unique<ExpirableEquipment>(name, price, expiry, warranty);
     }
 
+    if (type == "ReusableEquipment") {
+        std::string warrantyStr, usageLimitStr, currentUsageStr;
+        if (!getline(iss, warrantyStr, ',') ||
+            !getline(iss, usageLimitStr, ',') ||
+            !getline(iss, currentUsageStr)) return nullptr;
+
+        int warranty = std::stoi(warrantyStr);
+        int usageLimit = std::stoi(usageLimitStr);
+        int currentUsage = std::stoi(currentUsageStr);
+
+        return std::make_unique<ReusableEquipment>(name, price, warranty, usageLimit, currentUsage);
+    }
+
+
     return nullptr;
 }
+
 

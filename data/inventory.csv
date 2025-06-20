@@ -1,4 +1,5 @@
-Medication,0,5.5
-Equipment,0,1200
-Medication,0,300
-Medication,0,7.3
+Medication,Paracetamol,5.0,2025-12-01
+Equipment,Defibrillator,800.0,24
+ExpirableEquipment,BatteryDefibKit,300.0,2025-11-30,12
+ReusableEquipment,ReusableScalpel,100,12,50,10
+

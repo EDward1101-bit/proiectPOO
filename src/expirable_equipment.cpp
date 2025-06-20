@@ -9,10 +9,11 @@ ExpirableEquipment::ExpirableEquipment()
     : Medication(), MedicalEquipment() {}
 
 ExpirableEquipment::ExpirableEquipment(const std::string& name, double price,
-                                       const sys_days& expiryDate, int warrantyMonths)
+                                       const std::chrono::sys_days& expiryDate, int warrantyMonths)
     : InventoryItem(name, price),
       Medication(name, price, expiryDate),
       MedicalEquipment(name, price, warrantyMonths) {}
+
 
 ExpirableEquipment::ExpirableEquipment(const ExpirableEquipment& other)
     : InventoryItem(other),
