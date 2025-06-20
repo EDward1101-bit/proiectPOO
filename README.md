@@ -1,12 +1,38 @@
 # Hospital Manager
 
-This project is a Hospital Management System. The system is designed to manage doctors, patients, and appointments in a hospital setting.
+Acest proiect reprezintă o aplicație de tip consolă scrisă în C++, ce simulează gestiunea unui spital privat. Include funcționalități pentru managementul doctorilor, pacienților, programărilor și inventarului medical.
 
-* Managing doctors and patients
-* Scheduling appointments
-* Tracking doctor availability
-* Displaying hospital information
-* Manage hospital inventory
+## 🔧 Funcționalități
+
+### 🧑‍⚕️ Doctori
+- Adăugare și listare doctori
+- Specializare medicală
+- Asignare / eliberare pacienți
+
+### 🧍 Pacienți
+- Adăugare pacient cu validare CNP
+- Boli asociate pacientului
+- Legare la specialități medicale
+
+### 📅 Programări
+- Adăugare programare cu validări:
+  - doar în timpul programului
+  - minim 7 zile în viitor
+  - fără suprapuneri pentru același doctor
+- Listare programări sortate
+
+### 💊 Inventar Medical
+- Categorii:
+  - Medicamente
+  - Echipamente medicale
+  - Echipamente expirabile (moștenire multiplă)
+- Atribute:
+  - Valabilitate, garanție, rentabilitate
+- Acțiuni:
+  - Adăugare din preset
+  - Eliminare automată dacă expirat
+  - Clonare automat a celui mai rentabil
+  - Gestiune buget
 
 | Marius MC | https://github.com/mcmarius/oop-template     |
 
