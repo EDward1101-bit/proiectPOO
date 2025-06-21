@@ -45,7 +45,7 @@ void InventoryManager::loadFromCSV(const string& filename) {
 }
 
 void InventoryManager::saveToCSV(const string& filename) const {
-    std::ofstream out("data/inventory.csv");  // sau ce cale ai tu
+    std::ofstream out(filename);
     if (!out.is_open()) {
         throw SpitalException("Nu s-a putut deschide fișierul de inventar pentru scriere.");
     }
