@@ -42,3 +42,7 @@ int ReusableEquipment::getUsageLeft() const {
     return usageLimit - currentUsage;
 }
 
+void ReusableEquipment::saveToCSV(std::ostream& out) const {
+    out << "ReusableEquipment," << getName() << "," << priceValue()
+        << "," << getWarrantyMonths() << "," << currentUsage << "/" << usageLimit << "\n";
+}

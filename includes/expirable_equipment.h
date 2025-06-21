@@ -10,6 +10,7 @@ public:
     ExpirableEquipment(const std::string& name, double price,
                        const std::chrono::sys_days& expiryDate, int warrantyMonths);
     ExpirableEquipment(const ExpirableEquipment& other);
+    void saveToCSV(std::ostream& out) const override;
 
     bool isExpiringSoon() const override;
     double getRentabilityScore() const override;

@@ -12,6 +12,7 @@ public:
     MedicalEquipment(const std::string& name, double price, int warrantyMonths);
     MedicalEquipment(const MedicalEquipment& other);
     virtual ~MedicalEquipment() override = default;
+    void saveToCSV(std::ostream& out) const override;
 
     double getRentabilityScore() const override;
     void display(std::ostream& os) const override;

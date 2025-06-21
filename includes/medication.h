@@ -13,6 +13,7 @@ public:
     Medication(const std::string& name, double price, const std::chrono::sys_days& expiryDate);
     Medication(const Medication& other);
     virtual ~Medication() override = default;
+    void saveToCSV(std::ostream& out) const override;
 
 
     bool isExpiringSoon() const override;

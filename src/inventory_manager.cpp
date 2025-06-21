@@ -45,24 +45,13 @@ void InventoryManager::loadFromCSV(const string& filename) {
 }
 
 void InventoryManager::saveToCSV(const string& filename) const {
-    ofstream fout(filename);
+    std::ofstream out("data/inventory.csv");  // sau ce cale ai tu
+    if (!out.is_open()) {
+        throw SpitalException("Nu s-a putut deschide fișierul de inventar pentru scriere.");
+    }
+
     for (const auto& item : items) {
-        if (auto* re = dynamic_cast<const ReusableEquipment*>(item.get())) {
-            fout << "ReusableEquipment," << item->getName() << "," << item->priceValue()
-                 << "," << re->getWarrantyMonths() << "," << re->getUsageLeft() << "\n";
-        }
-        else if (auto* ex = dynamic_cast<const ExpirableEquipment*>(item.get())) {
-            fout << "ExpirableEquipment," << item->getName() << "," << item->priceValue()
-                 << "," << Medication::formatDate(ex->getExpiryDate()) << "," << ex->getWarrantyMonths() << "\n";
-        }
-        else if (auto* med = dynamic_cast<const Medication*>(item.get())) {
-            fout << "Medication," << item->getName() << "," << item->priceValue()
-                 << "," << Medication::formatDate(med->getExpiryDate()) << "\n";
-        }
-        else if (auto* eq = dynamic_cast<const MedicalEquipment*>(item.get())) {
-            fout << "Equipment," << item->getName() << "," << item->priceValue()
-                 << "," << eq->getWarrantyMonths() << "\n";
-        }
+        item->saveToCSV(out);
     }
 }
 

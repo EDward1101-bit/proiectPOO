@@ -58,3 +58,8 @@ string Medication::formatDate(const sys_days& date) {
 std::chrono::sys_days Medication::getExpiryDate() const {
     return expiryDate;
 }
+
+void Medication::saveToCSV(std::ostream& out) const {
+    out << "Medication," << name << "," << price << "," << formatDate(expiryDate) << "\n";
+}
+

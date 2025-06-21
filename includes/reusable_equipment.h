@@ -12,6 +12,7 @@ public:
     ReusableEquipment();
     ReusableEquipment(const std::string& name, double price, int warranty, int usageLimit, int currentUsage = 0);
     ReusableEquipment(const ReusableEquipment& other);
+    void saveToCSV(std::ostream& out) const override;
 
     bool isExpiringSoon() const override;
     double getRentabilityScore() const override;

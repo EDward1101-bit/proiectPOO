@@ -29,3 +29,7 @@ std::unique_ptr<InventoryItem> MedicalEquipment::clone() const {
 int MedicalEquipment::getWarrantyMonths() const {
     return warrantyMonths;
 }
+
+void MedicalEquipment::saveToCSV(std::ostream& out) const {
+    out << "MedicalEquipment," << getName() << "," << priceValue() << "," << warrantyMonths << "\n";
+}

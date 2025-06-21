@@ -44,3 +44,9 @@ void ExpirableEquipment::display(std::ostream& os) const {
 std::unique_ptr<InventoryItem> ExpirableEquipment::clone() const {
     return std::make_unique<ExpirableEquipment>(*this);
 }
+
+void ExpirableEquipment::saveToCSV(std::ostream& out) const {
+    out << "ExpirableEquipment," << getName() << "," << priceValue()
+        << "," << Medication::formatDate(getExpiryDate())
+        << "," << getWarrantyMonths() << "\n";
+}

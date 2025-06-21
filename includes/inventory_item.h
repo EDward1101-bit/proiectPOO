@@ -17,6 +17,7 @@ public:
     InventoryItem(const std::string& name, double price);
     InventoryItem(const InventoryItem& other);
     virtual ~InventoryItem() = default;
+    virtual void saveToCSV(std::ostream& out) const = 0;
 
     virtual void display(std::ostream& os) const = 0;
     virtual std::unique_ptr<InventoryItem> clone() const = 0;
