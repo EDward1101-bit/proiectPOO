@@ -5,6 +5,7 @@
 #include "includes/menu.h"
 #include "includes/inventory_manager.h"
 #include "includes/spital_exception.h"
+#include <filesystem>
 #include <map>
 #include <fstream>
 #include <sstream>
@@ -67,7 +68,7 @@ void loadPatients(std::vector<std::unique_ptr<Patient>>& patients, const std::st
 void loadAppointments(Hospital& hospital, const std::vector<std::unique_ptr<Patient>>& patients, const std::string& filename) {
     std::ifstream fin(filename);
     if (!fin.is_open()) {
-        std::cerr << "Error opening appointments file.\n";
+        std::cerr << "[ERROR] Cannot open appointments file: " << filename << "\n";
         return;
     }
 
@@ -93,21 +94,36 @@ void loadAppointments(Hospital& hospital, const std::vector<std::unique_ptr<Pati
 
             if (doctor && patient) {
                 auto appointment = std::make_unique<Appointment>(date, time, doctor, patient);
+
                 if (appointment->isValidDateTime() && appointment->isInFuture()) {
-                    validAppointments.push_back({doctorName, patientName, date, time});
+                    validAppointments.emplace_back(doctorName, patientName, date, time);
                     hospital.addAppointment(std::move(appointment));
+                } else {
+                    std::cerr << "[INVALID] Skipped appointment (invalid datetime): " << line << "\n";
                 }
+            } else {
+                std::cerr << "[WARNING] Skipped appointment (doctor/patient not found): " << line << "\n";
             }
-            }
+        }
     }
     fin.close();
 
-    // suprascriem fisierul cu prog valide
-    std::ofstream fout(filename, std::ios::trunc);
-    for (const auto& [doctorName, patientName, date, time] : validAppointments) {
-        fout << doctorName << "," << patientName << "," << date << "," << time << "\n";
+    if (!validAppointments.empty()) {
+        // Backup original file before overwrite
+        try {
+            std::filesystem::copy(filename, filename + ".bak", std::filesystem::copy_options::overwrite_existing);
+        } catch (const std::exception& e) {
+            std::cerr << "[WARNING] Could not create backup: " << e.what() << "\n";
+        }
+
+        std::ofstream fout(filename, std::ios::trunc);
+        for (const auto& [doctorName, patientName, date, time] : validAppointments) {
+            fout << doctorName << "," << patientName << "," << date << "," << time << "\n";
+        }
+        fout.close();
+    } else {
+        std::cerr << "\n[INFO] No valid appointments found. Original file preserved.\n";
     }
-    fout.close();
 }
 
 void assignPatients(const Hospital& hospital,

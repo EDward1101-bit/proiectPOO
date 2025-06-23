@@ -1,2 +1,4 @@
-Medication,Paracetamol,5,2025-12-01
-ExpirableEquipment,BatteryDefibKit,300,2025-11-30,12
+Medication,Paracetamol,5.0,2025-12-31
+MedicalEquipment,Defibrillator,800.0,24
+ExpirableEquipment,BatteryDefibKit,300.0,2026-06-01,12
+ReusableEquipment,ReusableScalpel,100.0,12,0
