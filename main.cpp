@@ -93,7 +93,7 @@ void loadAppointments(Hospital& hospital, const std::vector<std::unique_ptr<Pati
 
             if (doctor && patient) {
                 auto appointment = std::make_unique<Appointment>(date, time, doctor, patient);
-
+2
                 if (appointment->isValidDateTime() && appointment->isInFuture()) {
                     validAppointments.push_back({doctorName, patientName, date, time});
                     hospital.addAppointment(std::move(appointment));

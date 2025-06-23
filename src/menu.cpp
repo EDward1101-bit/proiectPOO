@@ -31,35 +31,29 @@ std::string readValidName(const std::string& prompt) {
 
 void Menu::showMainMenu() {
     int choice = -1;
-    int loopCounter = 0;
-    const int MAX_LOOPS = 50;
-
     do {
-        if (++loopCounter > MAX_LOOPS) {
-            std::cerr << "Too many invalid inputs. Exiting.\n";
-            break;
-        }
+        std::cout << "\n--- Main Menu ---\n"
+                  << "1. Doctors Menu\n"
+                  << "2. Patients Menu\n"
+                  << "3. Appointments Menu\n"
+                  << "0. Exit\n"
+                  << "Choice: ";
 
-        std::cout << "\n--- Main Menu ---\n";
-        std::cout << "1. Doctors Menu\n";
-        std::cout << "2. Patients Menu\n";
-        std::cout << "3. Appointments Menu\n";
-        std::cout << "0. Exit\n";
-        std::cout << "Choice: ";
         std::string input;
         std::getline(std::cin, input);
         std::istringstream iss(input);
-        if (!(iss >> choice)) {
-            choice = -1;
-        }
+        iss >> choice;
 
-
-        switch (choice) {
-            case 1: doctorsMenu(); break;
-            case 2: patientsMenu(); break;
-            case 3: appointmentsMenu(); break;
-            case 0: std::cout << "Goodbye!\n"; break;
-            default: std::cout << "Invalid choice. Try again.\n";
+        try {
+            switch (choice) {
+                case 1: doctorsMenu(); break;
+                case 2: patientsMenu(); break;
+                case 3: appointmentsMenu(); break;
+                case 0: std::cout << "Goodbye!\n"; break;
+                default: std::cout << "Invalid choice. Try again.\n";
+            }
+        } catch (const SpitalException& e) {
+            std::cout << "[Eroare] " << e.what() << "\n";
         }
     } while (choice != 0);
 }

@@ -76,33 +76,51 @@ void InventoryManager::addItem(unique_ptr<InventoryItem> item) {
 }
 
 void InventoryManager::addItemFromPreset() {
-    cout << "\nAvailable Presets:\n1. Paracetamol\n2. Defibrillator\n3. BatteryDefibKit\n4. ReusableScalpel\nChoice: ";
-    string opt;
-    getline(cin, opt);
-    string name;
-    unique_ptr<InventoryItem> item;
+    std::cout << "\nAvailable Presets:\n"
+              << "1. Paracetamol\n"
+              << "2. Defibrillator\n"
+              << "3. BatteryDefibKit\n"
+              << "4. ReusableScalpel\n"
+              << "Choice: ";
+
+    std::string opt;
+    std::getline(std::cin, opt);
+
+    std::unique_ptr<InventoryItem> item;
+    std::string name;
+
     if (opt == "1") {
         name = "Paracetamol";
-        if (presetCount[name] >= presetLimits[name]) throw runtime_error("Limit reached");
-        item = make_unique<Medication>(name, 5.0, floor<days>(system_clock::now()) + days(180));
+        if (presetCount[name] >= presetLimits[name]) {
+            throw SpitalException("Limita atinsa pentru Paracetamol.");
+        }
+        item = std::make_unique<Medication>(name, 5.0, floor<days>(system_clock::now()) + days(180));
     } else if (opt == "2") {
         name = "Defibrillator";
-        if (presetCount[name] >= presetLimits[name]) throw runtime_error("Limit reached");
-        item = make_unique<MedicalEquipment>(name, 800.0, 24);
+        if (presetCount[name] >= presetLimits[name]) {
+            throw SpitalException("Limita atinsa pentru Defibrillator.");
+        }
+        item = std::make_unique<MedicalEquipment>(name, 800.0, 24);
     } else if (opt == "3") {
         name = "BatteryDefibKit";
-        if (presetCount[name] >= presetLimits[name]) throw runtime_error("Limit reached");
-        item = make_unique<ExpirableEquipment>(name, 300.0, floor<days>(system_clock::now()) + days(365), 12);
-    }else if (opt == "4") {
+        if (presetCount[name] >= presetLimits[name]) {
+            throw SpitalException("Limita atinsa pentru BatteryDefibKit.");
+        }
+        item = std::make_unique<ExpirableEquipment>(name, 300.0, floor<days>(system_clock::now()) + days(365), 12);
+    } else if (opt == "4") {
         name = "ReusableScalpel";
-        if (presetCount[name] >= presetLimits[name]) throw runtime_error("Limit reached");
-        item = make_unique<ReusableEquipment>(name, 100.0, 12, 50);
-    }else {
-        throw runtime_error("Invalid preset");
+        if (presetCount[name] >= presetLimits[name]) {
+            throw SpitalException("Limita atinsa pentru ReusableScalpel.");
+        }
+        item = std::make_unique<ReusableEquipment>(name, 100.0, 12, 50);
+    } else {
+        throw SpitalException("Optiune invalida din lista de preset-uri.");
     }
+
     presetCount[name]++;
     addItem(std::move(item));
 }
+
 
 void InventoryManager::removeItemById(int id) {
     auto it = remove_if(items.begin(), items.end(), [&](const unique_ptr<InventoryItem>& item) {
@@ -155,17 +173,37 @@ void InventoryManager::listExpiringSoon() const {
 }
 
 void InventoryManager::autoManage() {
-    vector<unique_ptr<InventoryItem>> kept;
+    std::vector<std::unique_ptr<InventoryItem>> kept;
+
     for (auto& item : items) {
-        if (item->isExpiringSoon()) {
-            budget += item->priceValue() * 0.25;
-            continue;
+        bool shouldRemove = false;
+
+        if (auto* reusable = dynamic_cast<ReusableEquipment*>(item.get())) {
+            if (reusable->getUsageLeft() <= 0) {
+                std::cout << "[AUTO-MANAGE] Removed reusable tool with 0 usage left: " << reusable->getName() << "\n";
+                shouldRemove = true;
+            }
+        } else if (auto* exp = dynamic_cast<ExpirableEquipment*>(item.get())) {
+            if (exp->isExpiringSoon()) {
+                std::cout << "[AUTO-MANAGE] Removed expiring equipment: " << exp->getName() << "\n";
+                shouldRemove = true;
+            }
+        } else if (item->isExpiringSoon()) {
+            std::cout << "[AUTO-MANAGE] Removed generic expiring item: " << item->getName() << "\n";
+            shouldRemove = true;
         }
-        kept.push_back(std::move(item));
+
+        if (shouldRemove) {
+            budget += item->priceValue() * 0.25;
+        } else {
+            kept.push_back(std::move(item));
+        }
     }
+
     items = std::move(kept);
-    cout << "Auto-manage complete.\n";
+    std::cout << "Auto-manage complete.\n";
 }
+
 
 void InventoryManager::showMenu() {
     string input;
