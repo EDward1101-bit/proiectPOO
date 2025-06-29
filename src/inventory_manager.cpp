@@ -30,6 +30,10 @@ InventoryManager::InventoryManager()
       }
 {}
 
+InventoryManager& InventoryManager::getInstance() {
+    static InventoryManager instance;
+    return instance;
+}
 
 void InventoryManager::loadFromCSV(const string& filename) {
     ifstream fin(filename);

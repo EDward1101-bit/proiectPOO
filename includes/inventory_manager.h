@@ -11,6 +11,7 @@ class InventoryManager {
 private:
     std::vector<std::unique_ptr<InventoryItem>> items;
     double budget;
+    InventoryManager();
 
     std::map<std::string, int> presetLimits;
     std::map<std::string, int> presetCount;
@@ -18,8 +19,8 @@ private:
     std::unique_ptr<InventoryItem> parseCSVLine(const std::string& line) const;
 
 public:
-    InventoryManager();
 
+    static InventoryManager& getInstance();
     void loadFromCSV(const std::string& filename);
     void saveToCSV(const std::string& filename) const;
 
@@ -38,6 +39,11 @@ public:
 
     void autoManage();
     void showMenu();
+
+    InventoryManager(const InventoryManager&) = delete;
+    InventoryManager& operator=(const InventoryManager&) = delete;
+    InventoryManager(InventoryManager&&) = delete;
+    InventoryManager& operator=(InventoryManager&&) = delete;
 };
 
 #endif // INVENTORY_MANAGER_H

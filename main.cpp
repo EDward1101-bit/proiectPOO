@@ -109,20 +109,11 @@ void loadAppointments(Hospital& hospital, const std::vector<std::unique_ptr<Pati
     fin.close();
 
     if (!validAppointments.empty()) {
-        // Backup original file before overwrite
-        try {
-            std::filesystem::copy(filename, filename + ".bak", std::filesystem::copy_options::overwrite_existing);
-        } catch (const std::exception& e) {
-            std::cerr << "[WARNING] Could not create backup: " << e.what() << "\n";
-        }
-
         std::ofstream fout(filename, std::ios::trunc);
         for (const auto& [doctorName, patientName, date, time] : validAppointments) {
             fout << doctorName << "," << patientName << "," << date << "," << time << "\n";
         }
         fout.close();
-    } else {
-        std::cerr << "\n[INFO] No valid appointments found. Original file preserved.\n";
     }
 }
 
@@ -172,7 +163,7 @@ std::map<std::string, std::string> loadDiseaseSpecialty(const std::string& filen
 }
 
 int main() {
-        InventoryManager inv;
+        InventoryManager& inv = InventoryManager::getInstance();
         inv.loadBudget("data/admin.csv");
         inv.loadFromCSV("data/inventory.csv");
         Hospital hospital("Spitalul Municipal");

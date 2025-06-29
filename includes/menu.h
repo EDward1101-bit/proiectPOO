@@ -19,6 +19,7 @@ private:
     void patientsMenu();
     void appointmentsMenu();
 
+
     Menu(Hospital& hospital, std::vector<std::unique_ptr<Patient>>& patients,
      const std::map<std::string, std::string>& diseaseToSpecialty);
 public:
