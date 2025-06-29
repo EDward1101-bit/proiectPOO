@@ -19,11 +19,17 @@ private:
     void patientsMenu();
     void appointmentsMenu();
 
-public:
     Menu(Hospital& hospital, std::vector<std::unique_ptr<Patient>>& patients,
-         const std::map<std::string, std::string>& diseaseToSpecialty);
+     const std::map<std::string, std::string>& diseaseToSpecialty);
+public:
 
+    static Menu& getInstance(Hospital& h, std::vector<std::unique_ptr<Patient>>& p, std::map<std::string, std::string>& d);
     void showMainMenu();
+
+    Menu(const Menu&) = delete;
+    Menu& operator=(const Menu&) = delete;
+    Menu(Menu&&) = delete;
+    Menu& operator=(Menu&&) = delete;
 };
 
 #endif // MENU_H

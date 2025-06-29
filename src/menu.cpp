@@ -13,7 +13,10 @@ Menu::Menu(Hospital& hospital, std::vector<std::unique_ptr<Patient>>& patients,
            const std::map<std::string, std::string>& diseaseToSpecialty)
     : hospital(hospital), patients(patients), diseaseToSpecialty(diseaseToSpecialty) {}
 
-
+Menu& Menu::getInstance(Hospital& h, std::vector<std::unique_ptr<Patient>>& p, std::map<std::string, std::string>& d) {
+    static Menu instance(h, p, d);
+    return instance;
+}
 
 std::string readValidName(const std::string& prompt) {
     std::string name;

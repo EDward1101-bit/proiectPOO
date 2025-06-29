@@ -185,7 +185,8 @@ int main() {
 
         loadAppointments(hospital, patients, "data/appointments.csv");
 
-        Menu menu(hospital, patients, diseaseToSpecialty);
+        Menu& menu = Menu::getInstance(hospital, patients, diseaseToSpecialty);
+
 
     std::string choice;
     while (true) {

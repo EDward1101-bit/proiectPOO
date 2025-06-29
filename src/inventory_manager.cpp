@@ -178,7 +178,7 @@ void InventoryManager::autoManage() {
     for (auto& item : items) {
         bool shouldRemove = false;
 
-        if (const auto* reusable = dynamic_cast<ReusableEquipment*>(item.get())){
+        if (const auto* reusable = dynamic_cast<ReusableEquipment*>(item.get())) {
             if (reusable->getUsageLeft() <= 0) {
                 std::cout << "[AUTO-MANAGE] Removed reusable tool with 0 usage left: " << reusable->getName() << "\n";
                 shouldRemove = true;
@@ -188,10 +188,8 @@ void InventoryManager::autoManage() {
                 std::cout << "[AUTO-MANAGE] Removed expiring equipment: " << exp->getName() << "\n";
                 shouldRemove = true;
             }
-        } else if (item->isExpiringSoon()) {
-            std::cout << "[AUTO-MANAGE] Removed generic expiring item: " << item->getName() << "\n";
-            shouldRemove = true;
         }
+
 
         if (shouldRemove) {
             budget += item->priceValue() * 0.25;
