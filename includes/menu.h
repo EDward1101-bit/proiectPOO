@@ -24,7 +24,8 @@ private:
      const std::map<std::string, std::string>& diseaseToSpecialty);
 public:
 
-    static Menu& Menu::getInstance(Hospital& h, std::vector<std::unique_ptr<Patient>>& p, const std::map<std::string, std::string>& d);
+    static Menu& getInstance(Hospital& h, std::vector<std::unique_ptr<Patient>>& p, const std::map<std::string, std::string>& d);
+
     void showMainMenu();
 
     Menu(const Menu&) = delete;
