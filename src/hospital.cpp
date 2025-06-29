@@ -37,7 +37,7 @@ Hospital& Hospital::operator=(const Hospital& other) {
     return *this;
 }
 
-Hospital::~Hospital() {}
+Hospital::~Hospital() =default;
 
 const std::string& Hospital::getName() const { return name; }
 const std::vector<std::unique_ptr<Doctor>>& Hospital::getDoctors() const { return doctors; }

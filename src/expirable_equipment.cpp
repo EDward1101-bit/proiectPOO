@@ -21,7 +21,7 @@ ExpirableEquipment::ExpirableEquipment(const ExpirableEquipment& other)
       MedicalEquipment(other) {}
 
 bool ExpirableEquipment::isExpiringSoon() const {
-    return Medication::isExpiringSoon();  // delegare
+    return Medication::isExpiringSoon();
 }
 
 double ExpirableEquipment::getRentabilityScore() const {
@@ -38,7 +38,7 @@ void ExpirableEquipment::display(std::ostream& os) const {
        << " | Price: $" << InventoryItem::price
        << " | Expiry: " << Medication::formatDate(getExpiryDate())
        << " | Warranty: " << getWarrantyMonths() << " months";
-    if (isExpiringSoon()) os << " ⚠️ EXPIRING SOON";
+    if (isExpiringSoon()) os << " !!! EXPIRING SOON !!!";
 }
 
 std::unique_ptr<InventoryItem> ExpirableEquipment::clone() const {

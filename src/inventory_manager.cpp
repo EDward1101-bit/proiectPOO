@@ -182,6 +182,7 @@ void InventoryManager::autoManage() {
     for (auto& item : items) {
         bool shouldRemove = false;
 
+        // am preferat sa scurtez portiunea asta decat sa fac functie virtuala
         if (const auto* reusable = dynamic_cast<ReusableEquipment*>(item.get())) {
             if (reusable->getUsageLeft() <= 0) {
                 std::cout << "[AUTO-MANAGE] Removed reusable tool with 0 usage left: " << reusable->getName() << "\n";

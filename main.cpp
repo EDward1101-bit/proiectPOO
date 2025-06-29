@@ -17,7 +17,6 @@ int main() {
     InventoryManager& inv = InventoryManager::getInstance();
     DataManager& data = DataManager::getInstance();
 
-    // Încarcă date
     std::vector<std::unique_ptr<Patient>> patients;
     data.loadInventory("data/inventory.csv", "data/admin.csv");
     data.loadHospital(hospital, patients, "data/doctors.csv", "data/patients.csv", "data/appointments.csv");
