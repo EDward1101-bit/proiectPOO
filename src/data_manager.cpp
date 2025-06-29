@@ -137,7 +137,7 @@ std::map<std::string, std::string> DataManager::loadDiseaseSpecialty(const std::
 }
 
 void DataManager::loadInventory(const std::string& itemsFile, const std::string& budgetFile) {
-    InventoryManager& inv = InventoryManager::getInstance();
+    const InventoryManager& inv = InventoryManager::getInstance();
     inv.loadBudget(budgetFile);
     inv.loadFromCSV(itemsFile);
 }

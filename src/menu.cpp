@@ -13,7 +13,8 @@ Menu::Menu(Hospital& hospital, std::vector<std::unique_ptr<Patient>>& patients,
            const std::map<std::string, std::string>& diseaseToSpecialty)
     : hospital(hospital), patients(patients), diseaseToSpecialty(diseaseToSpecialty) {}
 
-Menu& Menu::getInstance(Hospital& h, std::vector<std::unique_ptr<Patient>>& p, std::map<std::string, std::string>& d) {
+Menu& Menu::getInstance(Hospital& h, std::vector<std::unique_ptr<Patient>>& p, const std::map<std::string, std::string>& d)
+ {
     static Menu instance(h, p, d);
     return instance;
 }
@@ -167,12 +168,12 @@ void Menu::doctorsMenu() {
                     break;
                 }
 
-                auto& patients = doctor->getPatients();
-                auto it = std::find_if(patients.begin(), patients.end(), [&](Patient* p) {
+                auto& assignedPatients = doctor->getPatients();
+                auto it = std::find_if(assignedPatients.begin(), assignedPatients.end(), [&](const Patient* p) {
                     return p && p->getName() == patientName;
                 });
 
-                if (it != patients.end()) {
+                if (it != assignedPatients.end()) {
                     (*it)->removeDisease(disease);
                     std::cout << "Disease removed (if existed).\n";
                 } else {
