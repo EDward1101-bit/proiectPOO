@@ -25,13 +25,12 @@ public:
 
     const std::string& getName() const;
     const std::vector<std::unique_ptr<Doctor>>& getDoctors() const;
+    const std::vector<std::unique_ptr<Appointment>>& getAppointments() const;
 
     void addDoctor(std::unique_ptr<Doctor> doctor);
     void addAppointment(std::unique_ptr<Appointment> appointment);
     Doctor* findDoctorByName(const std::string& name) const;
     bool isDoctorAvailable(const Doctor* doctor, const std::string& date, const std::string& time) const;
-    void saveAppointmentsToCSV(const std::string& filename) const;
-    static void savePatientsToCSV(const std::vector<std::unique_ptr<Patient>>& patients, const std::string& filename);
 
 
     void listAllDoctors() const;

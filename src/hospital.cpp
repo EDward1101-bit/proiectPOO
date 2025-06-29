@@ -18,6 +18,10 @@ Hospital::Hospital(const Hospital& other)
     }
 }
 
+const std::vector<std::unique_ptr<Appointment>>& Hospital::getAppointments() const {
+    return appointments;
+}
+
 Hospital& Hospital::operator=(const Hospital& other) {
     if (this != &other) {
         name = other.name;
@@ -92,55 +96,6 @@ bool Hospital::isDoctorAvailable(const Doctor* doctor, const std::string& date, 
     return true; // Doctorul e liber
 }
 
-void Hospital::saveAppointmentsToCSV(const std::string& filename) const {
-    std::ofstream fout(filename, std::ios::trunc); // suprascrie fisierul
-    if (!fout.is_open()) {
-        std::cerr << "Error opening appointments file for writing.\n";
-        return;
-    }
-
-    for (const auto& appointment : appointments) {
-        if (appointment) {
-            fout << appointment->getDoctor()->getName() << ","
-                 << appointment->getPatient()->getName() << ","
-                 << appointment->getDate() << ","
-                 << appointment->getTime() << "\n";
-        }
-    }
-    fout.close();
-}
-
-void Hospital::savePatientsToCSV(const std::vector<std::unique_ptr<Patient>>& patients, const std::string& filename) {
-    std::ofstream fout(filename, std::ios::trunc); // ștergem și rescriem
-
-    if (!fout.is_open()) {
-        std::cerr << "Error opening patients file for writing.\n";
-        return;
-    }
-
-    for (const auto& patientPtr : patients) {
-        if (patientPtr) {
-            fout << patientPtr->getName() << ","
-                 << patientPtr->getCNP() << ","
-                 << patientPtr->getAge() << ","
-                 << patientPtr->getGender() << ",";
-
-            if (!patientPtr->getDiseases().empty()) {
-                auto it = patientPtr->getDiseases().begin();
-                fout << *it;
-                ++it;
-                for (; it != patientPtr->getDiseases().end(); ++it) {
-                    fout << "|" << *it;
-                }
-            } else {
-                fout << "Healthy";
-            }
-
-            fout << "\n";
-        }
-    }
-    fout.close();
-}
 
 std::ostream& operator<<(std::ostream& os, const Hospital& hospital) {
     os << "Hospital Name: " << hospital.name;

@@ -5,7 +5,7 @@ ReusableEquipment::ReusableEquipment()
     : MedicalEquipment(), usageLimit(10), currentUsage(0) {}
 
 ReusableEquipment::ReusableEquipment(const std::string& name, double price, int warranty, int usageLimit, int currentUsage)
-    : InventoryItem(name, price),  // ADĂUGAT
+    : InventoryItem(name, price),
       MedicalEquipment(name, price, warranty),
       usageLimit(usageLimit),
       currentUsage(currentUsage) {}

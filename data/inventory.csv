@@ -1,4 +1,7 @@
 Medication,Paracetamol,5.0,2025-12-31
-MedicalEquipment,Defibrillator,800.0,24
-ExpirableEquipment,BatteryDefibKit,300.0,2026-06-01,12
-ReusableEquipment,ReusableScalpel,100.0,12,0
+Medication,Ibuprofen,7.5,2026-01-15
+Equipment,Defibrillator,800.0,24
+ExpirableEquipment,OxygenCanister,200.0,2025-11-30,6
+ExpirableEquipment,AnesthesiaKit,150.0,2026-02-28,12
+ReusableEquipment,ScalpelSet,100.0,18,30,5
+ReusableEquipment,ReusableScalpel,120.0,24,50,10

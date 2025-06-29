@@ -73,6 +73,8 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         includes/spital_exception.h
         includes/reusable_equipment.h
         src/reusable_equipment.cpp
+        includes/data_manager.h
+        src/data_manager.cpp
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )
