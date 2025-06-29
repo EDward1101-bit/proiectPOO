@@ -151,28 +151,30 @@ void Menu::doctorsMenu() {
                 break;
             }
             case 5: {
-                std::string disease;
                 std::string doctorName = readValidName("Enter doctor's name: ");
-
                 std::string patientName = readValidName("Enter patient's name: ");
+                std::string disease;
 
                 std::cout << "Enter disease to remove: ";
                 std::getline(std::cin, disease);
 
                 const Doctor* doctor = hospital.findDoctorByName(doctorName);
-                if (doctor) {
-                    for (auto& p : doctor->getPatients()) {
-                        if (p->getName() == patientName) {
-                            p->removeDisease(disease);
-                            std::cout << "Disease removed (if existed).\n";
-                            goto EndCase5;
-                        }
-                    }
-                    std::cout << "Patient not found under this doctor.\n";
-                } else {
+                if (!doctor) {
                     std::cout << "Doctor not found.\n";
+                    break;
                 }
-                EndCase5:;
+
+                auto& patients = doctor->getPatients();
+                auto it = std::find_if(patients.begin(), patients.end(), [&](Patient* p) {
+                    return p && p->getName() == patientName;
+                });
+
+                if (it != patients.end()) {
+                    (*it)->removeDisease(disease);
+                    std::cout << "Disease removed (if existed).\n";
+                } else {
+                    std::cout << "Patient not found under this doctor.\n";
+                }
                 break;
             }
             case 0:
