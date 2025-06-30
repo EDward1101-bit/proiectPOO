@@ -236,11 +236,13 @@ void Menu::patientsMenu() {
                     std::cout << "Enter age: ";
                     if (!(std::cin >> age)) {
                         std::cin.clear();
-                        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                        std::string dummy; //doar pt golire de buffer
+                        std::getline(std::cin, dummy);
                         throw InvalidInputException("Vârsta introdusă nu este un număr valid.");
                     }
 
-                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                    std::string dummy;
+                    std::getline(std::cin, dummy);
 
                     std::cout << "Enter gender (M/F): ";
                     std::getline(std::cin, genderStr);
@@ -280,7 +282,8 @@ void Menu::patientsMenu() {
                         if (p->getName() == patientName) {
                             std::cout << *p << "\n";
                             std::cout << "Press ENTER to continue...\n";
-                            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                            std::string dummy;
+                            std::getline(std::cin, dummy);
                             break;
                         }
                     }
