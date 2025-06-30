@@ -13,9 +13,6 @@ private:
     double budget;
     InventoryManager();
 
-    std::map<std::string, int> presetLimits;
-    std::map<std::string, int> presetCount;
-
     std::unique_ptr<InventoryItem> parseCSVLine(const std::string& line) const;
 
 public:
@@ -28,7 +25,7 @@ public:
     void saveBudget(const std::string& filename) const;
 
     void addItem(std::unique_ptr<InventoryItem> item);
-    void addItemFromPreset();
+    void addItemFromTemplate();
 
     void removeItemById(int id);
     void cloneMostRentableItem();

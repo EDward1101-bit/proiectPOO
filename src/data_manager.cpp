@@ -4,6 +4,7 @@
 #include "../includes/patient.h"
 #include "../includes/appointment.h"
 #include "../includes/inventory_manager.h"
+#include "../includes/spital_exception.h"
 #include <fstream>
 #include <sstream>
 #include <iostream>
@@ -13,9 +14,9 @@
 void DataManager::loadDoctors(Hospital& hospital, const std::string& filename) {
     std::ifstream fin(filename);
     if (!fin) {
-        std::cerr << "Error opening doctors file.\n";
-        return;
+        throw FileOpenException(filename);
     }
+
 
     std::string line;
     while (std::getline(fin, line)) {
@@ -30,9 +31,9 @@ void DataManager::loadDoctors(Hospital& hospital, const std::string& filename) {
 void DataManager::loadPatients(std::vector<std::unique_ptr<Patient>>& patients, const std::string& filename) {
     std::ifstream fin(filename);
     if (!fin) {
-        std::cerr << "Error opening patients file.\n";
-        return;
+        throw FileOpenException(filename);
     }
+
 
     std::string line;
     while (std::getline(fin, line)) {
@@ -67,9 +68,9 @@ void DataManager::loadAppointments(Hospital& hospital,
                                    const std::string& filename) {
     std::ifstream fin(filename);
     if (!fin.is_open()) {
-        std::cerr << "[ERROR] Cannot open appointments file: " << filename << "\n";
-        return;
+        throw FileOpenException(filename);
     }
+
 
     std::vector<std::tuple<std::string, std::string, std::string, std::string>> validAppointments;
     std::string line;
@@ -91,18 +92,25 @@ void DataManager::loadAppointments(Hospital& hospital,
                 }
             }
 
-            if (doctor && patient) {
-                auto appointment = std::make_unique<Appointment>(date, time, doctor, patient);
-
-                if (appointment->isValidDateTime() && appointment->isInFuture()) {
-                    validAppointments.emplace_back(doctorName, patientName, date, time);
-                    hospital.addAppointment(std::move(appointment));
-                } else {
-                    std::cerr << "[INVALID] Skipped appointment (invalid datetime): " << line << "\n";
-                }
-            } else {
-                std::cerr << "[WARNING] Skipped appointment (doctor/patient not found): " << line << "\n";
+            if (!doctor) {
+                throw EntityNotFoundException("Doctor \"" + doctorName + "\"");
             }
+            if (!patient) {
+                throw EntityNotFoundException("Pacient \"" + patientName + "\"");
+            }
+
+            auto appointment = std::make_unique<Appointment>(date, time, doctor, patient);
+
+            if (!appointment->isValidDateTime()) {
+                throw InvalidAppointmentException("Format dată/ora invalid: " + date + " " + time);
+            }
+            if (!appointment->isInFuture()) {
+                throw InvalidAppointmentException("Programare nu e în viitor: " + date + " " + time);
+            }
+
+            validAppointments.emplace_back(doctorName, patientName, date, time);
+            hospital.addAppointment(std::move(appointment));
+
         }
     }
 
@@ -120,9 +128,9 @@ std::map<std::string, std::string> DataManager::loadDiseaseSpecialty(const std::
     std::map<std::string, std::string> mapping;
     std::ifstream fin(filename);
     if (!fin.is_open()) {
-        std::cerr << "Error opening disease_specialty file.\n";
-        return mapping;
+        throw FileOpenException(filename);
     }
+
 
     std::string line;
     while (std::getline(fin, line)) {
@@ -155,8 +163,8 @@ void DataManager::saveHospital(const Hospital& hospital,
     // Save appointments
     std::ofstream foutApp(appointmentsFile);
     if (!foutApp.is_open()) {
-        std::cerr << "[ERROR] Cannot open file to write appointments: " << appointmentsFile << "\n";
-    } else {
+        throw FileOpenException(appointmentsFile);
+    }else {
         for (const auto& app : hospital.getAppointments()) {
             foutApp << app->getDoctor()->getName() << ","
                     << app->getPatient()->getName() << ","
@@ -168,8 +176,8 @@ void DataManager::saveHospital(const Hospital& hospital,
     // Save patients
     std::ofstream foutPat(patientsFile);
     if (!foutPat.is_open()) {
-        std::cerr << "[ERROR] Cannot open file to write patients: " << patientsFile << "\n";
-    } else {
+        throw FileOpenException(patientsFile);
+    }else {
         for (const auto& p : patients) {
             foutPat << p->getName() << "," << p->getCNP() << "," << p->getAge() << "," << p->getGender() << ",";
             const auto& diseases = p->getDiseases();

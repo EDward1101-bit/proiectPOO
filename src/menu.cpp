@@ -54,7 +54,8 @@ void Menu::showMainMenu() {
                 case 2: patientsMenu(); break;
                 case 3: appointmentsMenu(); break;
                 case 0: std::cout << "Goodbye!\n"; break;
-                default: std::cout << "Invalid choice. Try again.\n";
+                default: throw InvalidInputException("Opțiune invalidă selectată în meniul principal: " + std::to_string(choice));
+
             }
         } catch (const SpitalException& e) {
             std::cout << "[Eroare] " << e.what() << "\n";
@@ -79,7 +80,7 @@ void Menu::doctorsMenu() {
         if (!(iss >> choice)) {
             choice = -1;
         }
-
+        try {
         switch (choice) {
             case 1:
                 hospital.listAllDoctors();
@@ -88,11 +89,11 @@ void Menu::doctorsMenu() {
                 std::string doctorName = readValidName("Enter doctor's name: ");
 
                 const Doctor* doctor = hospital.findDoctorByName(doctorName);
-                if (doctor) {
-                    std::cout << *doctor << "\n";
-                } else {
-                    std::cout << "Doctor not found.\n";
+                if (!doctor) {
+                    throw EntityNotFoundException("Doctorul \"" + doctorName + "\" nu a fost găsit.");
                 }
+                std::cout << *doctor << "\n";
+
                 break;
             }
             case 3: {
@@ -108,10 +109,13 @@ void Menu::doctorsMenu() {
                     }
                 }
 
-                if (!doctor || !patient) {
-                    std::cout << "Doctor or patient not found.\n";
-                    break;
+                if (!doctor) {
+                    throw EntityNotFoundException("Doctorul \"" + doctorName + "\" nu a fost găsit.");
                 }
+                if (!patient) {
+                    throw EntityNotFoundException("Pacientul \"" + patientName + "\" nu a fost găsit.");
+                }
+
 
                 bool matched = false;
                 for (const std::string& disease : patient->getDiseases()) {
@@ -132,7 +136,7 @@ void Menu::doctorsMenu() {
                 }
 
                 if (!matched) {
-                    std::cout << "Doctor is not qualified for any of the patient's diseases.\n";
+                    throw InvalidInputException("Doctorul \"" + doctorName + "\" nu este calificat pentru bolile pacientului \"" + patientName + "\".");
                 }
                 break;
             }
@@ -143,15 +147,14 @@ void Menu::doctorsMenu() {
 
 
                 Doctor* doctor = hospital.findDoctorByName(doctorName);
-                if (doctor) {
-                    if (doctor->dischargePatient(patientName)) {
-                        std::cout << "Patient discharged.\n";
-                    } else {
-                        std::cout << "Patient not found under this doctor.\n";
-                    }
-                } else {
-                    std::cout << "Doctor not found.\n";
+                if (!doctor) {
+                    throw EntityNotFoundException("Doctorul \"" + doctorName + "\" nu a fost găsit.");
                 }
+                if (!doctor->dischargePatient(patientName)) {
+                    throw EntityNotFoundException("Pacientul \"" + patientName + "\" nu este asociat acestui doctor.");
+                }
+                std::cout << "Pacient externat cu succes.\n";
+
                 break;
             }
             case 5: {
@@ -184,7 +187,11 @@ void Menu::doctorsMenu() {
             case 0:
                 break;
             default:
-                std::cout << "Invalid choice. Try again.\n";
+                throw InvalidInputException("Opțiune invalidă selectată în meniul programărilor: " + std::to_string(choice));
+
+        }
+        } catch (const SpitalException& e) {
+            std::cout << "[Eroare] " << e.what() << "\n";
         }
     } while (choice != 0);
 }
@@ -206,86 +213,89 @@ void Menu::patientsMenu() {
         }
 
 
+        try {
+            switch (choice) {
+                case 1:
+                    for (const auto& p : patients) {
+                        std::cout << *p << "\n";
+                    }
+                    break;
+                case 2: {
+                    std::string cnp, genderStr, diseasesStr;
+                    int age;
 
-        switch (choice) {
-            case 1:
-                for (const auto& p : patients) {
-                    std::cout << *p << "\n";
-                }
-                break;
-            case 2: {
-                std::string cnp, genderStr, diseasesStr;
-                int age;
-
-                std::string name = readValidName("Enter patient's name: ");
+                    std::string name = readValidName("Enter patient's name: ");
 
 
-                std::cout << "Enter CNP: ";
-                std::getline(std::cin, cnp);
-                if (!Patient::isValidCNP(cnp)) {
-                    throw InvalidCNPException();
-                }
+                    std::cout << "Enter CNP: ";
+                    std::getline(std::cin, cnp);
+                    if (!Patient::isValidCNP(cnp)) {
+                        throw InvalidCNPException();
+                    }
 
-                std::cout << "Enter age: ";
-                if (!(std::cin >> age)) {
-                    std::cout << "Invalid age. Patient not added.\n";
-                    std::cin.clear();
+                    std::cout << "Enter age: ";
+                    if (!(std::cin >> age)) {
+                        std::cin.clear();
+                        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                        throw InvalidInputException("Vârsta introdusă nu este un număr valid.");
+                    }
+
                     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                    break;
-                }
-                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-                std::cout << "Enter gender (M/F): ";
-                std::getline(std::cin, genderStr);
-                if (genderStr.empty()) {
-                    std::cout << "Invalid gender. Patient not added.\n";
-                    break;
-                }
-                char gender = toupper(genderStr[0]);
-                if (gender != 'M' && gender != 'F') {
-                    std::cout << "Invalid gender. Patient not added.\n";
-                    break;
-                }
+                    std::cout << "Enter gender (M/F): ";
+                    std::getline(std::cin, genderStr);
+                    if (genderStr.empty()) {
+                        throw InvalidInputException("Genul nu a fost introdus.");
+                    }
+                    char gender = toupper(genderStr[0]);
+                    if (gender != 'M' && gender != 'F') {
+                        throw InvalidInputException("Genul trebuie să fie M sau F.");
+                    }
 
-                std::cout << "Enter diseases (comma-separated, leave empty if none): ";
-                std::getline(std::cin, diseasesStr);
 
-                auto newPatient = std::make_unique<Patient>(name, cnp, age, gender);
+                    std::cout << "Enter diseases (comma-separated, leave empty if none): ";
+                    std::getline(std::cin, diseasesStr);
 
-                if (!diseasesStr.empty()) {
-                    std::istringstream diseaseStream(diseasesStr);
-                    std::string disease;
-                    while (std::getline(diseaseStream, disease, ',')) {
-                        if (!disease.empty()) {
-                            newPatient->addDisease(disease);
+                    auto newPatient = std::make_unique<Patient>(name, cnp, age, gender);
+
+                    if (!diseasesStr.empty()) {
+                        std::istringstream diseaseStream(diseasesStr);
+                        std::string disease;
+                        while (std::getline(diseaseStream, disease, ',')) {
+                            if (!disease.empty()) {
+                                newPatient->addDisease(disease);
+                            }
                         }
                     }
+
+                    patients.push_back(std::move(newPatient));
+                    std::cout << "Patient added successfully.\n";
+                    break;
                 }
 
-                patients.push_back(std::move(newPatient));
-                std::cout << "Patient added successfully.\n";
-                break;
-            }
+                case 3: {
+                    std::string patientName = readValidName("Enter patient's name: ");
 
-            case 3: {
-                std::string patientName = readValidName("Enter patient's name: ");
-
-                for (const auto& p : patients) {
-                    if (p->getName() == patientName) {
-                        std::cout << *p << "\n";
-                        std::cout << "Press ENTER to continue...\n";
-                        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                        break;
+                    for (const auto& p : patients) {
+                        if (p->getName() == patientName) {
+                            std::cout << *p << "\n";
+                            std::cout << "Press ENTER to continue...\n";
+                            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                            break;
+                        }
                     }
+                    break;
                 }
-                break;
+
+
+                case 0:
+                    break;
+                default:
+                    throw InvalidInputException("Opțiune invalidă selectată în meniul programărilor: " + std::to_string(choice));
+
             }
-
-
-            case 0:
-                break;
-            default:
-                std::cout << "Invalid choice. Try again.\n";
+        } catch (const SpitalException& e) {
+            std::cout << "[Eroare] " << e.what() << "\n";
         }
     } while (choice != 0);
 }
@@ -304,7 +314,7 @@ void Menu::appointmentsMenu() {
         if (!(iss >> choice)) {
             choice = -1;
         }
-
+        try {
         switch (choice) {
             case 1:
                 hospital.listAllAppointments();
@@ -315,8 +325,7 @@ void Menu::appointmentsMenu() {
     std::getline(std::cin, doctorName);
     Doctor* doctor = hospital.findDoctorByName(doctorName);
     if (!doctor) {
-        std::cout << "Doctor not found.\n";
-        break;
+        throw EntityNotFoundException("Doctorul \"" + doctorName + "\" nu a fost găsit.");
     }
 
     std::cout << "Enter patient's name: ";
@@ -329,15 +338,13 @@ void Menu::appointmentsMenu() {
         }
     }
     if (!patient) {
-        std::cout << "Patient not found.\n";
-        break;
+        throw EntityNotFoundException("Pacientul \"" + patientName + "\" nu a fost găsit.");
     }
 
     // Verificam daca pacientul este asignat acestui doctor
     const auto& assigned = doctor->getPatients();
     if (std::find(assigned.begin(), assigned.end(), patient) == assigned.end()) {
-        std::cout << "Patient is not assigned to this doctor.\n";
-        break;
+        throw InvalidAppointmentException("Pacientul \"" + patientName + "\" nu este asignat doctorului \"" + doctorName + "\".");
     }
 
     // Verificam daca specialitatea doctorului acopera boala pacientului
@@ -351,8 +358,7 @@ void Menu::appointmentsMenu() {
     }
 
     if (!specialtyMatch) {
-        std::cout << "Doctor is not qualified to treat any of the patient's diseases.\n";
-        break;
+        throw InvalidAppointmentException("Doctorul \"" + doctorName + "\" nu este calificat pentru bolile pacientului \"" + patientName + "\".");
     }
 
     std::cout << "Enter date (YYYY-MM-DD): ";
@@ -364,20 +370,23 @@ void Menu::appointmentsMenu() {
         throw AppointmentConflictException();
     }
 
-
     auto appointment = std::make_unique<Appointment>(date, time, doctor, patient);
     if (appointment->isValidDateTime() && appointment->isInFuture()) {
         hospital.addAppointment(std::move(appointment));
         std::cout << "Appointment added.\n";
     } else {
-        std::cout << "Invalid date/time.\n";
+        throw InvalidAppointmentException("Data și ora introduse nu sunt valide sau se află în trecut.");
     }
     break;
 }
             case 0:
                 break;
             default:
-                std::cout << "Invalid choice. Try again.\n";
+                throw InvalidInputException("Opțiune invalidă selectată în meniul programărilor: " + std::to_string(choice));
+
+        }
+        } catch (const SpitalException& e) {
+            std::cout << "[Eroare] " << e.what() << "\n";
         }
     } while (choice != 0);
 }

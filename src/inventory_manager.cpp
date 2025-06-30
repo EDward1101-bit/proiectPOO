@@ -4,7 +4,7 @@
 #include "../includes/expirable_equipment.h"
 #include "../includes/spital_exception.h"
 #include "../includes/reusable_equipment.h"
-
+#include "../includes/spital_exception.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -15,20 +15,7 @@ using namespace std;
 using namespace std::chrono;
 
 InventoryManager::InventoryManager()
-    : budget(0.0),
-      presetLimits{
-              {"Paracetamol", 3},
-              {"Defibrillator", 3},
-              {"BatteryDefibKit", 3},
-              {"ReusableScalpel", 3}
-      },
-      presetCount{
-              {"Paracetamol", 0},
-              {"Defibrillator", 0},
-              {"BatteryDefibKit", 0},
-              {"ReusableScalpel", 0}
-      }
-{}
+    : budget(0.0){}
 
 InventoryManager& InventoryManager::getInstance() {
     static InventoryManager instance;
@@ -38,9 +25,9 @@ InventoryManager& InventoryManager::getInstance() {
 void InventoryManager::loadFromCSV(const string& filename) {
     ifstream fin(filename);
     if (!fin.is_open()) {
-        cerr << "Error opening inventory file.\n";
-        return;
+        throw FileOpenException(filename);
     }
+
     string line;
     while (getline(fin, line)) {
         auto item = parseCSVLine(line);
@@ -79,8 +66,8 @@ void InventoryManager::addItem(unique_ptr<InventoryItem> item) {
     items.push_back(std::move(item));
 }
 
-void InventoryManager::addItemFromPreset() {
-    std::cout << "\nAvailable Presets:\n"
+void InventoryManager::addItemFromTemplate() {
+    std::cout << "\nAvailable Item Templates:\n"
               << "1. Paracetamol\n"
               << "2. Defibrillator\n"
               << "3. BatteryDefibKit\n"
@@ -91,39 +78,22 @@ void InventoryManager::addItemFromPreset() {
     std::getline(std::cin, opt);
 
     std::unique_ptr<InventoryItem> item;
-    std::string name;
 
     if (opt == "1") {
-        name = "Paracetamol";
-        if (presetCount[name] >= presetLimits[name]) {
-            throw SpitalException("Limita atinsa pentru Paracetamol.");
-        }
-        item = std::make_unique<Medication>(name, 5.0, floor<days>(system_clock::now()) + days(180));
+        item = std::make_unique<Medication>("Paracetamol", 5.0, floor<days>(system_clock::now()) + days(180));
     } else if (opt == "2") {
-        name = "Defibrillator";
-        if (presetCount[name] >= presetLimits[name]) {
-            throw SpitalException("Limita atinsa pentru Defibrillator.");
-        }
-        item = std::make_unique<MedicalEquipment>(name, 800.0, 24);
+        item = std::make_unique<MedicalEquipment>("Defibrillator", 800.0, 24);
     } else if (opt == "3") {
-        name = "BatteryDefibKit";
-        if (presetCount[name] >= presetLimits[name]) {
-            throw SpitalException("Limita atinsa pentru BatteryDefibKit.");
-        }
-        item = std::make_unique<ExpirableEquipment>(name, 300.0, floor<days>(system_clock::now()) + days(365), 12);
+        item = std::make_unique<ExpirableEquipment>("BatteryDefibKit", 300.0, floor<days>(system_clock::now()) + days(365), 12);
     } else if (opt == "4") {
-        name = "ReusableScalpel";
-        if (presetCount[name] >= presetLimits[name]) {
-            throw SpitalException("Limita atinsa pentru ReusableScalpel.");
-        }
-        item = std::make_unique<ReusableEquipment>(name, 100.0, 12, 50);
+        item = std::make_unique<ReusableEquipment>("ReusableScalpel", 100.0, 12, 50, 0);
     } else {
-        throw SpitalException("Optiune invalida din lista de preset-uri.");
+        throw InvalidInputException("Opțiune invalidă pentru șablon de item.");
     }
 
-    presetCount[name]++;
     addItem(std::move(item));
 }
+
 
 
 void InventoryManager::removeItemById(int id) {
@@ -136,10 +106,11 @@ void InventoryManager::removeItemById(int id) {
     });
     if (it != items.end()) {
         items.erase(it, items.end());
-        cout << "Item sold. Budget updated.\n";
+        std::cout << "Item sold. Budget updated.\n";
     } else {
-        cout << "Item ID not found.\n";
+        throw EntityNotFoundException("ID item necunoscut: " + std::to_string(id));
     }
+
 }
 
 void InventoryManager::cloneMostRentableItem() {
@@ -149,9 +120,9 @@ void InventoryManager::cloneMostRentableItem() {
     });
     auto cloned = (*it)->clone();
     if (cloned->priceValue() > budget) {
-        cout << "Not enough budget to clone.\n";
-        return;
+        throw InsufficientBudgetException(cloned->priceValue());
     }
+
     budget -= cloned->priceValue();
     items.push_back(std::move(cloned));
     cout << "Item cloned and added.\n";
@@ -209,28 +180,50 @@ void InventoryManager::autoManage() {
 
 
 void InventoryManager::showMenu() {
-    string input;
+    std::string input;
     while (true) {
-        cout << "\n=== INVENTORY MENU ===\n"
-             << "1. List all\n2. List expiring soon\n3. Sort by rentability\n4. Add inventory item\n"
-             << "5. Auto-manage\n6. Remove item by ID\n7. Clone most rentable\n8. Save & Exit\nChoice: ";
-        getline(cin, input);
-        if (input == "1") listAll();
-        else if (input == "2") listExpiringSoon();
-        else if (input == "3") listSortedByRentability();
-        else if (input == "4") try { addItemFromPreset(); } catch (exception& e) { cout << e.what() << "\n"; }
-        else if (input == "5") autoManage();
-        else if (input == "6") {
-            cout << "Enter ID to remove: ";
-            string idStr;
-            getline(cin, idStr);
-            try { removeItemById(stoi(idStr)); } catch (...) { cout << "Invalid ID.\n"; }
+        try {
+            cout << "\n=== INVENTORY MENU ===\n"
+                 << "1. List all\n2. List expiring soon\n3. Sort by rentability\n4. Add inventory item\n"
+                 << "5. Auto-manage\n6. Remove item by ID\n7. Clone most rentable\n8. Save & Exit\nChoice: ";
+            getline(cin, input);
+
+            if (input == "1") listAll();
+            else if (input == "2") listExpiringSoon();
+            else if (input == "3") listSortedByRentability();
+            else if (input == "4") {
+                try { addItemFromTemplate(); }
+                catch (const SpitalException& e) { cerr << e.what() << "\n"; }
+            }
+            else if (input == "5") autoManage();
+            else if (input == "6") {
+                cout << "Enter ID to remove: ";
+                string idStr;
+                getline(cin, idStr);
+                try {
+                    int id = stoi(idStr);
+                    removeItemById(id);
+                } catch (const std::invalid_argument&) {
+                    throw InvalidInputException("ID introdus invalid (nu e număr)");
+                } catch (const SpitalException& e) {
+                    cerr << e.what() << "\n";
+                }
+            }
+            else if (input == "7") {
+                try { cloneMostRentableItem(); }
+                catch (const SpitalException& e) { cerr << e.what() << "\n"; }
+            }
+            else if (input == "8") break;
+            else {
+                throw InvalidInputException("Opțiune invalidă selectată: " + input);
+            }
+
+        } catch (const SpitalException& e) {
+            cerr << "[Eroare] " << e.what() << "\n";
         }
-        else if (input == "7") cloneMostRentableItem();
-        else if (input == "8") break;
-        else cout << "Invalid choice.\n";
     }
 }
+
 
 std::unique_ptr<InventoryItem> InventoryManager::parseCSVLine(const std::string& line) const {
     std::istringstream iss(line);
