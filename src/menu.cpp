@@ -167,9 +167,9 @@ void Menu::doctorsMenu() {
 
                 const Doctor* doctor = hospital.findDoctorByName(doctorName);
                 if (!doctor) {
-                    std::cout << "Doctor not found.\n";
-                    break;
+                    throw EntityNotFoundException("Doctorul \"" + doctorName + "\" nu a fost găsit.");
                 }
+
 
                 auto& assignedPatients = doctor->getPatients();
                 auto it = std::find_if(assignedPatients.begin(), assignedPatients.end(), [&](const Patient* p) {
