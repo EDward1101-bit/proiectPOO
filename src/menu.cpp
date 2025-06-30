@@ -277,6 +277,7 @@ void Menu::patientsMenu() {
 
                 case 3: {
                     std::string patientName = readValidName("Enter patient's name: ");
+                    bool found = false;
 
                     for (const auto& p : patients) {
                         if (p->getName() == patientName) {
@@ -284,11 +285,18 @@ void Menu::patientsMenu() {
                             std::cout << "Press ENTER to continue...\n";
                             std::string dummy;
                             std::getline(std::cin, dummy);
+                            found = true;
                             break;
                         }
                     }
+
+                    if (!found) {
+                        throw EntityNotFoundException("Pacientul \"" + patientName + "\" nu a fost găsit.");
+                    }
+
                     break;
                 }
+
 
 
                 case 0:
