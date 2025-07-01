@@ -8,7 +8,7 @@
 #include <limits>
 #include <sstream>
 #include <algorithm>
-
+#include <limits>
 Menu::Menu(Hospital& hospital, std::vector<std::unique_ptr<Patient>>& patients,
            const std::map<std::string, std::string>& diseaseToSpecialty)
     : hospital(hospital), patients(patients), diseaseToSpecialty(diseaseToSpecialty) {}
@@ -17,6 +17,12 @@ Menu& Menu::getInstance(Hospital& h, std::vector<std::unique_ptr<Patient>>& p, c
  {
     static Menu instance(h, p, d);
     return instance;
+}
+
+void pressEnterToContinue() {
+    std::cout << "Press ENTER to continue...";
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    std::cin.get();
 }
 
 std::string readValidName(const std::string& prompt) {
@@ -282,9 +288,7 @@ void Menu::patientsMenu() {
                     for (const auto& p : patients) {
                         if (p->getName() == patientName) {
                             std::cout << *p << "\n";
-                            std::cout << "Press ENTER to continue...\n";
-                            std::string dummy;
-                            std::getline(std::cin, dummy);
+                            pressEnterToContinue();
                             found = true;
                             break;
                         }
