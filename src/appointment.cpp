@@ -86,17 +86,16 @@ std::ostream& operator<<(std::ostream& os, const Appointment& appointment) {
     os << "  Time: " << appointment.time << "\n";
 
     if (appointment.doctor) {
-        os << "  Doctor:\n";
-        os << *appointment.doctor;
+        os << "  Doctor: " << appointment.doctor->getName() << "\n";
     }
 
     if (appointment.patient) {
-        os << "  Patient:\n";
-        os << *appointment.patient;
+        os << "  Patient: " << appointment.patient->getName() << "\n";
     }
 
     visited.erase(&appointment);
     return os;
 }
+
 
 

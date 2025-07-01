@@ -44,14 +44,15 @@ std::ostream& operator<<(std::ostream& os, const Doctor& doctor) {
         os << " None\n";
     } else {
         os << "\n";
-        for (const auto* patient : doctor.patients) {
-            if (patient) os << *patient << "\n";
+        for (const Patient* const& patient : doctor.patients) {
+            if (patient) os << "  - " << patient->getName() << "\n";
         }
     }
 
     visited.erase(&doctor);
     return os;
 }
+
 
 
 

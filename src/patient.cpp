@@ -44,7 +44,7 @@ bool Patient::isValidCNP(const std::string& cnp) {
 std::ostream& operator<<(std::ostream& os, const Patient& patient) {
     static thread_local std::unordered_set<const void*> visited;
     if (visited.count(&patient)) {
-        os << "[Info: Patient '" << patient.getName() << "' already printed. Skipping repeated output.]\n";
+        os << "[Info: Patient already printed. Skipping repeated output.]\n";
         return os;
     }
     visited.insert(&patient);
@@ -70,6 +70,7 @@ std::ostream& operator<<(std::ostream& os, const Patient& patient) {
     visited.erase(&patient);
     return os;
 }
+
 
 
 
