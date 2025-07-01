@@ -2,37 +2,57 @@
 
 Acest proiect reprezintă o aplicație de tip consolă scrisă în C++, ce simulează gestiunea unui spital privat. Include funcționalități pentru managementul doctorilor, pacienților, programărilor și inventarului medical.
 
-## 🔧 Funcționalități
+### 📋 Doctori
+- Listare toți doctorii
+- Căutare după nume
+- Atribuire pacient la doctor
+- Externare pacient de la doctor
+- Ștergere boală de la un pacient
+- **(BONUS)** Listare doctori specializați în „Cardiologie” (filtrare template)
 
-### 🧑‍⚕️ Doctori
-- Adăugare și listare doctori
-- Specializare medicală
-- Asignare / eliberare pacienți
+### 🧍‍♂️ Pacienți
+- Listare toți pacienții
+- Adăugare pacient nou (cu validări pentru CNP, vârstă, gen)
+- Vizualizare detalii pacient
+- **(BONUS)** Listare pacienți vârstnici (> 60 ani)
 
-### 🧍 Pacienți
-- Adăugare pacient cu validare CNP
-- Boli asociate pacientului
-- Legare la specialități medicale
+### 🗓️ Programări
+- Listare toate programările
+- Adăugare programare:
+  - Doar dacă doctorul este disponibil
+  - Doar în zile lucrătoare (L-V)
+  - Doar între orele 08:30 – 18:45
+  - Doar dacă doctorul este specializat pentru boala pacientului
+  - Doar dacă data este validă și în viitor
+  - **Folosind `AppointmentBuilder`** pentru construirea obiectului
 
-### 📅 Programări
-- Adăugare programare cu validări:
-  - doar în timpul programului
-  - minim 7 zile în viitor
-  - fără suprapuneri pentru același doctor
-- Listare programări sortate
+---
 
-### 💊 Inventar Medical
-- Categorii:
-  - Medicamente
-  - Echipamente medicale
-  - Echipamente expirabile (moștenire multiplă)
-- Atribute:
-  - Valabilitate, garanție, rentabilitate
-- Acțiuni:
-  - Adăugare din preset
-  - Eliminare automată dacă expirat
-  - Clonare automat a celui mai rentabil
-  - Gestiune buget
+## 🔧 Pattern-uri folosite
+
+- **Singleton** – pentru clasa `Menu`
+- **Builder** – pentru crearea obiectelor `Appointment`
+- **Template** – `filterByPredicate<T>` pentru filtrare generică după predicate
+- **RAII / Smart Pointers** – `std::unique_ptr` în gestiunea pacienților și programărilor
+- **Excepții Personalizate** – `SpitalException`, `InvalidAppointmentException`, etc.
+
+---
+
+## 🧪 Validări și reguli
+
+- **Date și ore validate cu `std::get_time`**
+- Verificare programare în viitor
+- Verificare specialitate compatibilă cu boala
+- Verificare doctor disponibil în acel interval
+
+---
+
+## ▶️ Rulare
+
+```bash
+g++ -std=c++11 -o spital main.cpp src/*.cpp
+./spital
+
 
 | Marius MC | https://github.com/mcmarius/oop-template     |
 
