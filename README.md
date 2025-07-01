@@ -2,57 +2,66 @@
 
 Acest proiect reprezintă o aplicație de tip consolă scrisă în C++, ce simulează gestiunea unui spital privat. Include funcționalități pentru managementul doctorilor, pacienților, programărilor și inventarului medical.
 
-### 📋 Doctori
-- Listare toți doctorii
-- Căutare după nume
-- Atribuire pacient la doctor
-- Externare pacient de la doctor
-- Ștergere boală de la un pacient
-- **(BONUS)** Listare doctori specializați în „Cardiologie” (filtrare template)
-
-### 🧍‍♂️ Pacienți
-- Listare toți pacienții
-- Adăugare pacient nou (cu validări pentru CNP, vârstă, gen)
-- Vizualizare detalii pacient
-- **(BONUS)** Listare pacienți vârstnici (> 60 ani)
-
-### 🗓️ Programări
-- Listare toate programările
-- Adăugare programare:
-  - Doar dacă doctorul este disponibil
-  - Doar în zile lucrătoare (L-V)
-  - Doar între orele 08:30 – 18:45
-  - Doar dacă doctorul este specializat pentru boala pacientului
-  - Doar dacă data este validă și în viitor
-  - **Folosind `AppointmentBuilder`** pentru construirea obiectului
+### 🔹 Doctori
+- Afișarea tuturor doctorilor
+- Căutare doctor după nume
+- Atribuirea pacienților în funcție de specialitate și boală
+- Externarea pacienților
+- Afișarea doctorilor specializați în „Cardiologie” folosind funcție generică `filterByPredicate`
 
 ---
 
-## 🔧 Pattern-uri folosite
-
-- **Singleton** – pentru clasa `Menu`
-- **Builder** – pentru crearea obiectelor `Appointment`
-- **Template** – `filterByPredicate<T>` pentru filtrare generică după predicate
-- **RAII / Smart Pointers** – `std::unique_ptr` în gestiunea pacienților și programărilor
-- **Excepții Personalizate** – `SpitalException`, `InvalidAppointmentException`, etc.
+### 🔹 Pacienți
+- Adăugarea pacienților noi (cu validare CNP, vârstă, gen)
+- Asocierea unor boli
+- Vizualizarea detaliilor unui pacient
+- Afișarea pacienților peste 60 de ani (seniori) folosind `filterByPredicate`
 
 ---
 
-## 🧪 Validări și reguli
-
-- **Date și ore validate cu `std::get_time`**
-- Verificare programare în viitor
-- Verificare specialitate compatibilă cu boala
-- Verificare doctor disponibil în acel interval
+### 🔹 Programări
+- Adăugarea unei programări doar dacă:
+  - Pacientul este asignat doctorului
+  - Doctorul este calificat pentru boala pacientului
+  - Data este validă (cu cel puțin 7 zile în viitor, doar zile lucrătoare între 08:30 și 18:45)
+  - Nu există conflict de orar
+- Validare detaliată pentru dată și oră (`std::tm`, `chrono`)
+- Implementare `AppointmentBuilder` pentru creare fluentă a unei programări
+- Afișarea tuturor programărilor existente
 
 ---
 
-## ▶️ Rulare
+### 🔹 Inventar medical
+- Clasă generică `InventoryItemTemplate<T>`
+  - T poate fi `int`, `std::string` etc., pentru informații adiționale precum: cod lot, locație, observații
+- Adăugare iteme în inventar prin meniu interactiv
+- Validări pentru nume, tip și preț
+- Listare completă a echipamentelor și medicamentelor
+- Design extensibil și sigur (folosind `unique_ptr`, `vector`, template-uri)
 
-```bash
-g++ -std=c++11 -o spital main.cpp src/*.cpp
-./spital
+---
 
+## ⚠️ Excepții personalizate
+Sistemul gestionează erori folosind excepții derivate din `SpitalException`, printre care:
+- `EntityNotFoundException`
+- `InvalidInputException`
+- `AppointmentConflictException`
+- `InvalidAppointmentException`
+- `InvalidCNPException`
+
+---
+
+## 🧰 Tehnologii și concepte C++ utilizate
+
+- `C++11` standard
+- STL: `vector`, `map`, `unique_ptr`, `algorithm`, `chrono`, `sstream`
+- Programare orientată pe obiecte
+- Excepții personalizate
+- Design pattern: Builder (`AppointmentBuilder`)
+- Template-uri (pentru inventar)
+- Funcții lambda și generice (`filterByPredicate`)
+
+---
 
 | Marius MC | https://github.com/mcmarius/oop-template     |
 
