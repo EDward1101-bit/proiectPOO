@@ -6,6 +6,8 @@
 #include <iomanip>
 #include <ctime>
 #include <chrono>
+#include <unordered_set>
+#include <thread>
 using namespace std::chrono;
 
 Appointment::Appointment(const std::string& date, const std::string& time, Doctor* doctor, Patient* patient)
@@ -72,16 +74,29 @@ bool Appointment::isInFuture() const {
 }
 
 std::ostream& operator<<(std::ostream& os, const Appointment& appointment) {
-    os << "Appointment:\n  Date: " << appointment.date
-       << "\n  Time: " << appointment.time;
+    static thread_local std::unordered_set<const void*> visited;
+    if (visited.count(&appointment)) {
+        os << "[Info: Appointment already printed. Skipping repeated output.]\n";
+        return os;
+    }
+    visited.insert(&appointment);
+
+    os << "Appointment:\n";
+    os << "  Date: " << appointment.date << "\n";
+    os << "  Time: " << appointment.time << "\n";
 
     if (appointment.doctor) {
-        os << "\n  Doctor:\n" << *appointment.doctor;
-    }
-    if (appointment.patient) {
-        os << "\n  Patient:\n" << *appointment.patient;
+        os << "  Doctor:\n";
+        os << *appointment.doctor;
     }
 
+    if (appointment.patient) {
+        os << "  Patient:\n";
+        os << *appointment.patient;
+    }
+
+    visited.erase(&appointment);
     return os;
 }
+
 
