@@ -1,24 +1,23 @@
 1
 1
 2
-Dr. Maria
+Dr. Andrei
 3
-Dr. Maria
-Ana Popa
-4
-Dr. Maria
-Ana Popa
-5
-Dr. Maria
-Ana Popa
-epilepsy
+Dr. Andrei
+Ion Ionescu
+hypertension
 0
 2
 2
-Maria Stan
-6000101122334
-30
-F
-asthma
+EDY
+5050911111111
+19
+hypertension
 0
+3
+0
+1
+2
+3
+8
 0
