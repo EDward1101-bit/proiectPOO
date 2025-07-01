@@ -188,6 +188,32 @@ Observație: folderele `build/` și `install_dir/` sunt adăugate în fișierul 
 conțin fișiere generate și nu ne ajută să le versionăm.
 
 
-## Resurse
+## 📚 Resurse utilizate
 
-- adăugați trimiteri către resursele externe care v-au ajutat sau pe care le-ați folosit
+Pe parcursul dezvoltării acestui proiect, m-am documentat și am aplicat concepte din mai multe surse externe de încredere. Acestea m-au ajutat să înțeleg și să implementez eficient principiile OOP, utilizarea STL și design patterns în C++:
+
+- 📘 **C++ Primer (5th Edition)** – Stanley B. Lippman, Josée Lajoie, Barbara E. Moo  
+  *Pentru aprofundarea claselor, STL, excepțiilor și manipulării șabloanelor (template-uri)*
+
+- 📘 **Effective Modern C++** – Scott Meyers  
+  *Ghid avansat pentru folosirea corectă a `unique_ptr`, `auto`, lambdas și move semantics*
+
+- 🌐 [cplusplus.com](http://www.cplusplus.com/)  
+  *Documentație oficială C++: pentru referințe rapide la `std::vector`, `std::map`, `std::chrono`, `std::get_time`, etc.*
+
+- 🌐 [cppreference.com](https://en.cppreference.com/)  
+  *O resursă tehnică esențială pentru detalii exacte despre standardul C++11 și STL*
+
+- 📹 [The Cherno – YouTube](https://www.youtube.com/user/TheChernoProject)  
+  *Playlist C++ Series – explicații vizuale excelente despre clase, templates și pointeri inteligenți*
+
+- 🌐 [Refactoring.Guru](https://refactoring.guru/design-patterns/builder/cpp/example)  
+  *Pentru înțelegerea și aplicarea design pattern-ului Builder*
+
+- 🌐 [Stack Overflow](https://stackoverflow.com/)  
+  *Pentru soluții punctuale legate de conversii de timp (`std::tm`, `std::chrono`), STL și debugging general*
+
+- 📄 Notițele și exemplele de curs/laborator din cadrul disciplinei POO  
+  *Fundamentul proiectului și cerințele de implementare au fost adaptate din cadrul cursului oficial*
+
+---
