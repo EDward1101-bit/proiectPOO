@@ -42,27 +42,25 @@ bool Patient::isValidCNP(const std::string& cnp) {
 
 
 std::ostream& operator<<(std::ostream& os, const Patient& patient) {
-    os << "Patient Name: " << patient.getName()
-       << "\nCNP: " << patient.getCNP()
-       << "\nAge: " << patient.getAge()
-       << "\nGender: " << patient.getGender();
-
-    const auto& diseases = patient.getDiseases();
-    if (diseases.empty()) {
-        os << "\nDiseases: None";
+    os << "Patient Name: " << patient.getName() << "\n"
+       << "CNP: " << patient.getCNP() << "\n"
+       << "Age: " << patient.getAge() << "\n"
+       << "Gender: " << patient.getGender() << "\n"
+       << "Diseases: ";
+    if (patient.getDiseases().empty()) {
+        os << "None";
     } else {
-        os << "\nDiseases: ";
         bool first = true;
-        for (const auto& disease : diseases) {
+        for (const auto& disease : patient.getDiseases()) {
             if (!first) os << ", ";
             os << disease;
             first = false;
         }
     }
-
     os << "\n";
     return os;
 }
+
 
 
 
