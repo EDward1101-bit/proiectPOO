@@ -1,5 +1,7 @@
 #include "../includes/patient.h"
 #include <algorithm>
+#include <unordered_set>
+#include <thread>
 
 Patient::Patient(const std::string& name, const std::string& cnp, int age, char gender)
     : name(name), cnp(cnp), age(age), gender(gender) {}
@@ -43,21 +45,35 @@ std::string Patient::shortInfo() const {
 }
 
 std::ostream& operator<<(std::ostream& os, const Patient& patient) {
-    os << "Patient Name: " << patient.name
-       << ", CNP: " << patient.cnp
-       << ", Age: " << patient.age
-       << ", Gender: " << patient.gender;
+    static thread_local std::unordered_set<const void*> visited;
 
-    if (!patient.diseases.empty()) {
-        os << ", Diseases: ";
-        for (auto it = patient.diseases.begin(); it != patient.diseases.end(); ++it) {
-            if (it != patient.diseases.begin()) os << ", ";
-            os << *it;
-        }
-    } else {
-        os << ", Healthy";
+    if (visited.count(&patient)) {
+        os << "[Info: Patient '" << patient.getName() << "' already printed. Skipping repeated output.]\n";
+        return os;
     }
 
+    visited.insert(&patient);
+
+    os << "Patient Name: " << patient.name
+       << "\nCNP: " << patient.cnp
+       << "\nAge: " << patient.age
+       << "\nGender: " << patient.gender;
+
+    if (!patient.diseases.empty()) {
+        os << "\nDiseases: ";
+        bool first = true;
+        for (const auto& disease : patient.diseases) {
+            if (!first) os << ", ";
+            os << disease;
+            first = false;
+        }
+    } else {
+        os << "\nDiseases: None";
+    }
+
+    os << "\n";
+
+    visited.erase(&patient);
     return os;
 }
 

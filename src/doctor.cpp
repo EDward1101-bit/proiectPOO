@@ -28,15 +28,19 @@ bool Doctor::dischargePatient(const std::string& patientName) {
 }
 
 std::ostream& operator<<(std::ostream& os, const Doctor& doctor) {
-    os << "Doctor: " << doctor.getName() << ", Specialty: " << doctor.getSpecialty() << "\n";
-    os << "Patients:\n";
+    os << "Doctor: " << doctor.name
+       << "\nSpecialty: " << doctor.specialty
+       << "\nPatients:";
 
-    for (const auto* patient : doctor.getPatients()) {
-        if (patient) {
-            os << "  - " << patient->shortInfo() << "\n";
+    if (doctor.patients.empty()) {
+        os << " None\n";
+    } else {
+        os << "\n";
+        for (const auto* patient : doctor.patients) {
+            if (patient)
+                os << *patient << "\n";
         }
     }
-
     return os;
 }
 
