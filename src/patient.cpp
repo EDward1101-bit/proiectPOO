@@ -40,9 +40,6 @@ bool Patient::isValidCNP(const std::string& cnp) {
     return cnp.length() == 13 && std::all_of(cnp.begin(), cnp.end(), ::isdigit);
 }
 
-std::string Patient::shortInfo() const {
-    return name + " (CNP: " + cnp + ")";
-}
 
 std::ostream& operator<<(std::ostream& os, const Patient& patient) {
     static thread_local std::unordered_set<const void*> visited;
