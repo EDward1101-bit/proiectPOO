@@ -40,7 +40,7 @@ std::ostream& operator<<(std::ostream& os, const Doctor& doctor) {
     os << "Doctor: " << doctor.name << "\n";
     os << "Specialty: " << doctor.specialty << "\n";
     os << "Patients:\n";
-    for (const auto& patient : doctor.patients) {
+    for (const Patient* const& patient : doctor.patients) {
         os << *patient << "\n";
     }
     visited.erase(&doctor);
