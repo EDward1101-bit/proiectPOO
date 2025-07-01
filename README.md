@@ -111,7 +111,7 @@ O cerință nu se consideră îndeplinită dacă este realizată doar prin cod g
     - afișare virtuală, interfață non-virtuală
   - [✔️] apelarea constructorului din clasa de bază din constructori din derivate
   - [✔️] clasă cu atribut de tip pointer la o clasă de bază cu derivate; aici apelați funcțiile virtuale prin pointer de bază, eventual prin interfața non-virtuală din bază
-    - [ ] suprascris cc/op= pentru copieri/atribuiri corecte, copy and swap
+    - [✔️] suprascris cc/op= pentru copieri/atribuiri corecte, copy and swap
     - [✔️] `dynamic_cast`/`std::dynamic_pointer_cast` pentru downcast cu sens
     - [✔️] smart pointers (recomandat, opțional)
 - [✔️] excepții
@@ -132,12 +132,10 @@ O cerință nu se consideră îndeplinită dacă este realizată doar prin cod g
 ## Tema 3
 
 #### Cerințe
-- [ ] 2 șabloane de proiectare (design patterns)
-- [ ] o clasă șablon cu sens; minim **2 instanțieri**
-  - [ ] preferabil și o funcție șablon (template) cu sens; minim 2 instanțieri
-- [ ] minim 85% din codul propriu să fie C++
-<!-- - [ ] o specializare pe funcție/clasă șablon -->
-- [ ] tag de `git` pe commit cu **toate bifele**: de exemplu `v0.3` sau `v1.0`
+- [✔️] 2 șabloane de proiectare (design patterns)
+- [✔️] o clasă șablon cu sens; minim **2 instanțieri**
+  - [✔️] preferabil și o funcție șablon (template) cu sens; minim 2 instanțieri
+- [✔️] tag de `git` pe commit cu **toate bifele**: de exemplu `v0.3` sau `v1.0`
 
 ## Instrucțiuni de compilare
 
