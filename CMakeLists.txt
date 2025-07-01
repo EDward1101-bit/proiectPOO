@@ -75,6 +75,9 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         src/reusable_equipment.cpp
         includes/data_manager.h
         src/data_manager.cpp
+        includes/inventory_item_template.h
+        src/inventory_item_template.cpp
+        includes/utils.h
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )

@@ -5,6 +5,9 @@
 #include "../includes/spital_exception.h"
 #include "../includes/reusable_equipment.h"
 #include "../includes/spital_exception.h"
+#include "../includes/inventory_item_template.h"
+#include "../includes/utils.h"
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -185,7 +188,7 @@ void InventoryManager::showMenu() {
         try {
             cout << "\n=== INVENTORY MENU ===\n"
                  << "1. List all\n2. List expiring soon\n3. Sort by rentability\n4. Add inventory item\n"
-                 << "5. Auto-manage\n6. Remove item by ID\n7. Clone most rentable\n8. Save & Exit\nChoice: ";
+                 << "5. Auto-manage\n6. Remove item by ID\n7. Clone most rentable\n8. Save & Exit\n9. Adaugă item cu informație extinsă\n10. Afișează itemi cu rentabilitate > X\nChoice: ";
             getline(cin, input);
 
             if (input == "1") listAll();
@@ -214,9 +217,78 @@ void InventoryManager::showMenu() {
                 catch (const SpitalException& e) { cerr << e.what() << "\n"; }
             }
             else if (input == "8") break;
-            else {
-                throw InvalidInputException("Opțiune invalidă selectată: " + input);
+            else if (input == "9") {
+                std::string name, type, priceStr;
+
+                std::cout << "Nume item: ";
+                std::getline(std::cin, name);
+
+                std::cout << "Preț: ";
+                std::getline(std::cin, priceStr);
+
+                if (priceStr.empty() || !std::all_of(priceStr.begin(), priceStr.end(), [](char c) {
+                        return std::isdigit(c) || c == '.' || c == ',';
+                    })) {
+                    throw InvalidInputException("Preț invalid: trebuie să fie un număr pozitiv");
+                    }
+
+                double price = 0.0;
+                try {
+                    price = std::stod(priceStr);
+                } catch (const std::exception& e) {
+                    throw InvalidInputException("Conversie eșuată a prețului: " + std::string(e.what()));
+                }
+
+                std::cout << "Tip info extra (int/string): ";
+                std::getline(std::cin, type);
+
+                if (type == "int") {
+                    std::string valStr;
+                    std::cout << "Cod numeric suplimentar (ex: cod lot): ";
+                    std::getline(std::cin, valStr);
+
+                    if (valStr.empty() || !std::all_of(valStr.begin(), valStr.end(), ::isdigit)) {
+                        throw InvalidInputException("Cod numeric invalid");
+                    }
+
+                    int val = std::stoi(valStr);
+                    auto item = std::make_unique<InventoryItemTemplate<int>>(name, price, val);
+                    addItem(std::move(item));
+
+                } else if (type == "string") {
+                    std::string val;
+                    std::cout << "Etichetă suplimentară (ex: Secție): ";
+                    std::getline(std::cin, val);
+
+                    if (val.empty()) {
+                        throw InvalidInputException("Eticheta nu poate fi goală");
+                    }
+
+                    auto item = std::make_unique<InventoryItemTemplate<std::string>>(name, price, val);
+                    addItem(std::move(item));
+
+                } else {
+                    throw InvalidInputException("Tip necunoscut: trebuie 'int' sau 'string'");
+                }
             }
+            else if (input == "10") {
+                std::string xStr;
+                std::cout << "Rentabilitate minimă: ";
+                std::getline(std::cin, xStr);
+
+                double x = 0;
+                try {
+                    x = std::stod(xStr);
+                } catch (...) {
+                    throw InvalidInputException("Valoare rentabilitate invalidă");
+                }
+
+                std::cout << "Itemi cu rentabilitate > " << x << ":\n";
+                afiseazaDaca(items, [x](const InventoryItem* item) {
+                    return item->getRentabilityScore() > x;
+                });
+            }else throw InvalidInputException("Opțiune invalidă selectată: " + input);
+
 
         } catch (const SpitalException& e) {
             cerr << "[Eroare] " << e.what() << "\n";

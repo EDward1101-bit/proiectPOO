@@ -1,7 +1,4 @@
 Medication,Paracetamol,5,2025-12-31
 Medication,Ibuprofen,7.5,2026-01-15
-MedicalEquipment,Defibrillator,800,24
 ExpirableEquipment,OxygenCanister,200,2025-11-30,6
 ExpirableEquipment,AnesthesiaKit,150,2026-02-28,12
-ReusableEquipment,ScalpelSet,100,18,5/30
-ReusableEquipment,ReusableScalpel,120,24,10/50
