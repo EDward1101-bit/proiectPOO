@@ -8,34 +8,11 @@
 
 Hospital::Hospital(const std::string& name) : name(name) {}
 
-Hospital::Hospital(const Hospital& other)
-    : name(other.name) {
-    for (const auto& doctor : other.doctors) {
-        doctors.push_back(std::make_unique<Doctor>(*doctor));
-    }
-    for (const auto& appointment : other.appointments) {
-        appointments.push_back(std::make_unique<Appointment>(*appointment));
-    }
-}
 
 const std::vector<std::unique_ptr<Appointment>>& Hospital::getAppointments() const {
     return appointments;
 }
 
-Hospital& Hospital::operator=(const Hospital& other) {
-    if (this != &other) {
-        name = other.name;
-        doctors.clear();
-        appointments.clear();
-        for (const auto& doctor : other.doctors) {
-            doctors.push_back(std::make_unique<Doctor>(*doctor));
-        }
-        for (const auto& appointment : other.appointments) {
-            appointments.push_back(std::make_unique<Appointment>(*appointment));
-        }
-    }
-    return *this;
-}
 
 Hospital::~Hospital() =default;
 

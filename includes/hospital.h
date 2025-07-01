@@ -19,8 +19,8 @@ private:
 public:
     explicit Hospital(const std::string& name);
 
-    Hospital(const Hospital& other);
-    Hospital& operator=(const Hospital& other);
+    Hospital(const Hospital&) = delete;
+    Hospital& operator=(const Hospital&) = delete;
     ~Hospital();
 
     const std::string& getName() const;
