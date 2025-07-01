@@ -5,6 +5,7 @@
 #include "../includes/appointment.h"
 #include "../includes/spital_exception.h"
 #include "../includes/appointment_builder.h"
+#include "../includes/utils.h"
 #include <iostream>
 #include <limits>
 #include <sstream>
@@ -91,12 +92,13 @@ void Menu::doctorsMenu() {
         std::cout << "3. Assign patient to doctor\n";
         std::cout << "4. Discharge patient from doctor\n";
         std::cout << "5. Remove disease from patient\n";
+        std::cout << "6. List cardiology doctors\n";
         std::cout << "0. Back to main menu\n";
         std::cout << "Choice: ";
         std::string input;
         std::getline(std::cin, input);
         if (input.empty()) {
-            choice = -1; // sau altă valoare pentru invalid
+            choice = -1;
         } else {
             std::istringstream iss(input);
             if (!(iss >> choice)) {
@@ -212,6 +214,28 @@ void Menu::doctorsMenu() {
                 }
                 break;
             }
+            case 6: {
+                const auto& doctorPtrsUnique = hospital.getDoctors();  // vector<unique_ptr<Doctor>>
+
+                std::vector<Doctor*> doctorPtrs;
+                doctorPtrs.reserve(doctorPtrsUnique.size());
+                for (const auto& d : doctorPtrsUnique) {
+                    doctorPtrs.push_back(d.get());
+                }
+
+
+                auto cardiologi = filterByPredicate<Doctor>(doctorPtrs, [](const Doctor* d) {
+                    return d->getSpecialty() == "Cardiologie";
+                });
+
+                std::cout << "Doctori specializați în Cardiologie:\n";
+                for (const auto& d : cardiologi) std::cout << *d << "\n";
+
+                pressEnterToContinue();
+                break;
+            }
+
+
             case 0:
                 break;
             default:
@@ -231,6 +255,7 @@ void Menu::patientsMenu() {
         std::cout << "1. List all patients\n";
         std::cout << "2. Add new patient\n";
         std::cout << "3. Show patient details\n";
+        std::cout << "4. List elderly patients (60+)\n";
         std::cout << "0. Back to main menu\n";
         std::cout << "Choice: ";
         std::string input;
@@ -331,6 +356,20 @@ void Menu::patientsMenu() {
                         throw EntityNotFoundException("Pacientul \"" + patientName + "\" nu a fost găsit.");
                     }
 
+                    break;
+                }
+                case 4: {
+                    std::vector<Patient*> patientPtrs;
+                    for (const auto& p : patients) patientPtrs.push_back(p.get());
+
+                    auto seniori = filterByPredicate<Patient>(patientPtrs, [](const Patient* p) {
+                        return p->getAge() > 60;
+                    });
+
+                    std::cout << "Pacienți peste 60 ani:\n";
+                    for (const auto& p : seniori) std::cout << *p << "\n";
+
+                    pressEnterToContinue();
                     break;
                 }
 
