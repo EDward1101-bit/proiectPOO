@@ -84,3 +84,4 @@ std::ostream& operator<<(std::ostream& os, const Appointment& appointment) {
 
     return os;
 }
+
