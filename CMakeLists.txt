@@ -78,6 +78,8 @@ add_executable(${MAIN_EXECUTABLE_NAME}
         includes/inventory_item_template.h
         src/inventory_item_template.cpp
         includes/utils.h
+        includes/appointment_builder.h
+        src/appointment_builder.cpp
 )
 
 # NOTE: Add all defined targets (e.g. executables, libraries, etc. )

@@ -4,6 +4,7 @@
 #include "../includes/patient.h"
 #include "../includes/appointment.h"
 #include "../includes/spital_exception.h"
+#include "../includes/appointment_builder.h"
 #include <iostream>
 #include <limits>
 #include <sstream>
@@ -367,16 +368,13 @@ void Menu::appointmentsMenu() {
                 hospital.listAllAppointments();
                 break;
             case 2: {
-    std::string doctorName, patientName, date, time;
-    std::cout << "Enter doctor's name: ";
-    std::getline(std::cin, doctorName);
+    std::string doctorName = readValidName("Enter doctor's name: ");
     Doctor* doctor = hospital.findDoctorByName(doctorName);
     if (!doctor) {
         throw EntityNotFoundException("Doctorul \"" + doctorName + "\" nu a fost găsit.");
     }
 
-    std::cout << "Enter patient's name: ";
-    std::getline(std::cin, patientName);
+    std::string patientName = readValidName("Enter patient's name: ");
     Patient* patient = nullptr;
     for (const auto& p : patients) {
         if (p->getName() == patientName) {
@@ -388,13 +386,13 @@ void Menu::appointmentsMenu() {
         throw EntityNotFoundException("Pacientul \"" + patientName + "\" nu a fost găsit.");
     }
 
-    // Verificam daca pacientul este asignat acestui doctor
+    // Verificăm dacă pacientul e asignat doctorului
     const auto& assigned = doctor->getPatients();
     if (std::find(assigned.begin(), assigned.end(), patient) == assigned.end()) {
         throw InvalidAppointmentException("Pacientul \"" + patientName + "\" nu este asignat doctorului \"" + doctorName + "\".");
     }
 
-    // Verificam daca specialitatea doctorului acopera boala pacientului
+    // Verificăm dacă specialitatea doctorului acoperă o boală a pacientului
     bool specialtyMatch = false;
     for (const std::string& disease : patient->getDiseases()) {
         auto it = diseaseToSpecialty.find(disease);
@@ -408,24 +406,28 @@ void Menu::appointmentsMenu() {
         throw InvalidAppointmentException("Doctorul \"" + doctorName + "\" nu este calificat pentru bolile pacientului \"" + patientName + "\".");
     }
 
-    std::cout << "Enter date (YYYY-MM-DD): ";
+    std::string date, time;
+    std::cout << "Introduceți data (YYYY-MM-DD): ";
     std::getline(std::cin, date);
-    std::cout << "Enter time (HH:MM): ";
+    std::cout << "Introduceți ora (HH:MM): ";
     std::getline(std::cin, time);
+
+    Appointment appt = AppointmentBuilder()
+        .setDoctor(doctor)
+        .setPatient(patient)
+        .setDate(date)
+        .setTime(time)
+        .build();
 
     if (!hospital.isDoctorAvailable(doctor, date, time)) {
         throw AppointmentConflictException();
     }
 
-    auto appointment = std::make_unique<Appointment>(date, time, doctor, patient);
-    if (appointment->isValidDateTime() && appointment->isInFuture()) {
-        hospital.addAppointment(std::move(appointment));
-        std::cout << "Appointment added.\n";
-    } else {
-        throw InvalidAppointmentException("Data și ora introduse nu sunt valide sau se află în trecut.");
-    }
+    hospital.addAppointment(std::make_unique<Appointment>(appt));
+    std::cout << "Programare adăugată cu succes.\n";
     break;
 }
+
             case 0:
                 break;
             default:
