@@ -42,24 +42,19 @@ bool Patient::isValidCNP(const std::string& cnp) {
 
 
 std::ostream& operator<<(std::ostream& os, const Patient& patient) {
-    static thread_local std::unordered_set<const void*> visited;
-    if (visited.count(&patient)) {
-        os << "[Patient info suppressed to prevent circular printing]\n";
-        return os;
+    os << "Patient Name: " << patient.name << "\n"
+       << "CNP: " << patient.cnp << "\n"
+       << "Age: " << patient.age << "\n"
+       << "Gender: " << patient.gender << "\n"
+       << "Diseases: ";
+
+    bool first = true;
+    for (const auto& disease : patient.diseases) {
+        if (!first) os << ", ";
+        os << disease;
+        first = false;
     }
 
-    visited.insert(&patient);
-    os << "Patient Name: " << patient.name << "\n";
-    os << "CNP: " << patient.cnp << "\n";
-    os << "Age: " << patient.age << "\n";
-    os << "Gender: " << patient.gender << "\n";
-    os << "Diseases: ";
-    for (auto it = patient.diseases.begin(); it != patient.diseases.end(); ++it) {
-        if (it != patient.diseases.begin()) os << ", ";
-        os << *it;
-    }
-    os << "\n";
-    visited.erase(&patient);
     return os;
 }
 
