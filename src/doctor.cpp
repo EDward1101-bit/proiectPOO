@@ -30,23 +30,15 @@ bool Doctor::dischargePatient(const std::string& patientName) {
 }
 
 std::ostream& operator<<(std::ostream& os, const Doctor& doctor) {
-    static std::unordered_set<const void*> visited;
-
-    if (visited.contains(&doctor)) {
-        os << "[INFO] (circular reference detected)\n";
-        return os;
-    }
-
-    visited.insert(&doctor);
-
     os << "Doctor: " << doctor.name << "\n";
     os << "Specialty: " << doctor.specialty << "\n";
     os << "Patients:\n";
+
     for (const Patient* const& patient : doctor.patients) {
-        os << *patient << "\n";
+        os << "  - " << patient->getName() << " (CNP: " << patient->getCNP() << ")\n";
     }
 
-    visited.erase(&doctor);
     return os;
 }
+
 
