@@ -47,11 +47,13 @@ std::ostream& operator<<(std::ostream& os, const Patient& patient) {
        << "Age: " << patient.getAge() << "\n"
        << "Gender: " << patient.getGender() << "\n"
        << "Diseases: ";
-    if (patient.getDiseases().empty()) {
+
+    const auto& diseases = patient.getDiseases();
+    if (diseases.empty()) {
         os << "None";
     } else {
         bool first = true;
-        for (const auto& disease : patient.getDiseases()) {
+        for (const auto& disease : diseases) {
             if (!first) os << ", ";
             os << disease;
             first = false;
@@ -60,6 +62,7 @@ std::ostream& operator<<(std::ostream& os, const Patient& patient) {
     os << "\n";
     return os;
 }
+
 
 
 
