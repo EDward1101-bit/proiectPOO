@@ -38,6 +38,10 @@ bool Patient::isValidCNP(const std::string& cnp) {
     return cnp.length() == 13 && std::all_of(cnp.begin(), cnp.end(), ::isdigit);
 }
 
+std::string Patient::shortInfo() const {
+    return name + " (CNP: " + cnp + ")";
+}
+
 std::ostream& operator<<(std::ostream& os, const Patient& patient) {
     os << "Patient Name: " << patient.name
        << ", CNP: " << patient.cnp
@@ -46,15 +50,15 @@ std::ostream& operator<<(std::ostream& os, const Patient& patient) {
 
     if (!patient.diseases.empty()) {
         os << ", Diseases: ";
-        auto it = patient.diseases.begin();
-        os << *it;
-        ++it;
-        for (; it != patient.diseases.end(); ++it) {
-            os << ", " << *it;
+        for (auto it = patient.diseases.begin(); it != patient.diseases.end(); ++it) {
+            if (it != patient.diseases.begin()) os << ", ";
+            os << *it;
         }
     } else {
         os << ", Healthy";
     }
+
     return os;
 }
+
 

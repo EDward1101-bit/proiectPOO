@@ -33,6 +33,7 @@ public:
     void addDisease(const std::string& disease);
     void removeDisease(const std::string& disease);
     static bool isValidCNP(const std::string& cnp);
+    std::string shortInfo() const;
 
     friend std::ostream& operator<<(std::ostream& os, const Patient& patient);
 };

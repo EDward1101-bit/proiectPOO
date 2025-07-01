@@ -72,12 +72,17 @@ bool Appointment::isInFuture() const {
 }
 
 std::ostream& operator<<(std::ostream& os, const Appointment& appointment) {
-    os << "Date: " << appointment.date << ", Time: " << appointment.time;
-    if (appointment.doctor) {
-        os << ", Doctor: " << appointment.doctor->getName();
+    os << "Appointment:\n";
+    os << "  Date: " << appointment.getDate() << "\n";
+    os << "  Time: " << appointment.getTime() << "\n";
+
+    if (appointment.getDoctor()) {
+        os << "  Doctor: " << appointment.getDoctor()->getName() << "\n";
     }
-    if (appointment.patient) {
-        os << ", Patient: " << appointment.patient->getName();
+
+    if (appointment.getPatient()) {
+        os << "  Patient: " << appointment.getPatient()->shortInfo() << "\n";
     }
+
     return os;
 }
