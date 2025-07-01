@@ -1,46 +1,21 @@
 1
 1
-1
-2
-Dr. Andrei
-3
-Dr. Andrei
-Ion Ionescu
-4
-Dr. Andrei
-Ion Ionescu
-5
-Dr. Andrei
-Ion Ionescu
-hypertension
 0
 2
-1
-2
-Maria Stan
-6000101122334
-30
-F
-asthma
-3
-Maria Stan
 0
 3
-1
-2
-Dr. Popescu
-George Vlad
-2025-12-04
-13:00
 0
 2
 1
 2
 3
 4
+1
+4
+2
+4
+3
 5
-6
 7
 8
-0
 0
