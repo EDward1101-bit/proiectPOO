@@ -15,22 +15,15 @@
 3
 4
 1
-5
+4
+2
+4
+3
 7
 8
 1
-4
-Dr. Andrei
-Ion Ionescu
-0
 3
-2
 Dr. Andrei
-Maria Stan
+George Vlad
 0
-0
-2
-4
-3
-8
 0
