@@ -22,8 +22,8 @@ Menu& Menu::getInstance(Hospital& h, std::vector<std::unique_ptr<Patient>>& p, c
 void pressEnterToContinue() {
     std::cout << "Press ENTER to continue...";
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    std::cin.get();
 }
+
 
 std::string readValidName(const std::string& prompt) {
     std::string name;
@@ -277,6 +277,7 @@ void Menu::patientsMenu() {
                     }
 
 
+
                     std::cout << "Enter gender (M/F): ";
                     std::getline(std::cin, genderStr);
                     if (genderStr.empty()) {
@@ -291,11 +292,6 @@ void Menu::patientsMenu() {
                     std::cout << "Enter diseases (comma-separated, leave empty if none): ";
                     std::getline(std::cin, diseasesStr);
 
-                    for (const auto& p : patients) {
-                        if (p->getCNP() == cnp) {
-                            throw InvalidInputException("Pacientul cu acest CNP există deja.");
-                        }
-                    }
                     auto newPatient = std::make_unique<Patient>(name, cnp, age, gender);
 
                     if (!diseasesStr.empty()) {
