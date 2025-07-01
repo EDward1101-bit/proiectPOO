@@ -29,14 +29,16 @@ std::string readValidName(const std::string& prompt) {
     std::string name;
     while (true) {
         std::cout << prompt;
-        std::getline(std::cin, name);
+        if (!std::getline(std::cin, name)) {
+            throw std::runtime_error("End of input or input stream error.");
+        }
 
         if (!name.empty() && name.find_first_not_of(' ') != std::string::npos) {
-            break;
+            return name;
         }
+
         std::cout << "Invalid input. Please enter a non-empty string.\n";
     }
-    return name;
 }
 
 void Menu::showMainMenu() {
@@ -240,15 +242,13 @@ void Menu::patientsMenu() {
                     }
 
                     std::cout << "Enter age: ";
-                    if (!(std::cin >> age)) {
-                        std::cin.clear();
-                        std::string dummy; //doar pt golire de buffer
-                        std::getline(std::cin, dummy);
+                    std::string ageStr;
+                    std::getline(std::cin, ageStr);
+                    std::istringstream ageStream(ageStr);
+                    if (!(ageStream >> age)) {
                         throw InvalidInputException("Vârsta introdusă nu este un număr valid.");
                     }
 
-                    std::string dummy;
-                    std::getline(std::cin, dummy);
 
                     std::cout << "Enter gender (M/F): ";
                     std::getline(std::cin, genderStr);
@@ -264,6 +264,11 @@ void Menu::patientsMenu() {
                     std::cout << "Enter diseases (comma-separated, leave empty if none): ";
                     std::getline(std::cin, diseasesStr);
 
+                    for (const auto& p : patients) {
+                        if (p->getCNP() == cnp) {
+                            throw InvalidInputException("Pacientul cu acest CNP există deja.");
+                        }
+                    }
                     auto newPatient = std::make_unique<Patient>(name, cnp, age, gender);
 
                     if (!diseasesStr.empty()) {
@@ -275,7 +280,11 @@ void Menu::patientsMenu() {
                             }
                         }
                     }
-
+                    for (const auto& p : patients) {
+                        if (p->getCNP() == cnp) {
+                            throw InvalidInputException("Pacientul cu acest CNP există deja.");
+                        }
+                    }
                     patients.push_back(std::move(newPatient));
                     std::cout << "Patient added successfully.\n";
                     break;
