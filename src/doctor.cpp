@@ -32,24 +32,19 @@ bool Doctor::dischargePatient(const std::string& patientName) {
 std::ostream& operator<<(std::ostream& os, const Doctor& doctor) {
     static thread_local std::unordered_set<const void*> visited;
     if (visited.count(&doctor)) {
-        os << "[Info: Doctor already printed. Skipping repeated output.]\n";
+        os << "[Doctor details omitted to prevent recursive loop]";
         return os;
     }
+
     visited.insert(&doctor);
-
-    os << "Doctor: " << doctor.name
-       << "\nSpecialty: " << doctor.specialty
-       << "\nPatients:";
-
-    if (doctor.patients.empty()) {
-        os << " None\n";
-    } else {
-        os << "\n";
-        for (const auto* patient : doctor.patients) {
-            if (patient) os << *patient << "\n";
+    os << "Doctor: " << doctor.name << "\n";
+    os << "Specialty: " << doctor.specialty << "\n";
+    os << "Patients:\n";
+    for (const auto& patient : doctor.patients) {
+        if (patient) {
+            os << *patient << "\n";
         }
     }
-
     visited.erase(&doctor);
     return os;
 }
