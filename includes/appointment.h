@@ -27,10 +27,13 @@ public:
     bool isInFuture() const;
     bool isValidDateTime() const;
 
-    Appointment(const Appointment&) = default;
-    Appointment& operator=(const Appointment&) = default;
+    Appointment(const Appointment&) = delete;
+    Appointment& operator=(const Appointment&) = delete;
     ~Appointment() = default;
     friend std::ostream& operator<<(std::ostream& os, const Appointment& appointment);
+
+
+
 };
 
 #endif // APPOINTMENT_H
