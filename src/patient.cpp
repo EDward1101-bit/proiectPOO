@@ -43,7 +43,7 @@ bool Patient::isValidCNP(const std::string& cnp) {
 
 std::ostream& operator<<(std::ostream& os, const Patient& patient) {
     static thread_local std::unordered_set<const void*> visited;
-    if (visited.count(&&patient)) {
+    if (visited.count(&patient)) {
         os << "[Patient details omitted to prevent recursive loop]";
         return os;
     }
