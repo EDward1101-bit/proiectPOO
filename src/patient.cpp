@@ -44,7 +44,7 @@ bool Patient::isValidCNP(const std::string& cnp) {
 std::ostream& operator<<(std::ostream& os, const Patient& patient) {
     static thread_local std::unordered_set<const void*> visited;
     if (visited.count(&patient)) {
-        os << "[Patient details omitted to prevent recursive loop]";
+        os << "[Patient info suppressed to prevent circular printing]\n";
         return os;
     }
 
@@ -62,6 +62,5 @@ std::ostream& operator<<(std::ostream& os, const Patient& patient) {
     visited.erase(&patient);
     return os;
 }
-
 
 
