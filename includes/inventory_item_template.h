@@ -15,9 +15,6 @@ public:
     InventoryItemTemplate(const std::string& name, double price, const T& extraInfo)
         : InventoryItem(name, price), extraInfo(extraInfo) {}
 
-    const T& getExtraInfo() const {
-        return extraInfo;
-    }
 
     void display(std::ostream& os) const override {
         os << "[Item] ID: " << getId()
