@@ -42,34 +42,28 @@ bool Patient::isValidCNP(const std::string& cnp) {
 
 
 std::ostream& operator<<(std::ostream& os, const Patient& patient) {
-    static thread_local std::unordered_set<const void*> visited;
-    if (visited.count(&patient)) {
-        os << "[Info: Patient already printed. Skipping repeated output.]\n";
-        return os;
-    }
-    visited.insert(&patient);
-
     os << "Patient Name: " << patient.getName()
        << "\nCNP: " << patient.getCNP()
        << "\nAge: " << patient.getAge()
        << "\nGender: " << patient.getGender();
 
-    if (!patient.getDiseases().empty()) {
+    const auto& diseases = patient.getDiseases();
+    if (diseases.empty()) {
+        os << "\nDiseases: None";
+    } else {
         os << "\nDiseases: ";
         bool first = true;
-        for (const auto& disease : patient.getDiseases()) {
+        for (const auto& disease : diseases) {
             if (!first) os << ", ";
             os << disease;
             first = false;
         }
-    } else {
-        os << "\nDiseases: None";
     }
 
     os << "\n";
-    visited.erase(&patient);
     return os;
 }
+
 
 
 

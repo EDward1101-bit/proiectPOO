@@ -74,28 +74,25 @@ bool Appointment::isInFuture() const {
 }
 
 std::ostream& operator<<(std::ostream& os, const Appointment& appointment) {
-    static thread_local std::unordered_set<const void*> visited;
-    if (visited.count(&appointment)) {
-        os << "[Info: Appointment already printed. Skipping repeated output.]\n";
-        return os;
-    }
-    visited.insert(&appointment);
-
     os << "Appointment:\n";
     os << "  Date: " << appointment.date << "\n";
     os << "  Time: " << appointment.time << "\n";
 
     if (appointment.doctor) {
         os << "  Doctor: " << appointment.doctor->getName() << "\n";
+    } else {
+        os << "  Doctor: [null]\n";
     }
 
     if (appointment.patient) {
         os << "  Patient: " << appointment.patient->getName() << "\n";
+    } else {
+        os << "  Patient: [null]\n";
     }
 
-    visited.erase(&appointment);
     return os;
 }
+
 
 
 
