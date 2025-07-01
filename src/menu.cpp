@@ -229,13 +229,11 @@ void Menu::doctorsMenu() {
                 });
 
                 std::cout << "Doctori specializați în Cardiologie:\n";
-                for (const auto& d : cardiologi) std::cout << *d << "\n";
+                for (const Doctor* const d : cardiologi) std::cout << *d << "\n";
 
                 pressEnterToContinue();
                 break;
             }
-
-
             case 0:
                 break;
             default:
@@ -367,7 +365,7 @@ void Menu::patientsMenu() {
                     });
 
                     std::cout << "Pacienți peste 60 ani:\n";
-                    for (const auto& p : seniori) std::cout << *p << "\n";
+                    for (const Patient* const p : seniori) std::cout << *p << "\n";
 
                     pressEnterToContinue();
                     break;
