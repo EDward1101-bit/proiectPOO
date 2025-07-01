@@ -53,8 +53,19 @@ void Menu::showMainMenu() {
 
         std::string input;
         std::getline(std::cin, input);
-        std::istringstream iss(input);
-        iss >> choice;
+        if (input.empty()) {
+            choice = -1;
+        } else {
+            std::istringstream iss(input);
+            if (!(iss >> choice)) {
+                choice = -1;
+            }
+        }
+
+        if (choice == -1) {
+            std::cout << "Opțiune invalidă, te rog încearcă din nou.\n";
+            continue;
+        }
 
         try {
             switch (choice) {
@@ -62,8 +73,7 @@ void Menu::showMainMenu() {
                 case 2: patientsMenu(); break;
                 case 3: appointmentsMenu(); break;
                 case 0: std::cout << "Goodbye!\n"; break;
-                default: throw InvalidInputException("Opțiune invalidă selectată în meniul principal: " + std::to_string(choice));
-
+                default: std::cout << "Opțiune invalidă, te rog încearcă din nou.\n"; break;
             }
         } catch (const SpitalException& e) {
             std::cout << "[Eroare] " << e.what() << "\n";
@@ -84,9 +94,18 @@ void Menu::doctorsMenu() {
         std::cout << "Choice: ";
         std::string input;
         std::getline(std::cin, input);
-        std::istringstream iss(input);
-        if (!(iss >> choice)) {
-            choice = -1;
+        if (input.empty()) {
+            choice = -1; // sau altă valoare pentru invalid
+        } else {
+            std::istringstream iss(input);
+            if (!(iss >> choice)) {
+                choice = -1;
+            }
+        }
+
+        if (choice == -1) {
+            std::cout << "Opțiune invalidă, te rog încearcă din nou.\n";
+            continue;
         }
         try {
         switch (choice) {
@@ -215,11 +234,19 @@ void Menu::patientsMenu() {
         std::cout << "Choice: ";
         std::string input;
         std::getline(std::cin, input);
-        std::istringstream iss(input);
-        if (!(iss >> choice)) {
-            choice = -1;
+        if (input.empty()) {
+            choice = -1; // sau altă valoare pentru invalid
+        } else {
+            std::istringstream iss(input);
+            if (!(iss >> choice)) {
+                choice = -1;
+            }
         }
 
+        if (choice == -1) {
+            std::cout << "Opțiune invalidă, te rog încearcă din nou.\n";
+            continue;
+        }
 
         try {
             switch (choice) {
